@@ -11,7 +11,8 @@ import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.github.paolorotolo.appintro.AppIntro;
+import com.github.appintro.AppIntro;
+
 
 public class IntroActivity extends AppIntro {
     @Override
