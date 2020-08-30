@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">This App Is Trying To Make You Better</string>
+    <string name="app_alias">Menko</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="today_fragment_label">Today Fragment</string>
+    <string name="tomorrow_fragment_label">Tomorrow Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <!-- Activiy Name-->
+
+    <string name="hello_first_fragment">Hello today fragment</string>
+    <string name="hello_second_fragment">Hello tomorrow fragment. Arg: %1$s</string>
+
+    <!-- App Intro -->
+    <string name="first_page_title">Halo, </string>
+    <string name="first_page_subtitle">Terimakasih telah mencoba aplikasi ini </string>
+    <string name="first_page_button">Sama-Sama, Selanjutnya</string>
+    <string name="second_page_title">Karena itu,</string>
+    <string name="second_page_subtitle">Biarkan kami membantu anda untuk memperbaiki kehidupan anda </string>
+    <string name="second_page_button">Sama-Sama, Selanjutnya</string>
+    <string name="third_page_title">Mudah Saja,</string>
+    <string name="third_page_subtitle">Cukup isi hal-hal yang anda ingin lakukan hari ini </string>
+    <string name="third_page_button">Sama-Sama, Selanjutnya</string>
+
+    <string name="title_activity_intro">FullscreenActivity</string>
+
+</resources>
