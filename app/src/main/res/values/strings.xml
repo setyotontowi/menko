@@ -2,6 +2,10 @@
     <string name="app_name">This App Is Trying To Make You Better</string>
     <string name="app_alias">Menko</string>
     <string name="action_settings">Settings</string>
+
+    <!-- Settings String-->
+    <string name="prefSetting">pref_setting</string>
+
     <!-- Strings used for fragments for navigation -->
     <string name="today_fragment_label">Today Fragment</string>
     <string name="tomorrow_fragment_label">Tomorrow Fragment</string>
