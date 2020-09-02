@@ -2,8 +2,10 @@ package com.project.thisappistryingtomakeyoubetter;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 
+import com.github.appintro.AppIntro;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -11,10 +13,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.preference.PreferenceManager;
+import android.transition.Slide;
+import android.view.Gravity;
 import android.view.View;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.DecelerateInterpolator;
 
 import java.util.Date;
 
@@ -91,4 +96,5 @@ public class MainActivity extends AppCompatActivity {
     private Date getDate(){
         return new Date();
     }
+
 }
