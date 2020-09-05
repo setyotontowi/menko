@@ -2,41 +2,43 @@ package com.project.thisappistryingtomakeyoubetter;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
-
-import com.github.appintro.AppIntro;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.preference.PreferenceManager;
-import android.transition.Slide;
-import android.view.Gravity;
-import android.view.View;
 
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.animation.DecelerateInterpolator;
 
+import com.project.thisappistryingtomakeyoubetter.databinding.ActivityMainBinding;
+
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private List<Calendar> calendar;
+    private static final int DAY_LIMIT = 5;
+    private ActivityMainBinding binding;
+    public Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(GeneralHelper.dateFormatter().format(getDate()));
         setSupportActionBar(toolbar);
 
+        // App Intro Initiation
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                // Shared Preferences init
+                // Shared Preferences
                 SharedPreferences getPrefs = getSharedPreferences(getString(R.string.prefSetting),
                         MODE_PRIVATE);
                 SharedPreferences.Editor editor = getPrefs.edit();
@@ -61,14 +63,15 @@ public class MainActivity extends AppCompatActivity {
 
         t.start();
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        // Generate Calendar List
+        calendar = generateCalendar(DAY_LIMIT);
+
+        // Create Fragment View Pager
+        DayAdapter dayAdapter = new DayAdapter(getSupportFragmentManager(),
+                getLifecycle(),
+                calendar);
+        binding.frame.setAdapter(dayAdapter);
+        binding.frame.setPageTransformer(new DepthPageTransformer());
     }
 
     @Override
@@ -95,6 +98,21 @@ public class MainActivity extends AppCompatActivity {
 
     private Date getDate(){
         return new Date();
+    }
+
+    /**
+     * Generating Calendar, a temporary method.
+     * @param limit: choose until what day
+     * @return List of Calendar (Today, Tomorrow, until limit)
+     */
+    private List<Calendar> generateCalendar(int limit){
+        List<Calendar> calendars = new ArrayList<>();
+        for (int i=0; i<limit; i++){
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_YEAR, i);
+            calendars.add(calendar);
+        }
+        return calendars;
     }
 
 }
