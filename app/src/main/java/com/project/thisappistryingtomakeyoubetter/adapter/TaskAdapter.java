@@ -38,7 +38,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         Task task = tasks.get(position);
 
         holder.title.setText(task.getTitle());
-        holder.description.setText(task.getDescription());
+        if(task.getDescription().equals("") || task.getDescription() == null){
+            holder.description.setVisibility(View.GONE);
+        } else {
+            holder.description.setText(task.getDescription());
+        }
     }
 
     @Override

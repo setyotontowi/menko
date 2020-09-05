@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/padding20"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="@string/add_task_title_hint"
+            android:hint="@string/add_task_title_hint"
+            android:inputType="textCapSentences"
+            android:padding="@dimen/padding20" />
+
+        <EditText
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="@string/add_task_description_hint"
+            android:hint="@string/add_task_description_hint"
+            android:inputType="textCapSentences"
+            android:layout_marginBottom="@dimen/inbetween"
+            android:padding="@dimen/padding20" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_task_cancel_button"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/cancel"
+            android:layout_toRightOf="@id/cancel"
+            android:backgroundTint="@color/success"
+            android:text="@string/add_task_save_button"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            tools:targetApi="lollipop" />
+
+
+    </RelativeLayout>
+</LinearLayout>

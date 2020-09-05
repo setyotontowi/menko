@@ -1,5 +1,8 @@
 <resources>
     <dimen name="padding10">10dp</dimen>
     <dimen name="padding20">20dp</dimen>
+    <dimen name="inbetween">15dp</dimen>
+    <dimen name="card_inbetween">10dp</dimen>
     <dimen name="task_padding">34dp</dimen>
+    <dimen name="fab_margin">20dp</dimen>
 </resources>

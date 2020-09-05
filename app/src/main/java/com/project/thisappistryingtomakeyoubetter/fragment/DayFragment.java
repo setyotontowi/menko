@@ -1,5 +1,7 @@
 package com.project.thisappistryingtomakeyoubetter.fragment;
 
+import android.app.Dialog;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,8 +12,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 
+import com.project.thisappistryingtomakeyoubetter.R;
 import com.project.thisappistryingtomakeyoubetter.adapter.TaskAdapter;
+import com.project.thisappistryingtomakeyoubetter.databinding.DialogAddTaskBinding;
 import com.project.thisappistryingtomakeyoubetter.model.Task;
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper;
 import com.project.thisappistryingtomakeyoubetter.activity.MainActivity;
@@ -21,12 +27,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
-public class DayFragment extends Fragment {
+public class DayFragment extends Fragment implements View.OnClickListener {
 
     private Date date;
     private FragmentDayBinding binding;
     private List<Task> tasks;
+    private TaskAdapter taskAdapter;
 
     public DayFragment() {
         // Required empty public constructor
@@ -60,21 +68,14 @@ public class DayFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         tasks = new ArrayList<>();
 
-        // Data samples
-        Task task1 = new Task("Tester", "I met my crush last night");
-        tasks.add(task1);
+        placeHolder();
 
-        if(tasks.isEmpty()){
-            binding.task.setVisibility(View.GONE);
-            binding.nodata.setVisibility(View.VISIBLE);
-        } else {
-            binding.task.setVisibility(View.VISIBLE);
-            binding.nodata.setVisibility(View.GONE);
-        }
-
-        TaskAdapter taskAdapter = new TaskAdapter(getActivity(), tasks);
+        taskAdapter = new TaskAdapter(getActivity(), tasks);
         binding.task.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.task.setAdapter(taskAdapter);
+
+        // Floating Action Button Add
+        binding.addTask.setOnClickListener(this);
     }
 
     @Override
@@ -82,5 +83,61 @@ public class DayFragment extends Fragment {
         super.onResume();
         ((MainActivity)requireActivity()).toolbar.setTitle(
                 GeneralHelper.dateFormatter().format(date));
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.add_task) {
+            addTaskDialog();
+        }
+    }
+
+    private void addTaskDialog(){
+        final Dialog dialog = new Dialog(requireContext());
+        final DialogAddTaskBinding binding = DialogAddTaskBinding.inflate(getLayoutInflater());
+        dialog.setContentView(binding.getRoot());
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Objects.requireNonNull(dialog.getWindow()).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        }
+
+        Window window = dialog.getWindow();
+        assert window != null;
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.WRAP_CONTENT);
+
+        binding.cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        binding.save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addTask(binding.title.getText().toString(),
+                        binding.description.getText().toString());
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void addTask(String title, String description) {
+        tasks.add(new Task(title, description));
+        taskAdapter.notifyDataSetChanged();
+        placeHolder();
+    }
+
+    private void placeHolder(){
+        if(tasks.isEmpty()){
+            binding.task.setVisibility(View.GONE);
+            binding.nodata.setVisibility(View.VISIBLE);
+        } else {
+            binding.task.setVisibility(View.VISIBLE);
+            binding.nodata.setVisibility(View.GONE);
+        }
     }
 }

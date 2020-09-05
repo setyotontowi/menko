@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:elevation="5dp"
+    android:layout_marginBottom="@dimen/card_inbetween"
     tools:targetApi="lollipop">
 
     <LinearLayout
