@@ -1,4 +1,4 @@
-package com.project.thisappistryingtomakeyoubetter;
+package com.project.thisappistryingtomakeyoubetter.fragment;
 
 import android.os.Bundle;
 
@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper;
+import com.project.thisappistryingtomakeyoubetter.activity.MainActivity;
 import com.project.thisappistryingtomakeyoubetter.databinding.FragmentDayBinding;
 
 import java.util.Calendar;

@@ -1,4 +1,4 @@
-package com.project.thisappistryingtomakeyoubetter;
+package com.project.thisappistryingtomakeyoubetter.util;
 
 import android.view.View;
 

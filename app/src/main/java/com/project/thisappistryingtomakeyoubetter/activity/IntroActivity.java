@@ -1,4 +1,4 @@
-package com.project.thisappistryingtomakeyoubetter;
+package com.project.thisappistryingtomakeyoubetter.activity;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -7,6 +7,10 @@ import android.os.Bundle;
 
 import com.github.appintro.AppIntro;
 import com.github.appintro.AppIntroPageTransformerType;
+import com.project.thisappistryingtomakeyoubetter.fragment.IntroFirstPage;
+import com.project.thisappistryingtomakeyoubetter.fragment.IntroSecondPage;
+import com.project.thisappistryingtomakeyoubetter.fragment.IntroThirdPage;
+import com.project.thisappistryingtomakeyoubetter.R;
 
 
 public class IntroActivity extends AppIntro {

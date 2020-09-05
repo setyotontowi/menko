@@ -1,4 +1,4 @@
-package com.project.thisappistryingtomakeyoubetter;
+package com.project.thisappistryingtomakeyoubetter.adapter;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -6,8 +6,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import com.project.thisappistryingtomakeyoubetter.fragment.DayFragment;
+
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class DayAdapter extends FragmentStateAdapter {

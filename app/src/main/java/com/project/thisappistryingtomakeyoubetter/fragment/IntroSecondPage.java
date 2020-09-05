@@ -1,4 +1,4 @@
-package com.project.thisappistryingtomakeyoubetter;
+package com.project.thisappistryingtomakeyoubetter.fragment;
 
 import android.os.Bundle;
 
@@ -8,15 +8,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class IntroThirdPage extends Fragment {
+import com.project.thisappistryingtomakeyoubetter.R;
 
-    public IntroThirdPage() {
+public class IntroSecondPage extends Fragment {
+
+    public IntroSecondPage() {
         // Required empty public constructor
     }
 
-    public static IntroThirdPage newInstance() {
-        IntroThirdPage fragment = new IntroThirdPage();
-        return fragment;
+    public static IntroSecondPage newInstance() {
+        return new IntroSecondPage();
     }
 
     @Override
@@ -28,6 +29,6 @@ public class IntroThirdPage extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_intro_third_page, container, false);
+        return inflater.inflate(R.layout.fragment_intro_second_page, container, false);
     }
 }

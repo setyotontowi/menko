@@ -1,4 +1,4 @@
-package com.project.thisappistryingtomakeyoubetter;
+package com.project.thisappistryingtomakeyoubetter.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +11,10 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.project.thisappistryingtomakeyoubetter.adapter.DayAdapter;
+import com.project.thisappistryingtomakeyoubetter.util.DepthPageTransformer;
+import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper;
+import com.project.thisappistryingtomakeyoubetter.R;
 import com.project.thisappistryingtomakeyoubetter.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
