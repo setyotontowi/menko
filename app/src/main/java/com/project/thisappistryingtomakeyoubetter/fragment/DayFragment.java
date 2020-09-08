@@ -31,14 +31,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-public class DayFragment extends Fragment implements View.OnClickListener {
+public class DayFragment extends Fragment implements
+        View.OnClickListener,
+        TaskAdapter.LongClick{
 
-    private Date date;
     private Calendar calendar;
     private FragmentDayBinding binding;
     private List<Task> tasks;
     private TaskAdapter taskAdapter;
     private AppDatabase db;
+    private Date from, to;
 
     public DayFragment() {
         // Required empty public constructor
@@ -58,7 +60,6 @@ public class DayFragment extends Fragment implements View.OnClickListener {
         assert getArguments() != null;
         calendar = Calendar.getInstance();
         calendar.setTimeInMillis(getArguments().getLong("date"));
-        date = new Date(getArguments().getLong("date"));
     }
 
     @Override
@@ -78,13 +79,14 @@ public class DayFragment extends Fragment implements View.OnClickListener {
                 .allowMainThreadQueries()
                 .build();
 
-        Date from = GeneralHelper.fromDate(calendar);
-        Date to = GeneralHelper.toDate(calendar);
+        from = GeneralHelper.fromDate(calendar);
+        to = GeneralHelper.toDate(calendar);
 
-        tasks = db.taskDao().getAll(from, to);
+        getAll(from, to);
+
         placeHolder();
 
-        taskAdapter = new TaskAdapter(getActivity(), tasks);
+        taskAdapter = new TaskAdapter(getActivity(), tasks, this);
         binding.task.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.task.setAdapter(taskAdapter);
 
@@ -96,7 +98,7 @@ public class DayFragment extends Fragment implements View.OnClickListener {
     public void onResume() {
         super.onResume();
         ((MainActivity)requireActivity()).toolbar.setTitle(
-                GeneralHelper.dateFormatter().format(date));
+                GeneralHelper.dateFormatter().format(calendar.getTime()));
     }
 
     @Override
@@ -104,6 +106,11 @@ public class DayFragment extends Fragment implements View.OnClickListener {
         if (v.getId() == R.id.add_task) {
             addTaskDialog();
         }
+    }
+
+    @Override
+    public void onLongClick(Task task) {
+        deleteTask(task);
     }
 
     private void addTaskDialog(){
@@ -139,13 +146,24 @@ public class DayFragment extends Fragment implements View.OnClickListener {
         dialog.show();
     }
 
+    private void getAll(Date from, Date to){
+        tasks = db.taskDao().getAll(from, to);
+    }
+
     private void addTask(String title, String description) {
-        Task task = new Task(title, description, date);
+        Task task = new Task(title, description, GeneralHelper.toDate(calendar));
         tasks.add(task);
         taskAdapter.notifyDataSetChanged();
         placeHolder();
 
         db.taskDao().insertAll(task);
+    }
+
+    private void deleteTask(Task task) {
+        db.taskDao().delete(task);
+        getAll(from, to);
+        taskAdapter.notifyDataSetChanged();
+        placeHolder();
     }
 
     private void placeHolder(){
