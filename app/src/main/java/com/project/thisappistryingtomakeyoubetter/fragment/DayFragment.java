@@ -155,16 +155,10 @@ public class DayFragment extends Fragment implements
         if(task != null){
             binding.title.setText(task.getTitle());
             binding.description.setText(task.getDescription());
+            binding.delete.setVisibility(View.VISIBLE);
         }
 
         // Listeners
-        binding.cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
         binding.save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -177,6 +171,16 @@ public class DayFragment extends Fragment implements
                     task.setTitle(binding.title.getText().toString());
                     task.setDescription(binding.description.getText().toString());
                     updateTask(task);
+                }
+                dialog.dismiss();
+            }
+        });
+
+        binding.delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(task != null) {
+                    deleteTask(task);
                 }
                 dialog.dismiss();
             }
