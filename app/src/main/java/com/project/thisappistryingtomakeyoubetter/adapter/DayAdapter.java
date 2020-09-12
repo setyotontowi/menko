@@ -23,7 +23,7 @@ public class DayAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         Calendar calendar = calendars.get(position);
-        return DayFragment.newInstance(calendar);
+        return DayFragment.newInstance(calendar, position);
     }
 
     @Override
