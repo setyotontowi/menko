@@ -18,7 +18,7 @@ import android.view.WindowManager;
 
 import com.project.thisappistryingtomakeyoubetter.R;
 import com.project.thisappistryingtomakeyoubetter.adapter.TaskAdapter;
-import com.project.thisappistryingtomakeyoubetter.databinding.DialogAddTaskBinding;
+import com.project.thisappistryingtomakeyoubetter.databinding.DialogTaskBinding;
 import com.project.thisappistryingtomakeyoubetter.model.Task;
 import com.project.thisappistryingtomakeyoubetter.util.AppDatabase;
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper;
@@ -29,16 +29,21 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.TimeZone;
 
-public class DayFragment extends Fragment implements View.OnClickListener {
+public class DayFragment extends Fragment implements
+        View.OnClickListener,
+        TaskAdapter.TaskCallback{
 
-    private Date date;
     private Calendar calendar;
     private FragmentDayBinding binding;
-    private List<Task> tasks;
+    // Debug
+    private List<Task> tasks = new ArrayList<>();
     private TaskAdapter taskAdapter;
     private AppDatabase db;
+    private Date from, to;
 
     public DayFragment() {
         // Required empty public constructor
@@ -56,9 +61,8 @@ public class DayFragment extends Fragment implements View.OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         assert getArguments() != null;
-        calendar = Calendar.getInstance();
+        calendar = Calendar.getInstance(TimeZone.getDefault(), Locale.ENGLISH);
         calendar.setTimeInMillis(getArguments().getLong("date"));
-        date = new Date(getArguments().getLong("date"));
     }
 
     @Override
@@ -72,19 +76,15 @@ public class DayFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        tasks = new ArrayList<>();
 
         db = Room.databaseBuilder(requireContext(), AppDatabase.class, "database")
                 .allowMainThreadQueries()
                 .build();
 
-        Date from = GeneralHelper.fromDate(calendar);
-        Date to = GeneralHelper.toDate(calendar);
+        from = GeneralHelper.fromDate(calendar);
+        to = GeneralHelper.toDate(calendar);
 
-        tasks = db.taskDao().getAll(from, to);
-        placeHolder();
-
-        taskAdapter = new TaskAdapter(getActivity(), tasks);
+        taskAdapter = new TaskAdapter(getActivity(), tasks, this);
         binding.task.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.task.setAdapter(taskAdapter);
 
@@ -96,30 +96,50 @@ public class DayFragment extends Fragment implements View.OnClickListener {
     public void onResume() {
         super.onResume();
         ((MainActivity)requireActivity()).toolbar.setTitle(
-                GeneralHelper.dateFormatter().format(date));
+                GeneralHelper.dateFormatter().format(calendar.getTime()));
+        getAll(from, to);
     }
 
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.add_task) {
-            addTaskDialog();
+            taskDialog(null);
         }
     }
 
-    private void addTaskDialog(){
+    @Override
+    public void onLongClick(Task task) {
+        taskDialog(task);
+    }
+
+    @Override
+    public void onBoxChecked(Task task) {
+        updateTask(task);
+    }
+
+    private void taskDialog(final Task task){
         final Dialog dialog = new Dialog(requireContext());
-        final DialogAddTaskBinding binding = DialogAddTaskBinding.inflate(getLayoutInflater());
+        final DialogTaskBinding binding = DialogTaskBinding.inflate(getLayoutInflater());
         dialog.setContentView(binding.getRoot());
 
+        // Hide Keyboard
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Objects.requireNonNull(dialog.getWindow()).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         }
 
+        // Match dialog window to screen width
         Window window = dialog.getWindow();
         assert window != null;
         window.setLayout(WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.WRAP_CONTENT);
 
+        // Views Setup
+        if(task != null){
+            binding.title.setText(task.getTitle());
+            binding.description.setText(task.getDescription());
+        }
+
+        // Listeners
         binding.cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,8 +150,16 @@ public class DayFragment extends Fragment implements View.OnClickListener {
         binding.save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addTask(binding.title.getText().toString(),
-                        binding.description.getText().toString());
+                if(task == null) {
+                    Task task = new Task(binding.title.getText().toString(),
+                            binding.description.getText().toString(),
+                            calendar.getTime());
+                    addTask(task);
+                } else {
+                    task.setTitle(binding.title.getText().toString());
+                    task.setDescription(binding.description.getText().toString());
+                    updateTask(task);
+                }
                 dialog.dismiss();
             }
         });
@@ -139,13 +167,29 @@ public class DayFragment extends Fragment implements View.OnClickListener {
         dialog.show();
     }
 
-    private void addTask(String title, String description) {
-        Task task = new Task(title, description, date);
-        tasks.add(task);
-        taskAdapter.notifyDataSetChanged();
-        placeHolder();
+    private void getAll(Date from, Date to){
+        tasks.clear();
+        tasks.addAll(db.taskDao().getAll(from, to));
 
+        if(taskAdapter != null) {
+            taskAdapter.notifyDataSetChanged();
+        }
+        placeHolder();
+    }
+
+    private void addTask(Task task) {
         db.taskDao().insertAll(task);
+        getAll(from, to);
+    }
+
+    private void deleteTask(Task task) {
+        db.taskDao().delete(task);
+        getAll(from, to);
+    }
+
+    private void updateTask(Task task){
+        db.taskDao().update(task);
+        getAll(from, to);
     }
 
     private void placeHolder(){
