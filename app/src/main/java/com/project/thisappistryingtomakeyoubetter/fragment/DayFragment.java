@@ -37,22 +37,27 @@ public class DayFragment extends Fragment implements
         View.OnClickListener,
         TaskAdapter.TaskCallback{
 
+    // Static Variables
+    public final static String DATE = "date";
+    public final static String POSITION = "position";
+
     private Calendar calendar;
     private FragmentDayBinding binding;
-    // Debug
     private List<Task> tasks = new ArrayList<>();
     private TaskAdapter taskAdapter;
     private AppDatabase db;
     private Date from, to;
+    private int position;
 
     public DayFragment() {
         // Required empty public constructor
     }
 
-    public static DayFragment newInstance(Calendar calendar) {
+    public static DayFragment newInstance(Calendar calendar, int position) {
         DayFragment fragment = new DayFragment();
         Bundle args = new Bundle();
-        args.putLong("date", calendar.getTimeInMillis());
+        args.putLong(DATE, calendar.getTimeInMillis());
+        args.putInt(POSITION, position);
         fragment.setArguments(args);
         return fragment;
     }
@@ -62,7 +67,8 @@ public class DayFragment extends Fragment implements
         super.onCreate(savedInstanceState);
         assert getArguments() != null;
         calendar = Calendar.getInstance(TimeZone.getDefault(), Locale.ENGLISH);
-        calendar.setTimeInMillis(getArguments().getLong("date"));
+        calendar.setTimeInMillis(getArguments().getLong(DATE));
+        position = getArguments().getInt(POSITION);
     }
 
     @Override
@@ -95,8 +101,20 @@ public class DayFragment extends Fragment implements
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity)requireActivity()).toolbar.setTitle(
-                GeneralHelper.dateFormatter().format(calendar.getTime()));
+        String title;
+        switch (position){
+            case 0:
+                title = getString(R.string.title_today);
+                break;
+            case 1:
+                title = getString(R.string.title_tomorrow);
+                break;
+            default:
+                title = GeneralHelper.dateFormatter().format(calendar.getTime());
+                break;
+        }
+        ((MainActivity)requireActivity()).toolbar.setTitle(title);
+
         getAll(from, to);
     }
 
@@ -137,16 +155,10 @@ public class DayFragment extends Fragment implements
         if(task != null){
             binding.title.setText(task.getTitle());
             binding.description.setText(task.getDescription());
+            binding.delete.setVisibility(View.VISIBLE);
         }
 
         // Listeners
-        binding.cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
         binding.save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -159,6 +171,16 @@ public class DayFragment extends Fragment implements
                     task.setTitle(binding.title.getText().toString());
                     task.setDescription(binding.description.getText().toString());
                     updateTask(task);
+                }
+                dialog.dismiss();
+            }
+        });
+
+        binding.delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(task != null) {
+                    deleteTask(task);
                 }
                 dialog.dismiss();
             }

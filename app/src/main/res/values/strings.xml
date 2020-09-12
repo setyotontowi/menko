@@ -36,5 +36,8 @@
     <string name="add_task_description_hint">Tambahkan Deskripsi</string>
     <string name="add_task_save_button">Simpan</string>
     <string name="add_task_cancel_button">Batal</string>
+    <string name="add_task_delete_button">Hapus</string>
+    <string name="title_today">Hari Ini</string>
+    <string name="title_tomorrow">Besok</string>
 
 </resources>
