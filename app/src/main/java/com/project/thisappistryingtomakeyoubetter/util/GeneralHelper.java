@@ -16,6 +16,10 @@ public class GeneralHelper {
         return new SimpleDateFormat("EEEE, dd MMMM", Locale.ENGLISH);
     }
 
+    public static SimpleDateFormat hourFormatter(){
+        return new SimpleDateFormat("EEEE, dd MMMM: HH.mm.ss", Locale.ENGLISH);
+    }
+
     public static Date fromDate(Calendar calendar){
         int date = calendar.get(Calendar.DATE);
         int month = calendar.get(Calendar.MONTH);
