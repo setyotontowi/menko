@@ -8,15 +8,12 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.project.thisappistryingtomakeyoubetter.R;
 import com.project.thisappistryingtomakeyoubetter.model.Task;
-import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper;
 
 import java.util.List;
 
@@ -49,6 +46,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         if(task.getDescription().equals("") || task.getDescription() == null){
             holder.description.setVisibility(View.GONE);
         } else {
+            holder.description.setVisibility(View.VISIBLE);
             holder.description.setText(task.getDescription());
         }
 
