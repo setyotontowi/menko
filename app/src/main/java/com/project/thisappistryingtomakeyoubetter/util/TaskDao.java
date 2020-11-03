@@ -1,5 +1,6 @@
 package com.project.thisappistryingtomakeyoubetter.util;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -15,7 +16,7 @@ import java.util.List;
 @Dao
 public interface TaskDao {
     @Query("SELECT * FROM task WHERE date BETWEEN :from AND :to")
-    List<Task> getAll(Date from, Date to);
+    LiveData<List<Task>> getTasks(Date from, Date to);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(Task... task);
