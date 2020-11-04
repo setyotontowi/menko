@@ -20,9 +20,9 @@ import java.util.List;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
-    private Context context;
+    private final Context context;
     private List<Task> tasks;
-    private TaskCallback listener;
+    private final TaskCallback listener;
 
     public TaskAdapter(Context context, List<Task> tasks, TaskCallback listener){
         this.tasks = tasks;
@@ -78,6 +78,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     @Override
     public int getItemCount() {
         return tasks.size();
+    }
+
+    public void setTasks(List<Task> tasks){
+        this.tasks.clear();
+        this.tasks.addAll(tasks);
+        notifyDataSetChanged();
     }
 
     public static final class TaskViewHolder extends RecyclerView.ViewHolder {

@@ -7,6 +7,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.room.Room;
 
@@ -24,6 +26,7 @@ import com.project.thisappistryingtomakeyoubetter.util.AppDatabase;
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper;
 import com.project.thisappistryingtomakeyoubetter.activity.MainActivity;
 import com.project.thisappistryingtomakeyoubetter.databinding.FragmentDayBinding;
+import com.project.thisappistryingtomakeyoubetter.util.TaskViewModel;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -43,11 +46,12 @@ public class DayFragment extends Fragment implements
 
     private Calendar calendar;
     private FragmentDayBinding binding;
-    private List<Task> tasks = new ArrayList<>();
+    private final List<Task> tasks = new ArrayList<>();
     private TaskAdapter taskAdapter;
     private AppDatabase db;
     private Date from, to;
     private int position;
+    private TaskViewModel taskViewModel;
 
     public DayFragment() {
         // Required empty public constructor
@@ -94,6 +98,10 @@ public class DayFragment extends Fragment implements
         binding.task.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.task.setAdapter(taskAdapter);
 
+        taskViewModel = new ViewModelProvider(this,
+                new TaskViewModel(requireActivity().getApplication(), from, to))
+                .get(TaskViewModel.class);
+
         // Floating Action Button Add
         binding.addTask.setOnClickListener(this);
     }
@@ -114,8 +122,7 @@ public class DayFragment extends Fragment implements
                 break;
         }
         ((MainActivity)requireActivity()).toolbar.setTitle(title);
-
-        getAll(from, to);
+        getTasks();
     }
 
     @Override
@@ -189,29 +196,28 @@ public class DayFragment extends Fragment implements
         dialog.show();
     }
 
-    private void getAll(Date from, Date to){
-        tasks.clear();
-        tasks.addAll(db.taskDao().getAll(from, to));
-
-        if(taskAdapter != null) {
-            taskAdapter.notifyDataSetChanged();
-        }
-        placeHolder();
+    private void getTasks(){
+        taskViewModel.getTasks().observe(getViewLifecycleOwner(), new Observer<List<Task>>() {
+            @Override
+            public void onChanged(List<Task> tasks) {
+                DayFragment.this.tasks.clear();
+                DayFragment.this.tasks.addAll(tasks);
+                taskAdapter.notifyDataSetChanged();
+                placeHolder();
+            }
+        });
     }
 
     private void addTask(Task task) {
-        db.taskDao().insertAll(task);
-        getAll(from, to);
+        taskViewModel.insert(task);
     }
 
     private void deleteTask(Task task) {
-        db.taskDao().delete(task);
-        getAll(from, to);
+        taskViewModel.delete(task);
     }
 
     private void updateTask(Task task){
-        db.taskDao().update(task);
-        getAll(from, to);
+        taskViewModel.update(task);
     }
 
     private void placeHolder(){

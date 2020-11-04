@@ -21,14 +21,15 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:text="@string/hello_blank_fragment"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/task"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="@dimen/padding10"
-            android:visibility="gone" />
+            android:visibility="visible"
+            tools:listitem="@layout/view_task"/>
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
