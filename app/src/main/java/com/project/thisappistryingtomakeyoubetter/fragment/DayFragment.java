@@ -99,7 +99,7 @@ public class DayFragment extends Fragment implements
         binding.task.setAdapter(taskAdapter);
 
         taskViewModel = new ViewModelProvider(this,
-                new TaskViewModel(getActivity().getApplication(), from, to))
+                new TaskViewModel(requireActivity().getApplication(), from, to))
                 .get(TaskViewModel.class);
 
         // Floating Action Button Add
@@ -122,7 +122,6 @@ public class DayFragment extends Fragment implements
                 break;
         }
         ((MainActivity)requireActivity()).toolbar.setTitle(title);
-
         getTasks();
     }
 
@@ -201,10 +200,12 @@ public class DayFragment extends Fragment implements
         taskViewModel.getTasks().observe(getViewLifecycleOwner(), new Observer<List<Task>>() {
             @Override
             public void onChanged(List<Task> tasks) {
-                taskAdapter.setTasks(tasks);
+                DayFragment.this.tasks.clear();
+                DayFragment.this.tasks.addAll(tasks);
+                taskAdapter.notifyDataSetChanged();
+                placeHolder();
             }
         });
-        placeHolder();
     }
 
     private void addTask(Task task) {
