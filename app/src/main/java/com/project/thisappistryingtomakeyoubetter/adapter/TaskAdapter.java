@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -21,7 +20,7 @@ import java.util.List;
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
     private final Context context;
-    private List<Task> tasks;
+    private final List<Task> tasks;
     private final TaskCallback listener;
 
     public TaskAdapter(Context context, List<Task> tasks, TaskCallback listener){
@@ -50,40 +49,26 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             holder.description.setText(task.getDescription());
         }
 
-        holder.title.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                task.setFinish(isChecked);
-                listener.onBoxChecked(task);
-            }
+        // This, on multiple item
+        holder.title.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            task.setFinish(isChecked);
+            listener.onBoxChecked(task);
         });
 
-        holder.wrapper.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                listener.onLongClick(task);
-                return true;
-            }
+        holder.wrapper.setOnLongClickListener(v -> {
+            listener.onLongClick(task);
+            return true;
         });
 
-        holder.title.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                listener.onLongClick(task);
-                return true;
-            }
+        holder.title.setOnLongClickListener(v -> {
+            listener.onLongClick(task);
+            return true;
         });
     }
 
     @Override
     public int getItemCount() {
         return tasks.size();
-    }
-
-    public void setTasks(List<Task> tasks){
-        this.tasks.clear();
-        this.tasks.addAll(tasks);
-        notifyDataSetChanged();
     }
 
     public static final class TaskViewHolder extends RecyclerView.ViewHolder {
