@@ -39,29 +39,21 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         // App Intro Initiation
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                // Shared Preferences
-                SharedPreferences getPrefs = getSharedPreferences(getString(R.string.prefSetting),
-                        MODE_PRIVATE);
-                SharedPreferences.Editor editor = getPrefs.edit();
+        Thread t = new Thread(() -> {
+            // Shared Preferences
+            SharedPreferences getPrefs = getSharedPreferences(getString(R.string.prefSetting),
+                    MODE_PRIVATE);
+            SharedPreferences.Editor editor = getPrefs.edit();
 
-                // Check if apps run on first start
-                boolean firstStart = getPrefs.getBoolean("firstStart", true);
-                if(firstStart){
-                    final Intent intent = new Intent(MainActivity.this, IntroActivity.class);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            startActivity(intent);
-                        }
-                    });
+            // Check if apps run on first start
+            boolean firstStart = getPrefs.getBoolean("firstStart", true);
+            if(firstStart){
+                final Intent intent = new Intent(MainActivity.this, IntroActivity.class);
+                runOnUiThread(() -> startActivity(intent));
 
-                    // Edit firstStart to false
-                    editor.putBoolean("firstStart", false);
-                    editor.apply();
-                }
+                // Edit firstStart to false
+                editor.putBoolean("firstStart", false);
+                editor.apply();
             }
         });
 
@@ -93,7 +85,9 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_history) {
+            Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
+            startActivity(intent);
             return true;
         }
 

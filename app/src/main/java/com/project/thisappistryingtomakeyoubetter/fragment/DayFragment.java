@@ -7,7 +7,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.room.Room;
@@ -48,7 +47,6 @@ public class DayFragment extends Fragment implements
     private FragmentDayBinding binding;
     private final List<Task> tasks = new ArrayList<>();
     private TaskAdapter taskAdapter;
-    private AppDatabase db;
     private Date from, to;
     private int position;
     private TaskViewModel taskViewModel;
@@ -87,7 +85,7 @@ public class DayFragment extends Fragment implements
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        db = Room.databaseBuilder(requireContext(), AppDatabase.class, "database")
+        Room.databaseBuilder(requireContext(), AppDatabase.class, "database")
                 .allowMainThreadQueries()
                 .build();
 
@@ -166,45 +164,36 @@ public class DayFragment extends Fragment implements
         }
 
         // Listeners
-        binding.save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(task == null) {
-                    Task task = new Task(binding.title.getText().toString(),
-                            binding.description.getText().toString(),
-                            calendar.getTime());
-                    addTask(task);
-                } else {
-                    task.setTitle(binding.title.getText().toString());
-                    task.setDescription(binding.description.getText().toString());
-                    updateTask(task);
-                }
-                dialog.dismiss();
+        binding.save.setOnClickListener(v -> {
+            if(task == null) {
+                Task task1 = new Task(binding.title.getText().toString(),
+                        binding.description.getText().toString(),
+                        calendar.getTime());
+                addTask(task1);
+            } else {
+                task.setTitle(binding.title.getText().toString());
+                task.setDescription(binding.description.getText().toString());
+                updateTask(task);
             }
+            dialog.dismiss();
         });
 
-        binding.delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(task != null) {
-                    deleteTask(task);
-                }
-                dialog.dismiss();
+        binding.delete.setOnClickListener(v -> {
+            if(task != null) {
+                deleteTask(task);
             }
+            dialog.dismiss();
         });
 
         dialog.show();
     }
 
     private void getTasks(){
-        taskViewModel.getTasks().observe(getViewLifecycleOwner(), new Observer<List<Task>>() {
-            @Override
-            public void onChanged(List<Task> tasks) {
-                DayFragment.this.tasks.clear();
-                DayFragment.this.tasks.addAll(tasks);
-                taskAdapter.notifyDataSetChanged();
-                placeHolder();
-            }
+        taskViewModel.getTasks().observe(getViewLifecycleOwner(), tasks -> {
+            DayFragment.this.tasks.clear();
+            DayFragment.this.tasks.addAll(tasks);
+            taskAdapter.notifyDataSetChanged();
+            placeHolder();
         });
     }
 
