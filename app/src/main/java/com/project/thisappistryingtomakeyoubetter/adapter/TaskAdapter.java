@@ -50,8 +50,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
 
         // This, on multiple item
-        holder.title.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            task.setFinish(isChecked);
+        holder.title.setOnClickListener(View -> {
+            task.setFinish(holder.title.isChecked());
             listener.onBoxChecked(task);
         });
 

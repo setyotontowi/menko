@@ -4,15 +4,16 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.project.thisappistryingtomakeyoubetter.adapter.TaskAdapter
 import com.project.thisappistryingtomakeyoubetter.databinding.ActivityHistoryBinding
 import com.project.thisappistryingtomakeyoubetter.databinding.DialogTaskBinding
 import com.project.thisappistryingtomakeyoubetter.model.Task
 import com.project.thisappistryingtomakeyoubetter.util.TaskViewModel
+import com.project.thisappistryingtomakeyoubetter.util.TaskViewModelProvider
 
 class HistoryActivity : AppCompatActivity(), TaskAdapter.TaskCallback {
 
@@ -20,7 +21,7 @@ class HistoryActivity : AppCompatActivity(), TaskAdapter.TaskCallback {
     private lateinit var toolbar: Toolbar
     private var adapter: TaskAdapter? = null
     private var tasks: MutableList<Task> = ArrayList()
-    private val taskViewModel: TaskViewModel by viewModels {TaskViewModel(application, null, null)}
+    private lateinit var taskViewModel: TaskViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +29,9 @@ class HistoryActivity : AppCompatActivity(), TaskAdapter.TaskCallback {
         toolbar = binding.toolbar
         setContentView(binding.root)
         setSupportActionBar(toolbar)
+
+        val factory = TaskViewModelProvider(TaskViewModel(application, null, null))
+        taskViewModel = ViewModelProvider(this, factory).get(TaskViewModel::class.java)
 
         adapter = TaskAdapter(this, tasks, this)
         binding.listTask.layoutManager = LinearLayoutManager(this)
