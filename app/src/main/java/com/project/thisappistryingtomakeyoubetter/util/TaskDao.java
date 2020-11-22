@@ -16,10 +16,10 @@ import java.util.List;
 @Dao
 public interface TaskDao {
     @Query("SELECT * FROM task WHERE date BETWEEN :from AND :to")
-    LiveData<List<Task>> getTasks(Date from, Date to);
+    List<Task> getTasks(Date from, Date to);
 
     @Query("SELECT * FROM task WHERE date ORDER BY date DESC")
-    LiveData<List<Task>> getAllTasks();
+    List<Task> getAllTasks();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(Task... task);

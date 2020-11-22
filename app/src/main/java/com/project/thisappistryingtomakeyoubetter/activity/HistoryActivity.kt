@@ -12,6 +12,7 @@ import com.project.thisappistryingtomakeyoubetter.adapter.TaskAdapter
 import com.project.thisappistryingtomakeyoubetter.databinding.ActivityHistoryBinding
 import com.project.thisappistryingtomakeyoubetter.databinding.DialogTaskBinding
 import com.project.thisappistryingtomakeyoubetter.model.Task
+import com.project.thisappistryingtomakeyoubetter.util.TaskRepository
 import com.project.thisappistryingtomakeyoubetter.util.TaskViewModel
 import com.project.thisappistryingtomakeyoubetter.util.TaskViewModelProvider
 
@@ -30,7 +31,7 @@ class HistoryActivity : AppCompatActivity(), TaskAdapter.TaskCallback {
         setContentView(binding.root)
         setSupportActionBar(toolbar)
 
-        val factory = TaskViewModelProvider(TaskViewModel(application, null, null))
+        val factory = TaskViewModelProvider(TaskViewModel(TaskRepository(application)))
         taskViewModel = ViewModelProvider(this, factory).get(TaskViewModel::class.java)
 
         adapter = TaskAdapter(this, tasks, this)

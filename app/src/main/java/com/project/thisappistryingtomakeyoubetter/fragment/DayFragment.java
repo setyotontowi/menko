@@ -25,6 +25,7 @@ import com.project.thisappistryingtomakeyoubetter.util.AppDatabase;
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper;
 import com.project.thisappistryingtomakeyoubetter.activity.MainActivity;
 import com.project.thisappistryingtomakeyoubetter.databinding.FragmentDayBinding;
+import com.project.thisappistryingtomakeyoubetter.util.TaskRepository;
 import com.project.thisappistryingtomakeyoubetter.util.TaskViewModel;
 import com.project.thisappistryingtomakeyoubetter.util.TaskViewModelProvider;
 
@@ -98,7 +99,7 @@ public class DayFragment extends Fragment implements
         binding.task.setAdapter(taskAdapter);
 
         taskViewModel = new ViewModelProvider(this,
-                new TaskViewModelProvider(new TaskViewModel(requireActivity().getApplication(), from, to)))
+                new TaskViewModelProvider(new TaskViewModel(new TaskRepository(requireActivity().getApplication()))))
                 .get(TaskViewModel.class);
 
         // Floating Action Button Add

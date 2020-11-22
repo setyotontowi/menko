@@ -5,9 +5,9 @@ import androidx.lifecycle.LiveData
 import com.project.thisappistryingtomakeyoubetter.model.Task
 import java.util.*
 
-class TaskRepository(application: Application?, from: Date?, to: Date?) {
+class TaskRepository(val application: Application?) {
     private val taskDao: TaskDao
-    var tasks: LiveData<List<Task>>? = null
+    var tasks: List<Task>? = null
     fun insert(task: Task?) {
         AppDatabase.databaseWriterExecutor.execute { taskDao.insertAll(task) }
     }
@@ -20,13 +20,18 @@ class TaskRepository(application: Application?, from: Date?, to: Date?) {
         AppDatabase.databaseWriterExecutor.execute { taskDao.delete(task) }
     }
 
-    init {
-        val db = AppDatabase.getInstance(application)
-        taskDao = db.taskDao()
+    fun get(from: Date?, to: Date?){
         tasks = if (from == null && to == null) {
             taskDao.allTasks
         } else {
             taskDao.getTasks(from, to)
         }
     }
+
+    init {
+        val db = AppDatabase.getInstance(application)
+        taskDao = db.taskDao()
+        get(null, null)
+    }
+
 }

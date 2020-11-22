@@ -2,14 +2,21 @@ package com.project.thisappistryingtomakeyoubetter.util
 
 import android.app.Application
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.project.thisappistryingtomakeyoubetter.model.Task
 import java.util.*
 
-class TaskViewModel(application: Application, from: Date?, to: Date?)
-    : ViewModel() {
-    private val taskRepository: TaskRepository = TaskRepository(application, from, to)
-    val tasks: LiveData<List<Task>>
+class TaskViewModel(
+        private val taskRepository: TaskRepository
+) : ViewModel() {
+    private val _tasks = MutableLiveData<List<Task>>()
+    val tasks: LiveData<List<Task>> = _tasks
+
+    init {
+        get(null, null)
+    }
+
     fun insert(task: Task?) {
         taskRepository.insert(task)
     }
@@ -22,7 +29,9 @@ class TaskViewModel(application: Application, from: Date?, to: Date?)
         taskRepository.delete(task)
     }
 
-    init {
-        tasks = taskRepository.tasks!!
+    @Suppress("UNUSED_PARAMETER")
+    fun get(from: Date?, to:Date?){
+        val result = taskRepository.tasks!!
+        _tasks.postValue(result)
     }
 }
