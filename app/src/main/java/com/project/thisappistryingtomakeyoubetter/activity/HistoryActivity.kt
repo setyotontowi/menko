@@ -36,7 +36,6 @@ class HistoryActivity : AppCompatActivity(), TaskAdapter.TaskCallback {
 
         (application as App).appComponent.inject(this)
 
-
         adapter = TaskAdapter(this, tasks, this)
         binding.listTask.layoutManager = LinearLayoutManager(this)
         binding.listTask.adapter = adapter
@@ -49,6 +48,8 @@ class HistoryActivity : AppCompatActivity(), TaskAdapter.TaskCallback {
             this.tasks.addAll(tasks)
             adapter!!.notifyDataSetChanged()
         })
+
+        taskViewModel.get(null, null)
     }
 
     override fun onLongClick(task: Task?) {

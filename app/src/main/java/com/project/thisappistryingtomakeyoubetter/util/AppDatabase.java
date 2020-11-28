@@ -14,6 +14,9 @@ import com.project.thisappistryingtomakeyoubetter.model.Task;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.inject.Singleton;
+
+@Singleton
 @Database(entities = {Task.class}, version = 1)
 @TypeConverters({Converter.class})
 public abstract class AppDatabase extends RoomDatabase {

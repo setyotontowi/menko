@@ -13,6 +13,9 @@ import com.project.thisappistryingtomakeyoubetter.model.Task;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Singleton;
+
+@Singleton
 @Dao
 public interface TaskDao {
     @Query("SELECT * FROM task WHERE date BETWEEN :from AND :to")

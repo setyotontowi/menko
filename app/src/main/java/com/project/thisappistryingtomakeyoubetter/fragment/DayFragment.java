@@ -30,12 +30,14 @@ import com.project.thisappistryingtomakeyoubetter.util.TaskViewModel;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.TimeZone;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 public class DayFragment extends Fragment implements
         View.OnClickListener,
@@ -53,6 +55,8 @@ public class DayFragment extends Fragment implements
     private TaskViewModel taskViewModel;
     @Inject
     ViewModelProvider.Factory vmFactory;
+    Date from;
+    Date to;
 
     public DayFragment() {
         // Required empty public constructor
@@ -89,9 +93,8 @@ public class DayFragment extends Fragment implements
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Room.databaseBuilder(requireContext(), AppDatabase.class, "database")
-                .allowMainThreadQueries()
-                .build();
+        from = GeneralHelper.fromDate(calendar);
+        to = GeneralHelper.toDate(calendar);
 
         taskAdapter = new TaskAdapter(getActivity(), tasks, this);
         binding.task.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -99,6 +102,9 @@ public class DayFragment extends Fragment implements
 
         taskViewModel = new ViewModelProvider(this, vmFactory)
                 .get(TaskViewModel.class);
+
+        taskViewModel.get(from, to);
+        getTasks();
 
         // Floating Action Button Add
         binding.addTask.setOnClickListener(this);
@@ -120,7 +126,7 @@ public class DayFragment extends Fragment implements
                 break;
         }
         ((MainActivity)requireActivity()).toolbar.setTitle(title);
-        getTasks();
+
     }
 
     @Override
