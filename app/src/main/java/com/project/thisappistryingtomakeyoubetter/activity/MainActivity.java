@@ -11,6 +11,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.project.thisappistryingtomakeyoubetter.App;
 import com.project.thisappistryingtomakeyoubetter.adapter.DayAdapter;
 import com.project.thisappistryingtomakeyoubetter.util.DepthPageTransformer;
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper;
@@ -37,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(GeneralHelper.dateFormatter().format(getDate()));
         setSupportActionBar(toolbar);
+
+        ((App) getApplication()).getAppComponent().inject(this);
 
         // App Intro Initiation
         Thread t = new Thread(() -> {

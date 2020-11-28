@@ -5,8 +5,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 public class GeneralHelper {
 
+    @Inject
     public GeneralHelper(){
         // empty constructor
     }

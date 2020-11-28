@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.project.thisappistryingtomakeyoubetter.App;
 import com.project.thisappistryingtomakeyoubetter.R;
 import com.project.thisappistryingtomakeyoubetter.adapter.TaskAdapter;
 import com.project.thisappistryingtomakeyoubetter.databinding.DialogTaskBinding;
@@ -35,6 +36,9 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.TimeZone;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 public class DayFragment extends Fragment implements
         View.OnClickListener,
         TaskAdapter.TaskCallback{
@@ -47,9 +51,12 @@ public class DayFragment extends Fragment implements
     private FragmentDayBinding binding;
     private final List<Task> tasks = new ArrayList<>();
     private TaskAdapter taskAdapter;
-    private Date from, to;
     private int position;
     private TaskViewModel taskViewModel;
+    @Inject
+    ViewModelProvider.Factory vmFactory;
+    Date from;
+    Date to;
 
     public DayFragment() {
         // Required empty public constructor
@@ -71,6 +78,7 @@ public class DayFragment extends Fragment implements
         calendar = Calendar.getInstance(TimeZone.getDefault(), Locale.ENGLISH);
         calendar.setTimeInMillis(getArguments().getLong(DATE));
         position = getArguments().getInt(POSITION);
+        ((App) requireActivity().getApplication()).getAppComponent().inject(this);
     }
 
     @Override
@@ -85,10 +93,6 @@ public class DayFragment extends Fragment implements
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Room.databaseBuilder(requireContext(), AppDatabase.class, "database")
-                .allowMainThreadQueries()
-                .build();
-
         from = GeneralHelper.fromDate(calendar);
         to = GeneralHelper.toDate(calendar);
 
@@ -96,9 +100,11 @@ public class DayFragment extends Fragment implements
         binding.task.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.task.setAdapter(taskAdapter);
 
-        taskViewModel = new ViewModelProvider(this,
-                new TaskViewModel(requireActivity().getApplication(), from, to))
+        taskViewModel = new ViewModelProvider(this, vmFactory)
                 .get(TaskViewModel.class);
+
+        taskViewModel.get(from, to);
+        getTasks();
 
         // Floating Action Button Add
         binding.addTask.setOnClickListener(this);
@@ -120,7 +126,7 @@ public class DayFragment extends Fragment implements
                 break;
         }
         ((MainActivity)requireActivity()).toolbar.setTitle(title);
-        getTasks();
+
     }
 
     @Override
