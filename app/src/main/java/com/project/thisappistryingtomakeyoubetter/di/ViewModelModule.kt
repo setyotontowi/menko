@@ -8,6 +8,7 @@ import dagger.Binds
 import dagger.MapKey
 import dagger.Module
 import dagger.multibindings.IntoMap
+import javax.inject.Singleton
 import kotlin.reflect.KClass
 
 @Target(

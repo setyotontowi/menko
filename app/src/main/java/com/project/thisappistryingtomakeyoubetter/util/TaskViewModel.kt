@@ -4,44 +4,46 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.project.thisappistryingtomakeyoubetter.model.Task
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 import java.util.*
 import java.util.concurrent.Executors
 import javax.inject.Inject
 import javax.inject.Named
+import kotlin.collections.ArrayList
 
 class TaskViewModel @Inject constructor(
         private val taskRepository: TaskRepository
 ) : ViewModel() {
-    private val _tasks = MutableLiveData<List<Task>>()
-    val tasks: LiveData<List<Task>> = _tasks
+    private val _tasks = MutableLiveData<List<Task>?>()
+    val tasks: LiveData<List<Task>?> = _tasks
 
     private val TAG = "TaskViewModel"
-    private val NUMBER_OF_THREADS = 4
-    val databaseWriterExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS)
 
-    init {
-        Log.d(TAG, "Init: Start")
-    }
 
     fun insert(task: Task?) {
-        databaseWriterExecutor.execute { taskRepository.insert(task) }
+        viewModelScope.launch(IO) {
+            taskRepository.insert(task)
+        }
     }
 
     fun update(task: Task?) {
-        databaseWriterExecutor.execute { taskRepository.update(task) }
+        viewModelScope.launch(IO) { taskRepository.update(task) }
     }
 
     fun delete(task: Task?) {
-        databaseWriterExecutor.execute { taskRepository.delete(task) }
+        viewModelScope.launch(IO) { taskRepository.delete(task) }
     }
 
     @Suppress("UNUSED_PARAMETER")
-    fun get(from: Date?, to: Date?) {
-        databaseWriterExecutor.execute {
-            Log.d(TAG, "get: $from")
+    fun get(from: Date?, to: Date?): LiveData<List<Task>?> {
+        viewModelScope.launch(IO) {
             val result = taskRepository.get(from, to)
-            _tasks.postValue(result)
+            _tasks.postValue(result.value)
         }
+        val result = taskRepository.get(from, to)
+        return result
     }
 }

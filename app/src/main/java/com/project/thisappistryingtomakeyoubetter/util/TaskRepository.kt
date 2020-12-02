@@ -1,31 +1,33 @@
 package com.project.thisappistryingtomakeyoubetter.util
 
+import android.util.Log
+import androidx.lifecycle.LiveData
 import com.project.thisappistryingtomakeyoubetter.model.Task
 import java.util.*
 import java.util.concurrent.Executors
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.collections.ArrayList
 
+@Singleton
 class TaskRepository @Inject constructor(
         private val taskDao: TaskDao
 ) {
 
-    fun insert(task: Task?) = taskDao.insertAll(task)
+    suspend fun insert(task: Task?){
+        taskDao.insertAll(task)
+    }
 
+    suspend fun update(task: Task?) = taskDao.update(task)
 
-    fun update(task: Task?) = taskDao.update(task)
+    suspend fun delete(task: Task?) = taskDao.delete(task)
 
-
-    fun delete(task: Task?) = taskDao.delete(task)
-
-    fun get(from: Date?, to: Date?): List<Task>? {
-        val list: List<Task>
+    fun get(from: Date?, to: Date?): LiveData<List<Task>?> {
         if (from == null && to == null) {
-            list = taskDao.allTasks
+            return taskDao.getAll
         } else {
-            list = taskDao.getTasks(from, to)
+            return taskDao.getTasks(from, to)
         }
-        return list
     }
 
 }

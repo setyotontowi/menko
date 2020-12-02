@@ -43,13 +43,13 @@ class HistoryActivity : AppCompatActivity(), TaskAdapter.TaskCallback {
 
     override fun onResume() {
         super.onResume()
-        taskViewModel.tasks.observe(this, { tasks ->
+        taskViewModel.get(null, null).observe(this, { tasks ->
             this.tasks.clear()
-            this.tasks.addAll(tasks)
+            if (tasks != null) {
+                this.tasks.addAll(tasks)
+            }
             adapter!!.notifyDataSetChanged()
         })
-
-        taskViewModel.get(null, null)
     }
 
     override fun onLongClick(task: Task?) {
@@ -77,7 +77,7 @@ class HistoryActivity : AppCompatActivity(), TaskAdapter.TaskCallback {
             task?.let {
                 task.title = binding.title.text.toString()
                 task.description = binding.description.text.toString()
-                taskViewModel.update(task)
+                //taskViewModel.update(task)
             }
             dialog.dismiss()
         }

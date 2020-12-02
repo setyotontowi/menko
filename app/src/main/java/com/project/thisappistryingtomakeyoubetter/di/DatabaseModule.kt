@@ -5,11 +5,13 @@ import android.content.Context
 import androidx.room.Room
 import com.project.thisappistryingtomakeyoubetter.util.AppDatabase
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
+import com.project.thisappistryingtomakeyoubetter.util.TaskDao
 import dagger.Module
 import dagger.Provides
 import java.util.*
 import java.util.concurrent.Executors
 import javax.inject.Named
+import javax.inject.Singleton
 
 @Module
 object DatabaseModule {
@@ -18,8 +20,11 @@ object DatabaseModule {
 
     @Provides
     fun providesDatabase(appContext: Context): AppDatabase{
-        return Room.databaseBuilder(appContext.applicationContext,
-                AppDatabase::class.java, DATABASE_NAME)
+        return Room
+                .databaseBuilder(
+                    appContext.applicationContext,
+                    AppDatabase::class.java, DATABASE_NAME)
+                .fallbackToDestructiveMigration()
                 .build()
     }
 
@@ -36,6 +41,6 @@ object DatabaseModule {
     }*/
 
     @Provides
-    fun providesTaskDao(db: AppDatabase) = db.taskDao()
+    fun providesTaskDao(db: AppDatabase): TaskDao = db.taskDao()
 
 }
