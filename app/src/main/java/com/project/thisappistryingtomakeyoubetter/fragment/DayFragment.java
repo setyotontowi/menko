@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.room.Room;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +45,7 @@ public class DayFragment extends Fragment implements
         TaskAdapter.TaskCallback{
 
     // Static Variables
+    private static final String TAG = "DayFragment";
     public final static String DATE = "date";
     public final static String POSITION = "position";
 
@@ -103,7 +105,6 @@ public class DayFragment extends Fragment implements
         taskViewModel = new ViewModelProvider(this, vmFactory)
                 .get(TaskViewModel.class);
 
-        taskViewModel.get(from, to);
         getTasks();
 
         // Floating Action Button Add
@@ -176,6 +177,8 @@ public class DayFragment extends Fragment implements
                         binding.description.getText().toString(),
                         calendar.getTime());
                 addTask(task1);
+                //tasks.add(task1);
+                //taskAdapter.notifyDataSetChanged();
             } else {
                 task.setTitle(binding.title.getText().toString());
                 task.setDescription(binding.description.getText().toString());
@@ -187,6 +190,8 @@ public class DayFragment extends Fragment implements
         binding.delete.setOnClickListener(v -> {
             if(task != null) {
                 deleteTask(task);
+                //tasks.remove(task);
+                //taskAdapter.notifyDataSetChanged();
             }
             dialog.dismiss();
         });
@@ -195,7 +200,8 @@ public class DayFragment extends Fragment implements
     }
 
     private void getTasks(){
-        taskViewModel.getTasks().observe(getViewLifecycleOwner(), tasks -> {
+        taskViewModel.get(from, to).observe(getViewLifecycleOwner(), tasks -> {
+            Log.d(TAG, "getTasks: " + tasks.size());
             DayFragment.this.tasks.clear();
             DayFragment.this.tasks.addAll(tasks);
             taskAdapter.notifyDataSetChanged();
