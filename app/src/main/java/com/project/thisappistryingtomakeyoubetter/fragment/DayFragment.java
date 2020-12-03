@@ -98,7 +98,7 @@ public class DayFragment extends Fragment implements
         from = GeneralHelper.fromDate(calendar);
         to = GeneralHelper.toDate(calendar);
 
-        taskAdapter = new TaskAdapter(getActivity(), tasks, this);
+        taskAdapter = new TaskAdapter(getActivity(), tasks, this, GeneralHelper.MODE_DAY);
         binding.task.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.task.setAdapter(taskAdapter);
 

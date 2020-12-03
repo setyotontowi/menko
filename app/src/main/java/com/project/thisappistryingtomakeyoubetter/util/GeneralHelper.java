@@ -9,6 +9,9 @@ import javax.inject.Inject;
 
 public class GeneralHelper {
 
+    public static final int MODE_DAY = 1;
+    public static final int MODE_HISTORY = 2;
+
     @Inject
     public GeneralHelper(){
         // empty constructor

@@ -14,6 +14,7 @@ import com.project.thisappistryingtomakeyoubetter.adapter.TaskAdapter
 import com.project.thisappistryingtomakeyoubetter.databinding.ActivityHistoryBinding
 import com.project.thisappistryingtomakeyoubetter.databinding.DialogTaskBinding
 import com.project.thisappistryingtomakeyoubetter.model.Task
+import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
 import com.project.thisappistryingtomakeyoubetter.util.TaskViewModel
 import javax.inject.Inject
 
@@ -36,7 +37,7 @@ class HistoryActivity : AppCompatActivity(), TaskAdapter.TaskCallback {
 
         (application as App).appComponent.inject(this)
 
-        adapter = TaskAdapter(this, tasks, this)
+        adapter = TaskAdapter(this, tasks, this, GeneralHelper.MODE_HISTORY)
         binding.listTask.layoutManager = LinearLayoutManager(this)
         binding.listTask.adapter = adapter
     }
