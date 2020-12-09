@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 
 public class GeneralHelperTest {
 
-    DateFormat format = new SimpleDateFormat("dd MMMM YYYY");
+    DateFormat format = new SimpleDateFormat("dd MMMM yyyy HH:mm:ss");
 
     @Test
     public void dateFormatter() {
@@ -24,7 +24,7 @@ public class GeneralHelperTest {
         calendar.set(2020, 0, 1);
 
         Calendar result = Calendar.getInstance();
-        result.set(2019, 11, 31);
+        result.set(2020, 0, 1, 0, 0, 0);
         Date date = result.getTime();
         Date input = GeneralHelper.fromDate(calendar);
 
@@ -40,7 +40,7 @@ public class GeneralHelperTest {
         calendar.set(2020, 0, 1);
 
         Calendar result = Calendar.getInstance();
-        result.set(2020, 0, 1);
+        result.set(2020, 0, 1, 23, 59, 59);
         Date date = result.getTime();
         Date input = GeneralHelper.toDate(calendar);
 

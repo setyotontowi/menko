@@ -11,7 +11,7 @@ interface TaskDao {
     @Query("SELECT * FROM task WHERE date BETWEEN :from AND :to")
     fun getTasks(from: Date?, to: Date?): LiveData<List<Task>?>
 
-    @get:Query("SELECT * FROM task WHERE date ORDER BY date DESC")
+    @get:Query("SELECT * FROM task ORDER BY date DESC")
     val getAll:LiveData<List<Task>?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
