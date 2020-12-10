@@ -98,7 +98,7 @@ public class DayFragment extends Fragment implements
         from = GeneralHelper.fromDate(calendar);
         to = GeneralHelper.toDate(calendar);
 
-        taskAdapter = new TaskAdapter(getActivity(), tasks, this, GeneralHelper.MODE_DAY);
+        taskAdapter = new TaskAdapter(requireActivity(), tasks, this, GeneralHelper.MODE_DAY);
         binding.task.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.task.setAdapter(taskAdapter);
 
@@ -114,6 +114,7 @@ public class DayFragment extends Fragment implements
     @Override
     public void onResume() {
         super.onResume();
+        taskAdapter.notifyDataSetChanged();
         String title;
         switch (position){
             case 0:

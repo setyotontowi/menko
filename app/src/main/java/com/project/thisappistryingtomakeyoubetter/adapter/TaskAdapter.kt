@@ -11,6 +11,7 @@ import com.project.thisappistryingtomakeyoubetter.R
 import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.LinearLayout
+import androidx.cardview.widget.CardView
 import com.project.thisappistryingtomakeyoubetter.model.Task
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
 
@@ -86,8 +87,7 @@ class TaskAdapter(
         var date: TextView = itemView.findViewById(R.id.date)
         var title: CheckBox = itemView.findViewById(R.id.title)
         var description: TextView = itemView.findViewById(R.id.description)
-        var wrapper: LinearLayout = itemView.findViewById(R.id.wrapper)
-
+        var wrapper: CardView = itemView.findViewById(R.id.wrapper)
     }
 
     interface TaskCallback {
