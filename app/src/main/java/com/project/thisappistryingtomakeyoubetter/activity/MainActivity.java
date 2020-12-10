@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager2.adapter.FragmentViewHolder;
 
 
 import android.view.Menu;
@@ -26,7 +27,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private List<Calendar> calendar;
-    private static final int DAY_LIMIT = 5;
+    public static final int DAY_LIMIT = 5;
+    public static final boolean INCLUDE_YESTERDAY = true;
     private ActivityMainBinding binding;
     public Toolbar toolbar;
 
@@ -63,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         t.start();
 
         // Generate Calendar List
-        calendar = generateCalendar(DAY_LIMIT);
+        calendar = generateCalendar(DAY_LIMIT, INCLUDE_YESTERDAY);
 
         // Create Fragment View Pager
         DayAdapter dayAdapter = new DayAdapter(getSupportFragmentManager(),
@@ -71,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 calendar);
         binding.frame.setAdapter(dayAdapter);
         binding.frame.setPageTransformer(new DepthPageTransformer());
+        binding.frame.setCurrentItem(1);
     }
 
     @Override
@@ -106,9 +109,10 @@ public class MainActivity extends AppCompatActivity {
      * @param limit: choose until what day
      * @return List of Calendar (Today, Tomorrow, until limit)
      */
-    private List<Calendar> generateCalendar(int limit){
+    private List<Calendar> generateCalendar(int limit, boolean includeYesterday){
         List<Calendar> calendars = new ArrayList<>();
-        for (int i=0; i<limit; i++){
+
+        for (int i=includeYesterday?-1:0; i<limit; i++){
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_YEAR, i);
             calendars.add(calendar);

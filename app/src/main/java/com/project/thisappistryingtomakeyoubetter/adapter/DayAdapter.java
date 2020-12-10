@@ -5,7 +5,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.adapter.FragmentViewHolder;
 
+import com.project.thisappistryingtomakeyoubetter.activity.MainActivity;
 import com.project.thisappistryingtomakeyoubetter.fragment.DayFragment;
 
 import java.util.Calendar;
@@ -23,6 +25,7 @@ public class DayAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         Calendar calendar = calendars.get(position);
+        if(MainActivity.INCLUDE_YESTERDAY) position--;
         return DayFragment.newInstance(calendar, position);
     }
 

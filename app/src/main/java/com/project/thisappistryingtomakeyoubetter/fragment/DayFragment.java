@@ -117,6 +117,9 @@ public class DayFragment extends Fragment implements
         taskAdapter.notifyDataSetChanged();
         String title;
         switch (position){
+            case -1:
+                title = getString(R.string.title_yesterday);
+                break;
             case 0:
                 title = getString(R.string.title_today);
                 break;

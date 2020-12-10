@@ -19,11 +19,11 @@ public class GeneralHelper {
 
 
     public static SimpleDateFormat dateFormatter(){
-        return new SimpleDateFormat("EEEE, dd MMMM", Locale.ENGLISH);
+        return new SimpleDateFormat("EEEE, dd MMMM", new Locale("id", "ID"));
     }
 
     public static SimpleDateFormat hourFormatter(){
-        return new SimpleDateFormat("EEEE, dd MMMM: HH.mm.ss", Locale.ENGLISH);
+        return new SimpleDateFormat("EEEE, dd MMMM: HH.mm.ss", new Locale("id", "ID"));
     }
 
     public static Date fromDate(Calendar calendar){

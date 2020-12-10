@@ -39,5 +39,6 @@
     <string name="add_task_delete_button">Hapus</string>
     <string name="title_today">Hari Ini</string>
     <string name="title_tomorrow">Besok</string>
+    <string name="title_yesterday">Kemarin</string>
 
 </resources>
