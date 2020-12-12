@@ -2,6 +2,7 @@
     <string name="app_name">This App Is Trying To Make You Better</string>
     <string name="app_alias">Menko</string>
     <string name="action_history">History</string>
+    <string name="action_main">Tugas</string>
 
     <!-- Settings String-->
     <string name="prefSetting">pref_setting</string>
@@ -13,7 +14,6 @@
     <string name="previous">Previous</string>
 
     <!-- Activiy Name-->
-
     <string name="hello_first_fragment">Hello today fragment</string>
     <string name="hello_second_fragment">Hello tomorrow fragment. Arg: %1$s</string>
 

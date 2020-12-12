@@ -130,7 +130,7 @@ public class DayFragment extends Fragment implements
                 title = GeneralHelper.dateFormatter().format(calendar.getTime());
                 break;
         }
-        ((MainActivity)requireActivity()).toolbar.setTitle(title);
+        ((MainActivity)requireParentFragment().requireActivity()).toolbar.setTitle(title);
 
     }
 

@@ -4,16 +4,28 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 import androidx.viewpager2.adapter.FragmentViewHolder;
 
 
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.project.thisappistryingtomakeyoubetter.App;
 import com.project.thisappistryingtomakeyoubetter.adapter.DayAdapter;
+import com.project.thisappistryingtomakeyoubetter.fragment.HistoryFragment;
+import com.project.thisappistryingtomakeyoubetter.fragment.MainFragment;
 import com.project.thisappistryingtomakeyoubetter.util.DepthPageTransformer;
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper;
 import com.project.thisappistryingtomakeyoubetter.R;
@@ -22,7 +34,9 @@ import com.project.thisappistryingtomakeyoubetter.databinding.ActivityMainBindin
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,11 +51,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle(GeneralHelper.dateFormatter().format(getDate()));
-        setSupportActionBar(toolbar);
 
         ((App) getApplication()).getAppComponent().inject(this);
+
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         // App Intro Initiation
         Thread t = new Thread(() -> {
@@ -64,60 +78,46 @@ public class MainActivity extends AppCompatActivity {
 
         t.start();
 
-        // Generate Calendar List
-        calendar = generateCalendar(DAY_LIMIT, INCLUDE_YESTERDAY);
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_view);
+        NavController navController = navHostFragment != null ? navHostFragment.getNavController() : null;
 
-        // Create Fragment View Pager
-        DayAdapter dayAdapter = new DayAdapter(getSupportFragmentManager(),
-                getLifecycle(),
-                calendar);
-        binding.frame.setAdapter(dayAdapter);
-        binding.frame.setPageTransformer(new DepthPageTransformer());
-        binding.frame.setCurrentItem(1);
+        Navigation.setViewNavController(binding.navView, navController);
+
+        Fragment mainFragment = MainFragment.newInstance();
+        Fragment historyFragment = HistoryFragment.newInstance();
+
+        binding.navView.setOnNavigationItemSelectedListener(item -> {
+            if(item.getItemId() == R.id.action_main){
+                openFragment(mainFragment);
+                return true;
+            } else if (item.getItemId() == R.id.action_history){
+                toolbar.setTitle("History");
+                openFragment(historyFragment);
+                return true;
+            }
+            return false;
+        });
+
+    }
+
+    private void openFragment(Fragment fragment){
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.nav_host_fragment, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        Navigation.findNavController(this, R.id.nav_host_fragment).popBackStack();
+        return super.onSupportNavigateUp();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_history) {
-            Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
-            startActivity(intent);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    private Date getDate(){
-        return new Date();
-    }
-
-    /**
-     * Generating Calendar, a temporary method.
-     * @param limit: choose until what day
-     * @return List of Calendar (Today, Tomorrow, until limit)
-     */
-    private List<Calendar> generateCalendar(int limit, boolean includeYesterday){
-        List<Calendar> calendars = new ArrayList<>();
-
-        for (int i=includeYesterday?-1:0; i<limit; i++){
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.DAY_OF_YEAR, i);
-            calendars.add(calendar);
-        }
-        return calendars;
-    }
 
 }

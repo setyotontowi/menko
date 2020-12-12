@@ -1,26 +1,32 @@
-package com.project.thisappistryingtomakeyoubetter.activity
+package com.project.thisappistryingtomakeyoubetter.fragment
 
 import android.app.Dialog
 import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.project.thisappistryingtomakeyoubetter.App
+import com.project.thisappistryingtomakeyoubetter.R
+import com.project.thisappistryingtomakeyoubetter.activity.MainActivity
 import com.project.thisappistryingtomakeyoubetter.adapter.TaskAdapter
-import com.project.thisappistryingtomakeyoubetter.databinding.ActivityHistoryBinding
 import com.project.thisappistryingtomakeyoubetter.databinding.DialogTaskBinding
+import com.project.thisappistryingtomakeyoubetter.databinding.FragmentHistoryBinding
 import com.project.thisappistryingtomakeyoubetter.model.Task
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
 import com.project.thisappistryingtomakeyoubetter.util.TaskViewModel
 import javax.inject.Inject
 
-class HistoryActivity : AppCompatActivity(), TaskAdapter.TaskCallback {
 
-    private lateinit var binding: ActivityHistoryBinding
+class HistoryFragment : Fragment(), TaskAdapter.TaskCallback {
+
+    private lateinit var binding: FragmentHistoryBinding
     private lateinit var toolbar: Toolbar
     private var adapter: TaskAdapter? = null
     private var tasks: MutableList<Task> = ArrayList()
@@ -28,17 +34,20 @@ class HistoryActivity : AppCompatActivity(), TaskAdapter.TaskCallback {
     lateinit var vmFactory: ViewModelProvider.Factory
     private val taskViewModel: TaskViewModel by viewModels { vmFactory}
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityHistoryBinding.inflate(layoutInflater)
-        toolbar = binding.toolbar
-        setContentView(binding.root)
-        setSupportActionBar(toolbar)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View {
+        // Inflate the layout for this fragment
+        binding = FragmentHistoryBinding.inflate(layoutInflater, container, false)
+        return binding.root
+    }
 
-        (application as App).appComponent.inject(this)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        adapter = TaskAdapter(this, tasks, this, GeneralHelper.MODE_HISTORY)
-        binding.listTask.layoutManager = LinearLayoutManager(this)
+        (activity?.application as App).appComponent.inject(this)
+
+        adapter = TaskAdapter(requireContext(), tasks, this, GeneralHelper.MODE_HISTORY)
+        binding.listTask.layoutManager = LinearLayoutManager(requireContext())
         binding.listTask.adapter = adapter
     }
 
@@ -62,7 +71,7 @@ class HistoryActivity : AppCompatActivity(), TaskAdapter.TaskCallback {
     }
 
     private fun taskDialog(task: Task?) {
-        val dialog = Dialog(this)
+        val dialog = Dialog(requireContext())
         val binding: DialogTaskBinding = DialogTaskBinding.inflate(layoutInflater)
         dialog.setContentView(binding.root)
 
@@ -91,4 +100,14 @@ class HistoryActivity : AppCompatActivity(), TaskAdapter.TaskCallback {
         dialog.show()
     }
 
+    companion object {
+        /**
+         * Use this factory method to create a new instance of
+         * this fragment using the provided parameters.
+         *
+         * @return A new instance of fragment HistoryFragment.
+         */
+        @JvmStatic
+        fun newInstance() = HistoryFragment()
+    }
 }
