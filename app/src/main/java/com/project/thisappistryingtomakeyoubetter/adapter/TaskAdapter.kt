@@ -14,6 +14,7 @@ import android.widget.LinearLayout
 import androidx.cardview.widget.CardView
 import com.project.thisappistryingtomakeyoubetter.model.Task
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
+import java.util.*
 
 class TaskAdapter(
         private val context: Context,
@@ -76,8 +77,9 @@ class TaskAdapter(
     }
 
     private fun checkDate(task: Task): Boolean{
-        val mDate = task.date.date
-        Log.d(TAG, "checkDate: $mDate ${task.title}")
+        val calendar:Calendar = Calendar.getInstance()
+        calendar.timeInMillis = task.date.time
+        val mDate = calendar.get(Calendar.DAY_OF_MONTH)
         if(mDate != this.date){
             this.date = mDate
             Log.d(TAG, "checkDate: false")
