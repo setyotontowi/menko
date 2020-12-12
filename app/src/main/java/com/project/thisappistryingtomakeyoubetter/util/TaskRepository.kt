@@ -22,6 +22,8 @@ class TaskRepository @Inject constructor(
 
     suspend fun delete(task: Task?) = taskDao.delete(task)
 
+    suspend fun deleteAll() = taskDao.deleteAll()
+
     fun get(from: Date?, to: Date?): LiveData<List<Task>?> {
         if (from == null && to == null) {
             return taskDao.getAll
