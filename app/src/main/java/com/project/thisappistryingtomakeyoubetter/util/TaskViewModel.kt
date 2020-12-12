@@ -37,6 +37,10 @@ class TaskViewModel @Inject constructor(
         viewModelScope.launch(IO) { taskRepository.delete(task) }
     }
 
+    fun deleteAll(){
+        viewModelScope.launch(IO) { taskRepository.deleteAll() }
+    }
+
     @Suppress("UNUSED_PARAMETER")
     fun get(from: Date?, to: Date?): LiveData<List<Task>?> {
         viewModelScope.launch(IO) {

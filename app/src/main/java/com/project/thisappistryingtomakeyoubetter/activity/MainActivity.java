@@ -85,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
 
         Fragment mainFragment = MainFragment.newInstance();
         Fragment historyFragment = HistoryFragment.newInstance();
+        // First Fragment Shown
+        openFragment(mainFragment);
 
         binding.navView.setOnNavigationItemSelectedListener(item -> {
             if(item.getItemId() == R.id.action_main){

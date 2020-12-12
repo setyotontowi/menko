@@ -22,4 +22,7 @@ interface TaskDao {
 
     @Delete
     suspend fun delete(vararg task: Task?)
+
+    @Query("DELETE FROM task")
+    suspend fun deleteAll()
 }

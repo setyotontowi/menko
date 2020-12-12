@@ -1,8 +1,11 @@
 <resources>
     <string name="app_name">This App Is Trying To Make You Better</string>
     <string name="app_alias">Menko</string>
-    <string name="action_history">History</string>
-    <string name="action_main">Tugas</string>
+    <string name="menu_history">History</string>
+    <string name="menu_main">Tugas</string>
+    <string name="menu_delete">Hapus Semua</string>
+    <string name="button_positive">Ya</string>
+    <string name="button_negative">Tidak</string>
 
     <!-- Settings String-->
     <string name="prefSetting">pref_setting</string>
@@ -29,7 +32,7 @@
     <string name="third_page_button">Sama-Sama, Selanjutnya</string>
 
     <string name="title_activity_intro">FullscreenActivity</string>
-    <string name="hello_blank_fragment">No Data</string>
+    <string name="hello_blank_fragment">Tidak ada tugas</string>
 
     <!-- Main Activity -->
     <string name="add_task_title_hint">Tambahkan Tugas</string>
@@ -40,5 +43,8 @@
     <string name="title_today">Hari Ini</string>
     <string name="title_tomorrow">Besok</string>
     <string name="title_yesterday">Kemarin</string>
+
+    <!-- History Fragment -->
+    <string name="history_delete_all_confirm">Apakah anda ingin menghapus semua list?</string>
 
 </resources>

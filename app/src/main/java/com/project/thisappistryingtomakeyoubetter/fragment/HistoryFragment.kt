@@ -1,17 +1,16 @@
 package com.project.thisappistryingtomakeyoubetter.fragment
 
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.project.thisappistryingtomakeyoubetter.App
+import com.project.thisappistryingtomakeyoubetter.R
 import com.project.thisappistryingtomakeyoubetter.adapter.TaskAdapter
 import com.project.thisappistryingtomakeyoubetter.databinding.DialogTaskBinding
 import com.project.thisappistryingtomakeyoubetter.databinding.FragmentHistoryBinding
@@ -21,7 +20,7 @@ import com.project.thisappistryingtomakeyoubetter.util.TaskViewModel
 import javax.inject.Inject
 
 
-class HistoryFragment : Fragment(), TaskAdapter.TaskCallback {
+class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.ConfirmDialog {
 
     private lateinit var binding: FragmentHistoryBinding
     private lateinit var toolbar: Toolbar
@@ -43,6 +42,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback {
 
         (activity?.application as App).appComponent.inject(this)
 
+        setHasOptionsMenu(true)
         adapter = TaskAdapter(requireContext(), tasks, this, GeneralHelper.MODE_HISTORY)
         binding.listTask.layoutManager = LinearLayoutManager(requireContext())
         binding.listTask.adapter = adapter
@@ -55,8 +55,25 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback {
             if (tasks != null) {
                 this.tasks.addAll(tasks)
             }
+            adapter!!.resetDate()
             adapter!!.notifyDataSetChanged()
+            placeHolder()
         })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu_option, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.action_delete_all -> {
+                deleteAll()
+                return true
+            }
+        }
+        return false
     }
 
     override fun onLongClick(task: Task?) {
@@ -65,6 +82,32 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback {
 
     override fun onBoxChecked(task: Task?) {
         taskViewModel.update(task)
+    }
+
+    private fun deleteAll(){
+        GeneralHelper.confirmationDialog(context,
+                getString(R.string.history_delete_all_confirm),
+                this)
+    }
+
+    /** Confirmation Dialog implementation */
+    override fun onPositive(dialogInterface: DialogInterface) {
+        taskViewModel.deleteAll()
+        dialogInterface.dismiss()
+    }
+
+    override fun onNegative(dialogInterface: DialogInterface) {
+        dialogInterface.dismiss()
+    }
+
+    private fun placeHolder() {
+        if (tasks.isEmpty()) {
+            binding.listTask.visibility = View.GONE
+            binding.nodata.visibility = View.VISIBLE
+        } else {
+            binding.listTask.visibility = View.VISIBLE
+            binding.nodata.visibility = View.GONE
+        }
     }
 
     private fun taskDialog(task: Task?) {

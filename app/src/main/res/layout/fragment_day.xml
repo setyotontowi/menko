@@ -41,6 +41,7 @@
         android:layout_alignEnd="@id/container"
         android:layout_alignRight="@id/container"
         app:rippleColor="@color/main_background"
-        android:src="@drawable/ic_add"/>
+        android:src="@drawable/ic_add"
+        android:contentDescription="@string/add_task_title_hint" />
 
 </RelativeLayout>

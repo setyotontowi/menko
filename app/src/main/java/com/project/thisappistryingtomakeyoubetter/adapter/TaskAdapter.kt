@@ -24,6 +24,8 @@ class TaskAdapter(
     private var date = 0
     private val TAG = "TaskAdapter"
 
+    fun resetDate() {this.date = 0}
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
         val v = LayoutInflater.from(context).inflate(R.layout.view_task, parent, false)
         return TaskViewHolder(v)
@@ -75,9 +77,10 @@ class TaskAdapter(
 
     private fun checkDate(task: Task): Boolean{
         val mDate = task.date.date
-        Log.d(TAG, "checkDate: $mDate")
+        Log.d(TAG, "checkDate: $mDate ${task.title}")
         if(mDate != this.date){
             this.date = mDate
+            Log.d(TAG, "checkDate: false")
             return false
         }
         return true
