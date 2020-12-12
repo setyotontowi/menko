@@ -2,19 +2,16 @@ package com.project.thisappistryingtomakeyoubetter.fragment
 
 import android.app.Dialog
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.activity.viewModels
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.project.thisappistryingtomakeyoubetter.App
-import com.project.thisappistryingtomakeyoubetter.R
-import com.project.thisappistryingtomakeyoubetter.activity.MainActivity
 import com.project.thisappistryingtomakeyoubetter.adapter.TaskAdapter
 import com.project.thisappistryingtomakeyoubetter.databinding.DialogTaskBinding
 import com.project.thisappistryingtomakeyoubetter.databinding.FragmentHistoryBinding
@@ -77,6 +74,13 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback {
 
         binding.delete.visibility = View.VISIBLE
 
+        // Views Setup
+        if (task != null) {
+            binding.title.setText(task.title)
+            binding.description.setText(task.description)
+            binding.delete.visibility = View.VISIBLE
+        }
+
         // Match dialog window to screen width
         val window = dialog.window!!
         window.setLayout(WindowManager.LayoutParams.MATCH_PARENT,
@@ -87,7 +91,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback {
             task?.let {
                 task.title = binding.title.text.toString()
                 task.description = binding.description.text.toString()
-                //taskViewModel.update(task)
+                taskViewModel.update(task)
             }
             dialog.dismiss()
         }
