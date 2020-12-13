@@ -78,7 +78,7 @@ class TaskAdapter(
 
     private fun checkDate(task: Task): Boolean{
         val calendar:Calendar = Calendar.getInstance()
-        calendar.timeInMillis = task.date.time
+        calendar.timeInMillis = task.date!!.time
         val mDate = calendar.get(Calendar.DAY_OF_MONTH)
         if(mDate != this.date){
             this.date = mDate

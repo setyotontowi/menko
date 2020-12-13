@@ -189,8 +189,6 @@ public class DayFragment extends Fragment implements
                         binding.description.getText().toString(),
                         calendar.getTime());
                 addTask(task1);
-                //tasks.add(task1);
-                //taskAdapter.notifyDataSetChanged();
             } else {
                 task.setTitle(binding.title.getText().toString());
                 task.setDescription(binding.description.getText().toString());
@@ -202,8 +200,6 @@ public class DayFragment extends Fragment implements
         binding.delete.setOnClickListener(v -> {
             if(task != null) {
                 deleteTask(task);
-                //tasks.remove(task);
-                //taskAdapter.notifyDataSetChanged();
             }
             dialog.dismiss();
         });

@@ -11,24 +11,35 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/title"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autofillHints="@string/add_task_title_hint"
-            android:hint="@string/add_task_title_hint"
-            android:inputType="textCapSentences"
-            android:padding="@dimen/padding20" />
+            android:hint="@string/add_task_title_hint">
 
-        <EditText
-            android:id="@+id/description"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapSentences"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/inbetween"
             android:autofillHints="@string/add_task_description_hint"
             android:hint="@string/add_task_description_hint"
-            android:inputType="textCapSentences"
-            android:padding="@dimen/padding20" />
+            android:inputType="textCapSentences">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapSentences"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
     <LinearLayout

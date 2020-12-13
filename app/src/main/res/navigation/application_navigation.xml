@@ -9,7 +9,7 @@
         android:id="@+id/navigation_main"
         android:name="com.project.thisappistryingtomakeyoubetter.fragment.MainFragment"
         android:label="Main"
-        tools:layout="@layout/activity_main">
+        tools:layout="@layout/fragment_day">
 
     </fragment>
 
@@ -17,7 +17,15 @@
         android:id="@+id/navigation_history"
         android:name="com.project.thisappistryingtomakeyoubetter.fragment.HistoryFragment"
         android:label="History"
-        tools:layout="@layout/activity_main">
+        tools:layout="@layout/fragment_history">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_label"
+        android:name="com.project.thisappistryingtomakeyoubetter.fragment.HistoryFragment"
+        android:label="History"
+        tools:layout="@layout/fragment_label">
 
     </fragment>
 

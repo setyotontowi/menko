@@ -25,6 +25,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.project.thisappistryingtomakeyoubetter.App;
 import com.project.thisappistryingtomakeyoubetter.adapter.DayAdapter;
 import com.project.thisappistryingtomakeyoubetter.fragment.HistoryFragment;
+import com.project.thisappistryingtomakeyoubetter.fragment.LabelFragment;
 import com.project.thisappistryingtomakeyoubetter.fragment.MainFragment;
 import com.project.thisappistryingtomakeyoubetter.util.DepthPageTransformer;
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper;
@@ -85,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
 
         Fragment mainFragment = MainFragment.newInstance();
         Fragment historyFragment = HistoryFragment.newInstance();
+        Fragment labelFragment = LabelFragment.newInstance();
+        // TODO: 13/12/2020 (1) Create Tag Fragment
         // First Fragment Shown
         openFragment(mainFragment);
 
@@ -96,6 +99,9 @@ public class MainActivity extends AppCompatActivity {
                 toolbar.setTitle("History");
                 openFragment(historyFragment);
                 return true;
+            } else if (item.getItemId() == R.id.action_label){
+                toolbar.setTitle("Label");
+                openFragment(labelFragment);
             }
             return false;
         });

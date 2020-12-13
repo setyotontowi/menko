@@ -1,4 +1,5 @@
 <resources>
+    <dimen name="padding5">5dp</dimen>
     <dimen name="padding10">10dp</dimen>
     <dimen name="padding20">20dp</dimen>
     <dimen name="inbetween">15dp</dimen>

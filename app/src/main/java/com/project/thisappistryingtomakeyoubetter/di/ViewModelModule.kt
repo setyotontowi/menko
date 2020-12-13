@@ -2,6 +2,7 @@ package com.project.thisappistryingtomakeyoubetter.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.project.thisappistryingtomakeyoubetter.util.LabelViewModel
 import com.project.thisappistryingtomakeyoubetter.util.TaskViewModel
 import com.project.thisappistryingtomakeyoubetter.util.ViewModelFactory
 import dagger.Binds
@@ -30,4 +31,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(TaskViewModel::class)
     internal abstract fun taskViewModel(viewModel: TaskViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(LabelViewModel::class)
+    internal abstract fun labelViewModel(viewModel: LabelViewModel): ViewModel
+
+    // TODO: 13/12/2020 (3) Provides TagViewModel and its Repo (complete)
 }

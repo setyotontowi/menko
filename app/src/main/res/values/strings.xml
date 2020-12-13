@@ -1,8 +1,9 @@
 <resources>
-    <string name="app_name">This App Is Trying To Make You Better</string>
+    <string name="app_name">Luminoire</string>
     <string name="app_alias">Menko</string>
     <string name="menu_history">History</string>
     <string name="menu_main">Tugas</string>
+    <string name="menu_label">Label</string>
     <string name="menu_delete">Hapus Semua</string>
     <string name="button_positive">Ya</string>
     <string name="button_negative">Tidak</string>

@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.room.Room
 import com.project.thisappistryingtomakeyoubetter.util.AppDatabase
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
+import com.project.thisappistryingtomakeyoubetter.util.LabelDao
 import com.project.thisappistryingtomakeyoubetter.util.TaskDao
 import dagger.Module
 import dagger.Provides
@@ -24,23 +25,18 @@ object DatabaseModule {
                 .databaseBuilder(
                     appContext.applicationContext,
                     AppDatabase::class.java, DATABASE_NAME)
+                .addMigrations(AppDatabase.MIGRATION_1_2)
                 .fallbackToDestructiveMigration()
                 .build()
     }
 
-    /*@Provides
-    @Named("From")
-    fun providesFrom(calendar: Calendar): Date{
-        return GeneralHelper.fromDate(calendar)
-    }
-
-    @Provides
-    @Named("To")
-    fun providesTo(calendar: Calendar): Date{
-        return GeneralHelper.toDate(calendar)
-    }*/
-
+    // TODO: 13/12/2020 (2) Provides LabelDao (complete)
+    // TODO: 13/12/2020 (4) Migration (complete)
+    
     @Provides
     fun providesTaskDao(db: AppDatabase): TaskDao = db.taskDao()
+
+    @Provides
+    fun providesLabelDao(db: AppDatabase): LabelDao = db.labelDao();
 
 }
