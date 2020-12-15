@@ -23,8 +23,8 @@
 
     <fragment
         android:id="@+id/navigation_label"
-        android:name="com.project.thisappistryingtomakeyoubetter.fragment.HistoryFragment"
-        android:label="History"
+        android:name="com.project.thisappistryingtomakeyoubetter.fragment.LabelFragment"
+        android:label="Label"
         tools:layout="@layout/fragment_label">
 
     </fragment>

@@ -12,4 +12,34 @@
 
     <color name="success">#2CB897</color>
     <color name="alert">#FF4141</color>
+
+    <color name="color_0">#2CB897</color>
+    <color name="color_1">#2C77B8</color>
+    <color name="color_2">#4418AC</color>
+    <color name="color_3">#B20AFA</color>
+    <color name="color_4">#A30E8F</color>
+    <color name="color_5">#FF0049</color>
+    <color name="color_6">#FF6600</color>
+    <color name="color_7">#FFE600</color>
+    <color name="color_8">#5AED32</color>
+    <color name="color_9">#11FF00</color>
+    <color name="color_10">#1C1C1C</color>
+    <color name="color_11">#656565</color>
+
+    <!-- Label Color Palette -->
+    <array name="color_array">
+        <item>@color/color_0</item>
+        <item>@color/color_1</item>
+        <item>@color/color_2</item>
+        <item>@color/color_3</item>
+        <item>@color/color_4</item>
+        <item>@color/color_5</item>
+        <item>@color/color_6</item>
+        <item>@color/color_7</item>
+        <item>@color/color_8</item>
+        <item>@color/color_9</item>
+        <item>@color/color_10</item>
+        <item>@color/color_11</item>
+    </array>
+
 </resources>

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="@dimen/padding20">
 
@@ -15,7 +16,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autofillHints="@string/add_task_title_hint"
-            android:hint="@string/add_task_title_hint">
+            android:hint="@string/add_task_title_hint"
+            android:layout_marginBottom="@dimen/padding5"
+            android:focusable="true"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxStrokeWidth="1dp"
+            app:boxBackgroundColor="@android:color/transparent">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/title"
@@ -31,6 +37,9 @@
             android:layout_marginBottom="@dimen/inbetween"
             android:autofillHints="@string/add_task_description_hint"
             android:hint="@string/add_task_description_hint"
+            app:boxStrokeWidth="1dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxBackgroundColor="@android:color/transparent"
             android:inputType="textCapSentences">
 
             <com.google.android.material.textfield.TextInputEditText

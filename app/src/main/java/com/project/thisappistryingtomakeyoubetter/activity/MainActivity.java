@@ -87,9 +87,10 @@ public class MainActivity extends AppCompatActivity {
         Fragment mainFragment = MainFragment.newInstance();
         Fragment historyFragment = HistoryFragment.newInstance();
         Fragment labelFragment = LabelFragment.newInstance();
-        // TODO: 13/12/2020 (1) Create Tag Fragment
+        // TODO: 13/12/2020 (1) Create Tag Fragment (complete)
         // First Fragment Shown
         openFragment(mainFragment);
+
 
         binding.navView.setOnNavigationItemSelectedListener(item -> {
             if(item.getItemId() == R.id.action_main){
@@ -102,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (item.getItemId() == R.id.action_label){
                 toolbar.setTitle("Label");
                 openFragment(labelFragment);
+                return true;
             }
             return false;
         });

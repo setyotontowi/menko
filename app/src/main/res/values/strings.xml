@@ -48,4 +48,7 @@
     <!-- History Fragment -->
     <string name="history_delete_all_confirm">Apakah anda ingin menghapus semua list?</string>
 
+    <!-- Label Fragment -->
+    <string name="label_add_name">Tambahkan Label</string>
+
 </resources>

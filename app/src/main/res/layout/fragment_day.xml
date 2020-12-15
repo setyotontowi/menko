@@ -27,7 +27,8 @@
             android:id="@+id/task"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="@dimen/padding10"
+            android:paddingTop="@dimen/padding5"
+            android:overScrollMode="never"
             android:visibility="visible"
             tools:listitem="@layout/view_task"/>
     </LinearLayout>
@@ -42,6 +43,7 @@
         android:layout_alignRight="@id/container"
         app:rippleColor="@color/main_background"
         android:src="@drawable/ic_add"
+        app:tint="@android:color/white"
         android:contentDescription="@string/add_task_title_hint" />
 
 </RelativeLayout>

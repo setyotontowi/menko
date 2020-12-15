@@ -19,7 +19,7 @@ import java.util.concurrent.Executors;
 import javax.inject.Singleton;
 
 @Singleton
-@Database(entities = {Task.class, Label.class}, version = 2)
+@Database(entities = {Task.class, Label.class}, version = 3)
 @TypeConverters({Converter.class})
 public abstract class AppDatabase extends RoomDatabase {
     public abstract TaskDao taskDao();
@@ -31,6 +31,13 @@ public abstract class AppDatabase extends RoomDatabase {
             database.execSQL("CREATE TABLE IF NOT EXISTS `Label`" +
                     "(`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
                     "`name` TEXT)");
+        }
+    };
+
+    public static final Migration MIGRATION_2_3 = new Migration(2,3) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE `Label` add  `color` INTEGER");
         }
     };
 }

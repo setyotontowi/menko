@@ -26,6 +26,7 @@ object DatabaseModule {
                     appContext.applicationContext,
                     AppDatabase::class.java, DATABASE_NAME)
                 .addMigrations(AppDatabase.MIGRATION_1_2)
+                .addMigrations(AppDatabase.MIGRATION_2_3)
                 .fallbackToDestructiveMigration()
                 .build()
     }
@@ -37,6 +38,6 @@ object DatabaseModule {
     fun providesTaskDao(db: AppDatabase): TaskDao = db.taskDao()
 
     @Provides
-    fun providesLabelDao(db: AppDatabase): LabelDao = db.labelDao();
+    fun providesLabelDao(db: AppDatabase): LabelDao = db.labelDao()
 
 }

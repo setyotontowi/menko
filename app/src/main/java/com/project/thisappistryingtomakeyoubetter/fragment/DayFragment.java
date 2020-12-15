@@ -166,7 +166,7 @@ public class DayFragment extends Fragment implements
 
         // Hide Keyboard
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Objects.requireNonNull(dialog.getWindow()).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+            Objects.requireNonNull(dialog.getWindow()).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         }
 
         // Match dialog window to screen width

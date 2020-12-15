@@ -1,5 +1,7 @@
 package com.project.thisappistryingtomakeyoubetter.util;
 
+import android.graphics.Color;
+
 import androidx.room.TypeConverter;
 
 import java.util.Date;
@@ -14,4 +16,5 @@ public class Converter {
     public static Long dateToTimestamp(Date date) {
         return date == null ? null : date.getTime();
     }
+
 }
