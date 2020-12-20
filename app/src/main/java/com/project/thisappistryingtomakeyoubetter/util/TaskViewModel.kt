@@ -24,17 +24,17 @@ class TaskViewModel @Inject constructor(
     private val TAG = "TaskViewModel"
 
 
-    fun insert(task: Task?) {
+    fun insert(task: Task) {
         viewModelScope.launch(IO) {
             taskRepository.insert(task)
         }
     }
 
-    fun update(task: Task?) {
+    fun update(task: Task) {
         viewModelScope.launch(IO) { taskRepository.update(task) }
     }
 
-    fun delete(task: Task?) {
+    fun delete(task: Task) {
         viewModelScope.launch(IO) { taskRepository.delete(task) }
     }
 

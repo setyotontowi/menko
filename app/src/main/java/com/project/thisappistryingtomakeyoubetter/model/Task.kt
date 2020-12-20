@@ -5,6 +5,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import java.util.*
+import kotlin.collections.ArrayList
 
 @Entity
 class Task {
@@ -23,7 +24,9 @@ class Task {
     @ColumnInfo(name = "finish", defaultValue = "false")
     var isFinish = false
 
-    // TODO: 20/12/2020 Ignore, add list label 
+    // TODO: 20/12/2020 Ignore, add list label
+    @Ignore
+    var labels: MutableList<Label> = ArrayList()
 
     @Ignore
     constructor(title: String, description: String) {

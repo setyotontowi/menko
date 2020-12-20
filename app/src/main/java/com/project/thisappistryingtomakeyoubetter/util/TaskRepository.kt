@@ -13,15 +13,18 @@ import kotlin.collections.ArrayList
 class TaskRepository @Inject constructor(
         private val taskDao: TaskDao
 ) {
-
-    suspend fun insert(task: Task?){
-        taskDao.insertAll(task)
+    private val TAG = "TaskRepository"
+    suspend fun insert(task: Task){
+        val id = taskDao.insertAll(task)
         // TODO: 20/12/2020 insert a task with returning and id and then insert to table task-label for each label
+        for (label in task.labels){
+            Log.d(TAG, "insert: ${label.name}")
+        }
     }
 
-    suspend fun update(task: Task?) = taskDao.update(task)
+    suspend fun update(task: Task) = taskDao.update(task)
 
-    suspend fun delete(task: Task?) = taskDao.delete(task)
+    suspend fun delete(task: Task) = taskDao.delete(task)
 
     suspend fun deleteAll() = taskDao.deleteAll()
 

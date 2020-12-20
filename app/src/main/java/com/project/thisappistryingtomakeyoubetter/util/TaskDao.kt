@@ -15,13 +15,13 @@ interface TaskDao {
     val getAll:LiveData<List<Task>?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(vararg task: Task?)
+    suspend fun insertAll(task: Task): Long
 
     @Update
-    suspend fun update(vararg task: Task?)
+    suspend fun update(task: Task)
 
     @Delete
-    suspend fun delete(vararg task: Task?)
+    suspend fun delete(task: Task)
 
     @Query("DELETE FROM task")
     suspend fun deleteAll()

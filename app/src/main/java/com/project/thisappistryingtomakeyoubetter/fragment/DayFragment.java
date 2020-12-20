@@ -200,6 +200,7 @@ public class DayFragment extends Fragment implements
                 Task task1 = new Task(Objects.requireNonNull(binding.title.getText()).toString(),
                         Objects.requireNonNull(binding.description.getText()).toString(),
                         calendar.getTime());
+                task1.setLabels(chipAdapter.getSelectedLabels());
                 addTask(task1);
             } else {
                 task.setTitle(Objects.requireNonNull(binding.title.getText()).toString());
