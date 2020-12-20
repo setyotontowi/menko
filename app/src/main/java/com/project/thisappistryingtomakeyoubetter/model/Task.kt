@@ -23,6 +23,8 @@ class Task {
     @ColumnInfo(name = "finish", defaultValue = "false")
     var isFinish = false
 
+    // TODO: 20/12/2020 Ignore, add list label 
+
     @Ignore
     constructor(title: String, description: String) {
         this.title = title

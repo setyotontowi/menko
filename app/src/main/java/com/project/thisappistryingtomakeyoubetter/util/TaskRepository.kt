@@ -16,6 +16,7 @@ class TaskRepository @Inject constructor(
 
     suspend fun insert(task: Task?){
         taskDao.insertAll(task)
+        // TODO: 20/12/2020 insert a task with returning and id and then insert to table task-label for each label
     }
 
     suspend fun update(task: Task?) = taskDao.update(task)
@@ -25,10 +26,10 @@ class TaskRepository @Inject constructor(
     suspend fun deleteAll() = taskDao.deleteAll()
 
     fun get(from: Date?, to: Date?): LiveData<List<Task>?> {
-        if (from == null && to == null) {
-            return taskDao.getAll
+        return if (from == null && to == null) {
+            taskDao.getAll
         } else {
-            return taskDao.getTasks(from, to)
+            taskDao.getTasks(from, to)
         }
     }
 

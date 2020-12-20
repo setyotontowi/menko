@@ -17,14 +17,13 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light" />
 
-    <style name="FullscreenTheme" parent="AppTheme.NoActionBar">
+    <style name="FullscreenTheme" parent="AppTheme.NoActionBar"> 
         <item name="android:windowFullscreen">true</item>
     </style>
 
     <style name="FullscreenActionBarStyle" parent="Widget.MaterialComponents.ActionBar.Primary">
         <item name="android:background">@color/black_overlay</item>
     </style>
-
 
     <style name="TextLabel" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
         <item name="android:textColorHint">@color/textPrimary</item>

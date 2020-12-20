@@ -1,6 +1,7 @@
 package com.project.thisappistryingtomakeyoubetter.fragment
 
-import android.graphics.*
+import android.graphics.BlendMode
+import android.graphics.BlendModeColorFilter
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -8,14 +9,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.project.thisappistryingtomakeyoubetter.App
 import com.project.thisappistryingtomakeyoubetter.R
 import com.project.thisappistryingtomakeyoubetter.adapter.ColorAdapter
 import com.project.thisappistryingtomakeyoubetter.adapter.LabelAdapter
 import com.project.thisappistryingtomakeyoubetter.databinding.FragmentLabelBinding
 import com.project.thisappistryingtomakeyoubetter.model.Label
+import com.project.thisappistryingtomakeyoubetter.util.LabelViewModel
+import javax.inject.Inject
 
 /**
  * A simple [Fragment] subclass.
@@ -25,12 +30,21 @@ import com.project.thisappistryingtomakeyoubetter.model.Label
 class LabelFragment : Fragment() {
 
     private val TAG = "LabelFragment"
-    private lateinit var binding: FragmentLabelBinding
-    private var labels: MutableList<Label> = ArrayList()
     private var isOpen = false
-    private lateinit var label: Label
     private var color: Int = 0
+    private var labels: MutableList<Label> = ArrayList()
+    private lateinit var binding: FragmentLabelBinding
+    private lateinit var label: Label
+    private lateinit var adapter: LabelAdapter
 
+    @Inject
+    lateinit var vmFactory: ViewModelProvider.Factory
+    private val labelViewModel: LabelViewModel by viewModels { vmFactory }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -46,6 +60,8 @@ class LabelFragment : Fragment() {
         // TODO: 14/12/2020  (5) Create Adapter (complete)
         // TODO: 14/12/2020  (6) Create dialog (skip)
 
+        (activity?.application as App).appComponent.inject(this)
+
         // Color Adapter
         val colorAdapter = ColorAdapter(requireContext(), resources.getIntArray(R.array.color_array).toList())
         binding.colorView.layoutManager = LinearLayoutManager(requireContext(),
@@ -54,9 +70,13 @@ class LabelFragment : Fragment() {
         this.color = binding.addLabel.currentTextColor
 
         // Label Adapter
-        val adapter = LabelAdapter(requireContext(), labels)
+        adapter = LabelAdapter(requireContext(), labels)
         binding.label.layoutManager = LinearLayoutManager(requireContext())
         binding.label.adapter = adapter
+
+
+        binding.colorView.visibility = if(isOpen) View.VISIBLE else View.GONE
+
 
         // Click Listener
         binding.addTextlayout.setEndIconOnClickListener {
@@ -69,6 +89,7 @@ class LabelFragment : Fragment() {
                 labels.add(label)
                 adapter.notifyDataSetChanged()
                 binding.addLabel.setText("")
+                addLabel(label)
             }
         }
 
@@ -82,8 +103,13 @@ class LabelFragment : Fragment() {
             }
         }
 
+        // Adapter OnLongClick Listener
+        adapter.deleteListener = { /* deleteLabel(it) */ }
 
-        colorAdapter.listener = {color ->
+        adapter.editListener = { updateLabel(it) }
+
+
+        colorAdapter.listener = { color ->
             Log.d(TAG, "onViewCreated: $color")
             this.color = color
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -95,6 +121,22 @@ class LabelFragment : Fragment() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        labelViewModel.get().observe(this, { labels ->
+            labels?.let {
+                this.labels.clear()
+                this.labels.addAll(it)
+            }
+            adapter.notifyDataSetChanged()
+        })
+    }
+
+    private fun addLabel(label: Label){ labelViewModel.insert(label) }
+
+    private fun updateLabel(label: Label){ labelViewModel.update(label) }
+
+    private fun deleteLabel(label: Label) {labelViewModel.delete(label)}
 
     companion object {
         /**

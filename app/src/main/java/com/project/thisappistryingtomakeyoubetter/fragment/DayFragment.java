@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import android.util.Log;
@@ -22,13 +23,16 @@ import android.view.WindowManager;
 
 import com.project.thisappistryingtomakeyoubetter.App;
 import com.project.thisappistryingtomakeyoubetter.R;
+import com.project.thisappistryingtomakeyoubetter.adapter.ChipAdapter;
 import com.project.thisappistryingtomakeyoubetter.adapter.TaskAdapter;
 import com.project.thisappistryingtomakeyoubetter.databinding.DialogTaskBinding;
+import com.project.thisappistryingtomakeyoubetter.model.Label;
 import com.project.thisappistryingtomakeyoubetter.model.Task;
 import com.project.thisappistryingtomakeyoubetter.util.AppDatabase;
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper;
 import com.project.thisappistryingtomakeyoubetter.activity.MainActivity;
 import com.project.thisappistryingtomakeyoubetter.databinding.FragmentDayBinding;
+import com.project.thisappistryingtomakeyoubetter.util.LabelViewModel;
 import com.project.thisappistryingtomakeyoubetter.util.TaskViewModel;
 
 import java.util.ArrayList;
@@ -54,6 +58,7 @@ public class DayFragment extends Fragment implements
     private Calendar calendar;
     private FragmentDayBinding binding;
     private final List<Task> tasks = new ArrayList<>();
+    private final List<Label> labels = new ArrayList<>();
     private TaskAdapter taskAdapter;
     private int position;
     private TaskViewModel taskViewModel;
@@ -109,6 +114,7 @@ public class DayFragment extends Fragment implements
                 .get(TaskViewModel.class);
 
         getTasks();
+        getLabel();
 
         // Floating Action Button Add
         binding.addTask.setOnClickListener(this);
@@ -169,6 +175,9 @@ public class DayFragment extends Fragment implements
             Objects.requireNonNull(dialog.getWindow()).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         }
 
+        // Chip Adapter
+        ChipAdapter chipAdapter = new ChipAdapter(requireContext(), labels);
+
         // Match dialog window to screen width
         Window window = dialog.getWindow();
         assert window != null;
@@ -181,17 +190,20 @@ public class DayFragment extends Fragment implements
             binding.description.setText(task.getDescription());
             binding.delete.setVisibility(View.VISIBLE);
         }
+        binding.labels.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        binding.labels.setAdapter(chipAdapter);
+
 
         // Listeners
         binding.save.setOnClickListener(v -> {
             if(task == null) {
-                Task task1 = new Task(binding.title.getText().toString(),
-                        binding.description.getText().toString(),
+                Task task1 = new Task(Objects.requireNonNull(binding.title.getText()).toString(),
+                        Objects.requireNonNull(binding.description.getText()).toString(),
                         calendar.getTime());
                 addTask(task1);
             } else {
-                task.setTitle(binding.title.getText().toString());
-                task.setDescription(binding.description.getText().toString());
+                task.setTitle(Objects.requireNonNull(binding.title.getText()).toString());
+                task.setDescription(Objects.requireNonNull(binding.description.getText()).toString());
                 updateTask(task);
             }
             dialog.dismiss();
@@ -214,6 +226,13 @@ public class DayFragment extends Fragment implements
             DayFragment.this.tasks.addAll(tasks);
             taskAdapter.notifyDataSetChanged();
             placeHolder();
+        });
+    }
+
+    private void getLabel(){
+        taskViewModel.getLabel().observe(getViewLifecycleOwner(), labels -> {
+            this.labels.clear();
+            this.labels.addAll(labels);
         });
     }
 

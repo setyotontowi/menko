@@ -1,24 +1,25 @@
 package com.project.thisappistryingtomakeyoubetter.util
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.project.thisappistryingtomakeyoubetter.model.Label
 import com.project.thisappistryingtomakeyoubetter.model.Task
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import java.util.*
-import java.util.concurrent.Executors
 import javax.inject.Inject
-import javax.inject.Named
-import kotlin.collections.ArrayList
 
 class TaskViewModel @Inject constructor(
-        private val taskRepository: TaskRepository
+        private val taskRepository: TaskRepository,
+        private val labelRepository: LabelRepository
 ) : ViewModel() {
     private val _tasks = MutableLiveData<List<Task>?>()
     val tasks: LiveData<List<Task>?> = _tasks
+
+    private val _labels = MutableLiveData<List<Label>?>()
+    val labels: LiveData<List<Label>?> = _labels
 
     private val TAG = "TaskViewModel"
 
@@ -49,5 +50,13 @@ class TaskViewModel @Inject constructor(
         }
         val result = taskRepository.get(from, to)
         return result
+    }
+
+    fun getLabel(): LiveData<List<Label>?> {
+        viewModelScope.launch(IO) {
+            val result = labelRepository.getAll()
+            _labels.postValue(result.value)
+        }
+        return labelRepository.getAll()
     }
 }
