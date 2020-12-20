@@ -3,10 +3,7 @@ package com.project.thisappistryingtomakeyoubetter.di
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
-import com.project.thisappistryingtomakeyoubetter.util.AppDatabase
-import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
-import com.project.thisappistryingtomakeyoubetter.util.LabelDao
-import com.project.thisappistryingtomakeyoubetter.util.TaskDao
+import com.project.thisappistryingtomakeyoubetter.util.*
 import dagger.Module
 import dagger.Provides
 import java.util.*
@@ -25,8 +22,7 @@ object DatabaseModule {
                 .databaseBuilder(
                     appContext.applicationContext,
                     AppDatabase::class.java, DATABASE_NAME)
-                .addMigrations(AppDatabase.MIGRATION_1_2)
-                .addMigrations(AppDatabase.MIGRATION_2_3)
+                .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3, AppDatabase.MIGRATION_3_4)
                 .fallbackToDestructiveMigration()
                 .build()
     }
@@ -39,5 +35,8 @@ object DatabaseModule {
 
     @Provides
     fun providesLabelDao(db: AppDatabase): LabelDao = db.labelDao()
+
+    @Provides
+    fun providesLabelingDao(db: AppDatabase): LabelingDao = db.labelingDao()
 
 }
