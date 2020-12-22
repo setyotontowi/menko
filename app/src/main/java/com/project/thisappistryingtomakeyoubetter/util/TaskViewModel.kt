@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.project.thisappistryingtomakeyoubetter.model.Label
 import com.project.thisappistryingtomakeyoubetter.model.Task
+import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import java.util.*
@@ -50,6 +51,10 @@ class TaskViewModel @Inject constructor(
         }
         val result = taskRepository.get(from, to)
         return result
+    }
+
+    fun getTaskWithLabel(from: Date?, to: Date?): LiveData<List<TaskWithLabel>?>{
+        return taskRepository.getTaskWithLabel(from, to)
     }
 
     fun getLabel(): LiveData<List<Label>?> {

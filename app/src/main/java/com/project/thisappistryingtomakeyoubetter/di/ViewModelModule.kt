@@ -36,6 +36,4 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(LabelViewModel::class)
     internal abstract fun labelViewModel(viewModel: LabelViewModel): ViewModel
-
-    // TODO: 13/12/2020 (3) Provides TagViewModel and its Repo (complete)
 }

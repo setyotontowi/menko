@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import com.project.thisappistryingtomakeyoubetter.model.Labeling
 import com.project.thisappistryingtomakeyoubetter.model.Task
+import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
 import java.util.*
 import java.util.concurrent.Executors
 import javax.inject.Inject
@@ -19,9 +20,8 @@ class TaskRepository @Inject constructor(
     suspend fun insert(task: Task){
         val id = taskDao.insertAll(task)
         for (label in task.labels){
-            val mTask = Task("", "")
-            mTask.id = id.toInt()
-            val labeling = Labeling(0, mTask, label)
+            Log.d(TAG, "insert: ${label.name}")
+            val labeling = Labeling(id.toInt(), label.id)
             labelingDao.insert(labeling)
         }
     }
@@ -37,6 +37,14 @@ class TaskRepository @Inject constructor(
             taskDao.getAll
         } else {
             taskDao.getTasks(from, to)
+        }
+    }
+
+    fun getTaskWithLabel(from: Date?, to: Date?): LiveData<List<TaskWithLabel>?>{
+        return if (from == null && to == null) {
+            taskDao.getAllTaskWithLabel()
+        } else {
+            taskDao.getTasksWithLabel(from, to)
         }
     }
 

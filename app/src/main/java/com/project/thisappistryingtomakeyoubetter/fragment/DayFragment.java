@@ -28,6 +28,7 @@ import com.project.thisappistryingtomakeyoubetter.adapter.TaskAdapter;
 import com.project.thisappistryingtomakeyoubetter.databinding.DialogTaskBinding;
 import com.project.thisappistryingtomakeyoubetter.model.Label;
 import com.project.thisappistryingtomakeyoubetter.model.Task;
+import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel;
 import com.project.thisappistryingtomakeyoubetter.util.AppDatabase;
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper;
 import com.project.thisappistryingtomakeyoubetter.activity.MainActivity;
@@ -57,7 +58,7 @@ public class DayFragment extends Fragment implements
 
     private Calendar calendar;
     private FragmentDayBinding binding;
-    private final List<Task> tasks = new ArrayList<>();
+    private final List<TaskWithLabel> tasks = new ArrayList<>();
     private final List<Label> labels = new ArrayList<>();
     private TaskAdapter taskAdapter;
     private int position;
@@ -115,6 +116,7 @@ public class DayFragment extends Fragment implements
 
         getTasks();
         getLabel();
+        getTaskWithLabel();
 
         // Floating Action Button Add
         binding.addTask.setOnClickListener(this);
@@ -222,11 +224,10 @@ public class DayFragment extends Fragment implements
 
     private void getTasks(){
         taskViewModel.get(from, to).observe(getViewLifecycleOwner(), tasks -> {
-            Log.d(TAG, "getTasks: " + tasks.size());
-            DayFragment.this.tasks.clear();
+            /*DayFragment.this.tasks.clear();
             DayFragment.this.tasks.addAll(tasks);
             taskAdapter.notifyDataSetChanged();
-            placeHolder();
+            placeHolder();*/
         });
     }
 
@@ -234,6 +235,15 @@ public class DayFragment extends Fragment implements
         taskViewModel.getLabel().observe(getViewLifecycleOwner(), labels -> {
             this.labels.clear();
             this.labels.addAll(labels);
+        });
+    }
+
+    private void getTaskWithLabel(){
+        taskViewModel.getTaskWithLabel(from, to).observe(getViewLifecycleOwner(), tasksWithLabels -> {
+            DayFragment.this.tasks.clear();
+            DayFragment.this.tasks.addAll(tasksWithLabels);
+            taskAdapter.notifyDataSetChanged();
+            placeHolder();
         });
     }
 
@@ -245,6 +255,7 @@ public class DayFragment extends Fragment implements
         taskViewModel.delete(task);
     }
 
+    // TODO: 22/12/2020 Update task with label 
     private void updateTask(Task task){
         taskViewModel.update(task);
     }

@@ -10,15 +10,16 @@ import android.view.View
 import com.project.thisappistryingtomakeyoubetter.R
 import android.widget.CheckBox
 import android.widget.TextView
-import android.widget.LinearLayout
 import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.project.thisappistryingtomakeyoubetter.model.Task
+import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
 import java.util.*
 
 class TaskAdapter(
         private val context: Context,
-        private val tasks: List<Task>,
+        private val tasks: List<TaskWithLabel>,
         private val listener: TaskCallback,
         private val mode: Int
 ) : RecyclerView.Adapter<TaskViewHolder>() {
@@ -33,9 +34,17 @@ class TaskAdapter(
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
-        val task = tasks[position]
+        val task = tasks[position].task
+        val labels = tasks[position].labels
+        val adapter = LabelAdapter(context, labels, LabelAdapter.TEXT)
+
+        // TODO: 22/12/2020 label notify dataset
+
+        // Setter
         holder.title.text = task.title
         holder.title.isChecked = task.isFinish
+        holder.label.adapter = adapter
+        holder.label.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
         // Check Description
         checkDescription(task, holder)
@@ -93,6 +102,7 @@ class TaskAdapter(
         var title: CheckBox = itemView.findViewById(R.id.title)
         var description: TextView = itemView.findViewById(R.id.description)
         var wrapper: CardView = itemView.findViewById(R.id.wrapper)
+        var label: RecyclerView = itemView.findViewById(R.id.labels)
     }
 
     interface TaskCallback {

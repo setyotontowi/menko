@@ -87,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
         Fragment mainFragment = MainFragment.newInstance();
         Fragment historyFragment = HistoryFragment.newInstance();
         Fragment labelFragment = LabelFragment.newInstance();
-        // TODO: 13/12/2020 (1) Create Tag Fragment (complete)
         // First Fragment Shown
         openFragment(mainFragment);
 

@@ -7,10 +7,10 @@ import com.project.thisappistryingtomakeyoubetter.model.Labeling
 @Dao
 interface LabelingDao {
 
-    @Query("SELECT * FROM Labeling WHERE task = :idTask")
+    @Query("SELECT * FROM Labeling WHERE taskId = :idTask")
     fun getEachLabelInTask(idTask: Int): LiveData<List<Labeling>>
 
-    @Query("SELECT * FROM Labeling WHERE label = :idLabel")
+    @Query("SELECT * FROM Labeling WHERE labelId = :idLabel")
     fun getEachTaskInLabel(idLabel: Int): LiveData<List<Labeling>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

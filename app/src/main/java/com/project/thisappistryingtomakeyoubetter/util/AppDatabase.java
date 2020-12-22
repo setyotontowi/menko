@@ -20,7 +20,7 @@ import java.util.concurrent.Executors;
 import javax.inject.Singleton;
 
 @Singleton
-@Database(entities = {Task.class, Label.class, Labeling.class}, version = 4)
+@Database(entities = {Task.class, Label.class, Labeling.class}, version = 5)
 @TypeConverters({Converter.class})
 public abstract class AppDatabase extends RoomDatabase {
     public abstract TaskDao taskDao();
@@ -52,4 +52,5 @@ public abstract class AppDatabase extends RoomDatabase {
                     "`label` INTEGER NOT NULL)");
         }
     };
+
 }

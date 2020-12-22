@@ -26,9 +26,6 @@ object DatabaseModule {
                 .fallbackToDestructiveMigration()
                 .build()
     }
-
-    // TODO: 13/12/2020 (2) Provides LabelDao (complete)
-    // TODO: 13/12/2020 (4) Migration (complete)
     
     @Provides
     fun providesTaskDao(db: AppDatabase): TaskDao = db.taskDao()

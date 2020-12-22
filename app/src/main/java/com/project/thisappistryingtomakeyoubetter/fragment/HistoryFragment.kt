@@ -15,6 +15,7 @@ import com.project.thisappistryingtomakeyoubetter.adapter.TaskAdapter
 import com.project.thisappistryingtomakeyoubetter.databinding.DialogTaskBinding
 import com.project.thisappistryingtomakeyoubetter.databinding.FragmentHistoryBinding
 import com.project.thisappistryingtomakeyoubetter.model.Task
+import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
 import com.project.thisappistryingtomakeyoubetter.util.TaskViewModel
 import javax.inject.Inject
@@ -25,7 +26,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
     private lateinit var binding: FragmentHistoryBinding
     private lateinit var toolbar: Toolbar
     private var adapter: TaskAdapter? = null
-    private var tasks: MutableList<Task> = ArrayList()
+    private var tasks: MutableList<TaskWithLabel> = ArrayList()
     @Inject
     lateinit var vmFactory: ViewModelProvider.Factory
     private val taskViewModel: TaskViewModel by viewModels { vmFactory}
@@ -50,7 +51,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
 
     override fun onResume() {
         super.onResume()
-        taskViewModel.get(null, null).observe(this, { tasks ->
+        taskViewModel.getTaskWithLabel(null, null).observe(this, { tasks ->
             this.tasks.clear()
             if (tasks != null) {
                 this.tasks.addAll(tasks)

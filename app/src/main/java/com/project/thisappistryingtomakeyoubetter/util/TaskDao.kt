@@ -3,6 +3,7 @@ package com.project.thisappistryingtomakeyoubetter.util
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.project.thisappistryingtomakeyoubetter.model.Task
+import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
 import java.util.*
 import javax.inject.Singleton
 
@@ -13,6 +14,14 @@ interface TaskDao {
 
     @get:Query("SELECT * FROM task ORDER BY date DESC")
     val getAll:LiveData<List<Task>?>
+
+    @Transaction
+    @Query("SELECT * FROM task WHERE date BETWEEN :from AND :to")
+    fun getTasksWithLabel(from: Date?, to:Date?): LiveData<List<TaskWithLabel>?>
+
+    @Transaction
+    @Query("SELECT * FROM task ORDER BY date DESC")
+    fun getAllTaskWithLabel():LiveData<List<TaskWithLabel>?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(task: Task): Long

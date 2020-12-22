@@ -18,45 +18,67 @@ import com.google.android.material.textfield.TextInputLayout
 import com.project.thisappistryingtomakeyoubetter.R
 import com.project.thisappistryingtomakeyoubetter.model.Label
 
-class LabelAdapter(
+class LabelAdapter (
         private val context: Context,
-        private val labels: List<Label>
-): RecyclerView.Adapter<LabelAdapter.LabelViewHolder>() {
+        private val labels: List<Label>,
+        private val mode: Int
+): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val TAG = "LabelAdapter"
     var deleteListener: ((label: Label)->Unit)?=null
     var editListener:((label: Label)->Unit)?=null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LabelViewHolder {
-        val v = LayoutInflater.from(context).inflate(R.layout.view_label, parent, false)
-        return LabelViewHolder(v)
+    companion object{
+        @JvmStatic
+        val CARD = 1
+        @JvmStatic
+        val TEXT = 2
     }
 
-    override fun onBindViewHolder(holder: LabelViewHolder, position: Int) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        when(mode){
+            TEXT -> {
+                val v = LayoutInflater.from(context).inflate(R.layout.view_label_text, parent, false)
+                return LabelTextViewHolder(v)
+            }
+            else -> {
+                val v = LayoutInflater.from(context).inflate(R.layout.view_label, parent, false)
+                return LabelViewHolder(v)
+            }
+        }
+
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val label = labels[position]
-        holder.labelName.text = label.name
-        Log.d(TAG, "onBindViewHolder: color ${label.color}")
-        label.color?.let { holder.labelIcon.setColorFilter(it) }
+        if(mode == CARD) {
+            holder as LabelViewHolder
+            holder.labelName.text = label.name
+            label.color?.let { holder.labelIcon.setColorFilter(it) }
 
-        holder.cardLayout.setOnLongClickListener {
-            holder.textView.visibility = View.GONE
-            holder.textEdit.visibility = View.VISIBLE
-            holder.editLabel.setText(label.name)
-            deleteListener?.invoke(label)
-            true
-        }
+            holder.cardLayout.setOnLongClickListener {
+                holder.textView.visibility = View.GONE
+                holder.textEdit.visibility = View.VISIBLE
+                holder.editLabel.setText(label.name)
+                deleteListener?.invoke(label)
+                true
+            }
 
-        holder.textInputLayout.setEndIconOnClickListener {
-            holder.textView.visibility = View.VISIBLE
-            holder.textEdit.visibility = View.GONE
-            holder.colorView.visibility = View.GONE
-            label.name = holder.editLabel.text.toString()
-            editListener?.invoke(label)
-        }
+            holder.textInputLayout.setEndIconOnClickListener {
+                holder.textView.visibility = View.VISIBLE
+                holder.textEdit.visibility = View.GONE
+                holder.colorView.visibility = View.GONE
+                label.name = holder.editLabel.text.toString()
+                editListener?.invoke(label)
+            }
 
-        holder.textInputLayout.setStartIconOnClickListener {
-            holder.colorView.visibility = View.VISIBLE
-            generateAdapter(holder.colorView)
+            holder.textInputLayout.setStartIconOnClickListener {
+                holder.colorView.visibility = View.VISIBLE
+                generateAdapter(holder.colorView)
+            }
+        } else {
+            holder as LabelTextViewHolder
+            holder.labelName.text = label.name
+            label.color?.let { holder.labelIcon.setColorFilter(it) }
         }
     }
 
@@ -80,5 +102,10 @@ class LabelAdapter(
         val textInputLayout: TextInputLayout = view.findViewById(R.id.textlayout)
         val editLabel: TextInputEditText = view.findViewById(R.id.edit_label)
         val colorView: RecyclerView = view.findViewById(R.id.color_view)
+    }
+
+    inner class LabelTextViewHolder(view: View): RecyclerView.ViewHolder(view){
+        val labelIcon: ImageView = view.findViewById(R.id.label_icon)
+        val labelName: TextView  = view.findViewById(R.id.label_name)
     }
 }

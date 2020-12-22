@@ -24,7 +24,6 @@ class Task {
     @ColumnInfo(name = "finish", defaultValue = "false")
     var isFinish = false
 
-    // TODO: 20/12/2020 Ignore, add list label
     @Ignore
     var labels: MutableList<Label> = ArrayList()
 

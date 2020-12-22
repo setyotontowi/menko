@@ -57,8 +57,6 @@ class LabelFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // TODO: 14/12/2020  (5) Create Adapter (complete)
-        // TODO: 14/12/2020  (6) Create dialog (skip)
 
         (activity?.application as App).appComponent.inject(this)
 
@@ -70,7 +68,7 @@ class LabelFragment : Fragment() {
         this.color = binding.addLabel.currentTextColor
 
         // Label Adapter
-        adapter = LabelAdapter(requireContext(), labels)
+        adapter = LabelAdapter(requireContext(), labels, LabelAdapter.CARD)
         binding.label.layoutManager = LinearLayoutManager(requireContext())
         binding.label.adapter = adapter
 
