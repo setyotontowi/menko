@@ -6,10 +6,8 @@ import com.project.thisappistryingtomakeyoubetter.model.Labeling
 import com.project.thisappistryingtomakeyoubetter.model.Task
 import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
 import java.util.*
-import java.util.concurrent.Executors
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.collections.ArrayList
 
 @Singleton
 class TaskRepository @Inject constructor(

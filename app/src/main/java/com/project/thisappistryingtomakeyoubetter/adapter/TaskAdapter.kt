@@ -36,7 +36,7 @@ class TaskAdapter(
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val task = tasks[position].task
         val labels = tasks[position].labels
-        val adapter = LabelAdapter(context, labels, LabelAdapter.TEXT)
+        val adapter = LabelTextAdapter(context, labels)
 
         // Setter
         holder.title.text = task.title

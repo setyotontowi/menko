@@ -1,6 +1,7 @@
 package com.project.thisappistryingtomakeyoubetter.model
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 @Entity

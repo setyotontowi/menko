@@ -19,6 +19,7 @@ import com.project.thisappistryingtomakeyoubetter.adapter.ColorAdapter
 import com.project.thisappistryingtomakeyoubetter.adapter.LabelAdapter
 import com.project.thisappistryingtomakeyoubetter.databinding.FragmentLabelBinding
 import com.project.thisappistryingtomakeyoubetter.model.Label
+import com.project.thisappistryingtomakeyoubetter.model.LabelWithTask
 import com.project.thisappistryingtomakeyoubetter.util.LabelViewModel
 import javax.inject.Inject
 
@@ -32,7 +33,7 @@ class LabelFragment : Fragment() {
     private val TAG = "LabelFragment"
     private var isOpen = false
     private var color: Int = 0
-    private var labels: MutableList<Label> = ArrayList()
+    private var labels: MutableList<LabelWithTask> = ArrayList()
     private lateinit var binding: FragmentLabelBinding
     private lateinit var label: Label
     private lateinit var adapter: LabelAdapter
@@ -57,7 +58,6 @@ class LabelFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         (activity?.application as App).appComponent.inject(this)
 
         // Color Adapter
@@ -68,13 +68,11 @@ class LabelFragment : Fragment() {
         this.color = binding.addLabel.currentTextColor
 
         // Label Adapter
-        adapter = LabelAdapter(requireContext(), labels, LabelAdapter.CARD)
+        adapter = LabelAdapter(requireContext(), labels)
         binding.label.layoutManager = LinearLayoutManager(requireContext())
         binding.label.adapter = adapter
 
-
         binding.colorView.visibility = if(isOpen) View.VISIBLE else View.GONE
-
 
         // Click Listener
         binding.addTextlayout.setEndIconOnClickListener {
@@ -84,7 +82,8 @@ class LabelFragment : Fragment() {
                         Toast.LENGTH_LONG).show()
             } else {
                 label = Label(0, binding.addLabel.text.toString(), this.color)
-                labels.add(label)
+                //labels.add(label)
+
                 adapter.notifyDataSetChanged()
                 binding.addLabel.setText("")
                 addLabel(label)
@@ -122,7 +121,7 @@ class LabelFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        labelViewModel.get().observe(this, { labels ->
+        labelViewModel.getLabelWithTask().observe(this, { labels ->
             labels?.let {
                 this.labels.clear()
                 this.labels.addAll(it)

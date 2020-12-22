@@ -51,5 +51,6 @@
     <!-- Label Fragment -->
     <string name="label_add_name">Tambahkan Label</string>
     <string name="label_empty_notification">Label tidak boleh kosong</string>
+    <string name="label_count">12</string>
 
 </resources>

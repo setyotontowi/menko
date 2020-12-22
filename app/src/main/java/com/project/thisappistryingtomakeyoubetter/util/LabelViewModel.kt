@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.project.thisappistryingtomakeyoubetter.model.Label
+import com.project.thisappistryingtomakeyoubetter.model.LabelWithTask
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -43,4 +44,7 @@ class LabelViewModel @Inject constructor(
         }
         return labelRepository.getAll()
     }
+
+    fun getLabelWithTask(): LiveData<List<LabelWithTask>?> { return labelRepository.getLabelWithTasks()}
+
 }
