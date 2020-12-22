@@ -77,12 +77,12 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         return false
     }
 
-    override fun onLongClick(task: Task?) {
-        taskDialog(task!!)
+    override fun onLongClick(task: TaskWithLabel?) {
+        taskDialog(task!!.task)
     }
 
-    override fun onBoxChecked(task: Task?) {
-        taskViewModel.update(task!!)
+    override fun onBoxChecked(task: TaskWithLabel?) {
+        taskViewModel.update(task!!.task)
     }
 
     private fun deleteAll(){

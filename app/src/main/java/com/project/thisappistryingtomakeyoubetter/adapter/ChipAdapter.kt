@@ -19,6 +19,21 @@ class ChipAdapter(
 ): RecyclerView.Adapter<ChipAdapter.ChipViewHolder>() {
     private val selectedLabels: MutableList<Label> = ArrayList()
 
+    fun setSelectedLabels(labels: MutableList<Label>){
+        selectedLabels.clear()
+        selectedLabels.addAll(labels)
+        notifyDataSetChanged()
+    }
+
+    fun findItem(id: Int): Boolean{
+        for(label in selectedLabels){
+            if(label.id == id){
+                return true
+            }
+        }
+        return false
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChipViewHolder {
         val v = LayoutInflater.from(context).inflate(R.layout.view_chip, parent, false)
         return ChipViewHolder(v)
@@ -27,6 +42,9 @@ class ChipAdapter(
     override fun onBindViewHolder(holder: ChipViewHolder, position: Int) {
         val label = labels[position]
         holder.chip.text = label.name
+        holder.chip.isChecked = false
+        if(findItem(label.id)) holder.chip.isChecked = true
+
         holder.chip.setOnCheckedChangeListener { _: CompoundButton, b: Boolean ->
             if(b){
                 selectedLabels.add(label)

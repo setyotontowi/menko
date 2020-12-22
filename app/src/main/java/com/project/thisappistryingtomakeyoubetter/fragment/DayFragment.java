@@ -114,7 +114,7 @@ public class DayFragment extends Fragment implements
         taskViewModel = new ViewModelProvider(this, vmFactory)
                 .get(TaskViewModel.class);
 
-        getTasks();
+
         getLabel();
         getTaskWithLabel();
 
@@ -158,16 +158,16 @@ public class DayFragment extends Fragment implements
     }
 
     @Override
-    public void onLongClick(Task task) {
+    public void onLongClick(TaskWithLabel task) {
         taskDialog(task);
     }
 
     @Override
-    public void onBoxChecked(Task task) {
-        updateTask(task);
+    public void onBoxChecked(TaskWithLabel task) {
+        updateTask(task.getTask());
     }
 
-    private void taskDialog(final Task task){
+    private void taskDialog(final TaskWithLabel task){
         final Dialog dialog = new Dialog(requireContext());
         final DialogTaskBinding binding = DialogTaskBinding.inflate(getLayoutInflater());
         dialog.setContentView(binding.getRoot());
@@ -179,6 +179,7 @@ public class DayFragment extends Fragment implements
 
         // Chip Adapter
         ChipAdapter chipAdapter = new ChipAdapter(requireContext(), labels);
+        chipAdapter.setSelectedLabels(task.getLabels());
 
         // Match dialog window to screen width
         Window window = dialog.getWindow();
@@ -188,8 +189,8 @@ public class DayFragment extends Fragment implements
 
         // Views Setup
         if(task != null){
-            binding.title.setText(task.getTitle());
-            binding.description.setText(task.getDescription());
+            binding.title.setText(task.getTask().getTitle());
+            binding.description.setText(task.getTask().getDescription());
             binding.delete.setVisibility(View.VISIBLE);
         }
         binding.labels.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -205,30 +206,22 @@ public class DayFragment extends Fragment implements
                 task1.setLabels(chipAdapter.getSelectedLabels());
                 addTask(task1);
             } else {
-                task.setTitle(Objects.requireNonNull(binding.title.getText()).toString());
-                task.setDescription(Objects.requireNonNull(binding.description.getText()).toString());
-                updateTask(task);
+                task.getTask().setTitle(Objects.requireNonNull(binding.title.getText()).toString());
+                task.getTask().setDescription(Objects.requireNonNull(binding.description.getText()).toString());
+                task.getTask().setLabels(chipAdapter.getSelectedLabels());
+                updateTask(task.getTask());
             }
             dialog.dismiss();
         });
 
         binding.delete.setOnClickListener(v -> {
             if(task != null) {
-                deleteTask(task);
+                deleteTask(task.getTask());
             }
             dialog.dismiss();
         });
 
         dialog.show();
-    }
-
-    private void getTasks(){
-        taskViewModel.get(from, to).observe(getViewLifecycleOwner(), tasks -> {
-            /*DayFragment.this.tasks.clear();
-            DayFragment.this.tasks.addAll(tasks);
-            taskAdapter.notifyDataSetChanged();
-            placeHolder();*/
-        });
     }
 
     private void getLabel(){
@@ -251,11 +244,12 @@ public class DayFragment extends Fragment implements
         taskViewModel.insert(task);
     }
 
+    // TODO: 22/12/2020 Delete task including labeling
     private void deleteTask(Task task) {
         taskViewModel.delete(task);
     }
 
-    // TODO: 22/12/2020 Update task with label 
+    // TODO: 22/12/2020 Update task with label. there are no assignation of list label (complete)
     private void updateTask(Task task){
         taskViewModel.update(task);
     }

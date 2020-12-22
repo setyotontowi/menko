@@ -20,13 +20,19 @@ class TaskRepository @Inject constructor(
     suspend fun insert(task: Task){
         val id = taskDao.insertAll(task)
         for (label in task.labels){
-            Log.d(TAG, "insert: ${label.name}")
             val labeling = Labeling(id.toInt(), label.id)
             labelingDao.insert(labeling)
         }
     }
 
-    suspend fun update(task: Task) = taskDao.update(task)
+    suspend fun update(task: Task) {
+        taskDao.update(task)
+        labelingDao.deleteLabelInTask(task.id)
+        for(label in task.labels){
+            val labeling = Labeling(task.id, label.id)
+            labelingDao.insert(labeling)
+        }
+    }
 
     suspend fun delete(task: Task) = taskDao.delete(task)
 

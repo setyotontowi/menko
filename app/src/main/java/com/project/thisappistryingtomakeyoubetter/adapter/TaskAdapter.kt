@@ -38,8 +38,6 @@ class TaskAdapter(
         val labels = tasks[position].labels
         val adapter = LabelAdapter(context, labels, LabelAdapter.TEXT)
 
-        // TODO: 22/12/2020 label notify dataset
-
         // Setter
         holder.title.text = task.title
         holder.title.isChecked = task.isFinish
@@ -60,14 +58,14 @@ class TaskAdapter(
         // This, on multiple item
         holder.title.setOnClickListener {
             task.isFinish = holder.title.isChecked
-            listener.onBoxChecked(task)
+            listener.onBoxChecked(tasks[position])
         }
         holder.wrapper.setOnLongClickListener {
-            listener.onLongClick(task)
+            listener.onLongClick(tasks[position])
             true
         }
         holder.title.setOnLongClickListener {
-            listener.onLongClick(task)
+            listener.onLongClick(tasks[position])
             true
         }
     }
@@ -106,7 +104,7 @@ class TaskAdapter(
     }
 
     interface TaskCallback {
-        fun onLongClick(task: Task?)
-        fun onBoxChecked(task: Task?)
+        fun onLongClick(task: TaskWithLabel?)
+        fun onBoxChecked(task: TaskWithLabel?)
     }
 }
