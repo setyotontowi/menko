@@ -15,5 +15,5 @@ data class TaskWithLabel (
                     parentColumn = "taskId",
                     entityColumn = "labelId")
     )
-    val labels: List<Label>
+    val labels: List<Label> = ArrayList()
 )

@@ -36,13 +36,13 @@ class TaskAdapter(
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val task = tasks[position].task
         val labels = tasks[position].labels
-        val adapter = LabelTextAdapter(context, labels)
+        val adapter = LabelTaskAdapter(context, labels)
 
         // Setter
         holder.title.text = task.title
         holder.title.isChecked = task.isFinish
         holder.label.adapter = adapter
-        holder.label.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        holder.label.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, true)
 
         // Check Description
         checkDescription(task, holder)

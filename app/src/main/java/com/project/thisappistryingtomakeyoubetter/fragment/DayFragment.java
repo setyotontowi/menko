@@ -116,7 +116,6 @@ public class DayFragment extends Fragment implements
 
 
         getLabel();
-        getTaskWithLabel();
 
         // Floating Action Button Add
         binding.addTask.setOnClickListener(this);
@@ -126,6 +125,7 @@ public class DayFragment extends Fragment implements
     public void onResume() {
         super.onResume();
         taskAdapter.notifyDataSetChanged();
+        getTaskWithLabel();
         String title;
         switch (position){
             case -1:
@@ -179,7 +179,6 @@ public class DayFragment extends Fragment implements
 
         // Chip Adapter
         ChipAdapter chipAdapter = new ChipAdapter(requireContext(), labels);
-        chipAdapter.setSelectedLabels(task.getLabels());
 
         // Match dialog window to screen width
         Window window = dialog.getWindow();
@@ -189,6 +188,7 @@ public class DayFragment extends Fragment implements
 
         // Views Setup
         if(task != null){
+            chipAdapter.setSelectedLabels(task.getLabels());
             binding.title.setText(task.getTask().getTitle());
             binding.description.setText(task.getTask().getDescription());
             binding.delete.setVisibility(View.VISIBLE);
@@ -243,13 +243,11 @@ public class DayFragment extends Fragment implements
     private void addTask(Task task) {
         taskViewModel.insert(task);
     }
-
-    // TODO: 22/12/2020 Delete task including labeling
+    
     private void deleteTask(Task task) {
         taskViewModel.delete(task);
     }
 
-    // TODO: 22/12/2020 Update task with label. there are no assignation of list label (complete)
     private void updateTask(Task task){
         taskViewModel.update(task);
     }
