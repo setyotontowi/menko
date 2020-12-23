@@ -114,7 +114,6 @@ public class DayFragment extends Fragment implements
         taskViewModel = new ViewModelProvider(this, vmFactory)
                 .get(TaskViewModel.class);
 
-
         getLabel();
 
         // Floating Action Button Add
@@ -124,8 +123,8 @@ public class DayFragment extends Fragment implements
     @Override
     public void onResume() {
         super.onResume();
-        taskAdapter.notifyDataSetChanged();
         getTaskWithLabel();
+        taskAdapter.notifyDataSetChanged();
         String title;
         switch (position){
             case -1:
@@ -163,9 +162,7 @@ public class DayFragment extends Fragment implements
     }
 
     @Override
-    public void onBoxChecked(TaskWithLabel task) {
-        updateTask(task.getTask());
-    }
+    public void onBoxChecked(TaskWithLabel task) { updateTask(task.getTask()); }
 
     private void taskDialog(final TaskWithLabel task){
         final Dialog dialog = new Dialog(requireContext());
@@ -226,6 +223,7 @@ public class DayFragment extends Fragment implements
 
     private void getLabel(){
         taskViewModel.getLabel().observe(getViewLifecycleOwner(), labels -> {
+            Log.d(TAG, "getLabel: Observer Label");
             this.labels.clear();
             this.labels.addAll(labels);
         });
@@ -233,6 +231,7 @@ public class DayFragment extends Fragment implements
 
     private void getTaskWithLabel(){
         taskViewModel.getTaskWithLabel(from, to).observe(getViewLifecycleOwner(), tasksWithLabels -> {
+            Log.d(TAG, "getTaskWithLabel: Observer TaskWithLabel");
             DayFragment.this.tasks.clear();
             DayFragment.this.tasks.addAll(tasksWithLabels);
             taskAdapter.notifyDataSetChanged();

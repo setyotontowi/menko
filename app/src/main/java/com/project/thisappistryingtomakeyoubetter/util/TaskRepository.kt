@@ -17,9 +17,11 @@ class TaskRepository @Inject constructor(
     private val TAG = "TaskRepository"
     suspend fun insert(task: Task){
         val id = taskDao.insertAll(task)
+        Log.d(TAG, "insert: Observer Inserting Task ${task.title}")
         for (label in task.labels){
             val labeling = Labeling(id.toInt(), label.id)
             labelingDao.insert(labeling)
+            Log.d(TAG, "insert: Observer Inserting Label ${label.name}")
         }
     }
 
@@ -34,7 +36,10 @@ class TaskRepository @Inject constructor(
 
     suspend fun delete(task: Task) = taskDao.delete(task)
 
-    suspend fun deleteAll() = taskDao.deleteAll()
+    suspend fun deleteAll() {
+        taskDao.deleteAll()
+        labelingDao.deleteAll()
+    }
 
     fun get(from: Date?, to: Date?): LiveData<List<Task>?> {
         return if (from == null && to == null) {

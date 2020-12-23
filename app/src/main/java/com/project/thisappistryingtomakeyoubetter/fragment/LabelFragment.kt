@@ -108,7 +108,6 @@ class LabelFragment : Fragment() {
 
 
         colorAdapter.listener = { color ->
-            Log.d(TAG, "onViewCreated: $color")
             this.color = color
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 binding.addTextlayout.startIconDrawable?.colorFilter = BlendModeColorFilter(color, BlendMode.SRC_IN)

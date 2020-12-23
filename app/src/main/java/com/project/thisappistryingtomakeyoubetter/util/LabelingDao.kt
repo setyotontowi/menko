@@ -20,6 +20,9 @@ interface LabelingDao {
     suspend fun delete(labeling: Labeling)
 
     @Query("DELETE FROM Labeling WHERE taskId = :taskId")
-    fun deleteLabelInTask(taskId: Int)
+    suspend fun deleteLabelInTask(taskId: Int)
+
+    @Query("DELETE FROM Labeling")
+    suspend fun deleteAll()
 
 }

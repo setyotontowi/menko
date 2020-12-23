@@ -58,6 +58,7 @@ class TaskAdapter(
         // This, on multiple item
         holder.title.setOnClickListener {
             task.isFinish = holder.title.isChecked
+            task.labels = labels.toMutableList()
             listener.onBoxChecked(tasks[position])
         }
         holder.wrapper.setOnLongClickListener {
@@ -89,7 +90,6 @@ class TaskAdapter(
         val mDate = calendar.get(Calendar.DAY_OF_MONTH)
         if(mDate != this.date){
             this.date = mDate
-            Log.d(TAG, "checkDate: false")
             return false
         }
         return true
