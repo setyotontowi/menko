@@ -25,7 +25,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
 
     private lateinit var binding: FragmentHistoryBinding
     private lateinit var toolbar: Toolbar
-    private var adapter: TaskAdapter? = null
+    private lateinit var taskAdapter: TaskAdapter
     private var tasks: MutableList<TaskWithLabel> = ArrayList()
     @Inject
     lateinit var vmFactory: ViewModelProvider.Factory
@@ -40,26 +40,20 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         (activity?.application as App).appComponent.inject(this)
-
         setHasOptionsMenu(true)
-        adapter = TaskAdapter(requireContext(), tasks, this, GeneralHelper.MODE_HISTORY)
-        binding.listTask.layoutManager = LinearLayoutManager(requireContext())
-        binding.listTask.adapter = adapter
-    }
 
-    override fun onResume() {
-        super.onResume()
-        taskViewModel.getTaskWithLabel(null, null).observe(this, { tasks ->
-            this.tasks.clear()
-            if (tasks != null) {
-                this.tasks.addAll(tasks)
-            }
-            adapter!!.resetDate()
-            adapter!!.notifyDataSetChanged()
-            placeHolder()
-        })
+        taskAdapter = TaskAdapter(requireActivity(), tasks, this, GeneralHelper.MODE_HISTORY)
+        binding.listTask.apply {
+            adapter = taskAdapter
+            layoutManager = LinearLayoutManager(activity)
+        }
+
+        taskViewModel.setFrom(null)
+        taskViewModel.setTo(null)
+        taskViewModel.apply {
+            tasksWithLabel.observe(viewLifecycleOwner){handleListTask(it)}
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -77,12 +71,22 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         return false
     }
 
-    override fun onLongClick(task: TaskWithLabel?) {
-        taskDialog(task!!.task)
+    override fun onLongClick(task: TaskWithLabel) {
+        taskDialog(task.task)
     }
 
-    override fun onBoxChecked(task: TaskWithLabel?) {
-        taskViewModel.update(task!!.task)
+    override fun onBoxChecked(task: TaskWithLabel) {
+        taskViewModel.update(task.task)
+    }
+
+    private fun handleListTask(tasks: List<TaskWithLabel>?) {
+        this.tasks.clear()
+        if (tasks != null) {
+            this.tasks.addAll(tasks)
+        }
+        taskAdapter.resetDate()
+        taskAdapter.notifyDataSetChanged()
+        placeHolder()
     }
 
     private fun deleteAll(){
@@ -149,12 +153,6 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @return A new instance of fragment HistoryFragment.
-         */
         @JvmStatic
         fun newInstance() = HistoryFragment()
     }

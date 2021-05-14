@@ -50,7 +50,7 @@ class TaskAdapter(
         // Check Date
         if(!checkDate(task) && mode == GeneralHelper.MODE_HISTORY){
             holder.date.visibility = View.VISIBLE
-            holder.date.text = GeneralHelper.dateFormatter().format(task.date)
+            holder.date.text = GeneralHelper.dateFormatter().format(task.date?:Date())
         } else {
             holder.date.visibility = View.GONE
         }
@@ -104,7 +104,7 @@ class TaskAdapter(
     }
 
     interface TaskCallback {
-        fun onLongClick(task: TaskWithLabel?)
-        fun onBoxChecked(task: TaskWithLabel?)
+        fun onLongClick(task: TaskWithLabel)
+        fun onBoxChecked(task: TaskWithLabel)
     }
 }

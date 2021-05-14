@@ -2,6 +2,7 @@ package com.project.thisappistryingtomakeyoubetter.util
 
 import android.util.Log
 import androidx.lifecycle.LiveData
+import com.project.thisappistryingtomakeyoubetter.model.Label
 import com.project.thisappistryingtomakeyoubetter.model.Labeling
 import com.project.thisappistryingtomakeyoubetter.model.Task
 import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
@@ -14,14 +15,11 @@ class TaskRepository @Inject constructor(
         private val taskDao: TaskDao,
         private val labelingDao: LabelingDao
 ) {
-    private val TAG = "TaskRepository"
     suspend fun insert(task: Task){
         val id = taskDao.insertAll(task)
-        Log.d(TAG, "insert: Observer Inserting Task ${task.title}")
         for (label in task.labels){
             val labeling = Labeling(id.toInt(), label.id)
             labelingDao.insert(labeling)
-            Log.d(TAG, "insert: Observer Inserting Label ${label.name}")
         }
     }
 

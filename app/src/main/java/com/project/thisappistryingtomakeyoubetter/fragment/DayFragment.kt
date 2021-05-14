@@ -1,263 +1,211 @@
-package com.project.thisappistryingtomakeyoubetter.fragment;
+package com.project.thisappistryingtomakeyoubetter.fragment
 
-import android.app.Dialog;
-import android.os.Build;
-import android.os.Bundle;
+import android.app.Dialog
+import android.os.Build
+import android.os.Bundle
+import android.view.*
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.project.thisappistryingtomakeyoubetter.App
+import com.project.thisappistryingtomakeyoubetter.R
+import com.project.thisappistryingtomakeyoubetter.activity.MainActivity
+import com.project.thisappistryingtomakeyoubetter.adapter.ChipAdapter
+import com.project.thisappistryingtomakeyoubetter.adapter.TaskAdapter
+import com.project.thisappistryingtomakeyoubetter.adapter.TaskAdapter.TaskCallback
+import com.project.thisappistryingtomakeyoubetter.databinding.DialogTaskBinding
+import com.project.thisappistryingtomakeyoubetter.databinding.FragmentDayBinding
+import com.project.thisappistryingtomakeyoubetter.model.Label
+import com.project.thisappistryingtomakeyoubetter.model.Task
+import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
+import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
+import com.project.thisappistryingtomakeyoubetter.util.TaskViewModel
+import java.util.*
+import javax.inject.Inject
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
+class DayFragment : Fragment(), View.OnClickListener, TaskCallback {
+    private var calendar: Calendar? = null
+    private lateinit var binding: FragmentDayBinding
+    private val tasks: MutableList<TaskWithLabel> = ArrayList()
+    private val labels: MutableList<Label> = ArrayList()
+    private var taskAdapter: TaskAdapter? = null
+    private var position = 0
+    private lateinit var taskViewModel: TaskViewModel
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-
-import com.project.thisappistryingtomakeyoubetter.App;
-import com.project.thisappistryingtomakeyoubetter.R;
-import com.project.thisappistryingtomakeyoubetter.adapter.ChipAdapter;
-import com.project.thisappistryingtomakeyoubetter.adapter.TaskAdapter;
-import com.project.thisappistryingtomakeyoubetter.databinding.DialogTaskBinding;
-import com.project.thisappistryingtomakeyoubetter.model.Label;
-import com.project.thisappistryingtomakeyoubetter.model.Task;
-import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel;
-import com.project.thisappistryingtomakeyoubetter.util.AppDatabase;
-import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper;
-import com.project.thisappistryingtomakeyoubetter.activity.MainActivity;
-import com.project.thisappistryingtomakeyoubetter.databinding.FragmentDayBinding;
-import com.project.thisappistryingtomakeyoubetter.util.LabelViewModel;
-import com.project.thisappistryingtomakeyoubetter.util.TaskViewModel;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.TimeZone;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-public class DayFragment extends Fragment implements
-        View.OnClickListener,
-        TaskAdapter.TaskCallback{
-
-    // Static Variables
-    private static final String TAG = "DayFragment";
-    public final static String DATE = "date";
-    public final static String POSITION = "position";
-
-    private Calendar calendar;
-    private FragmentDayBinding binding;
-    private final List<TaskWithLabel> tasks = new ArrayList<>();
-    private final List<Label> labels = new ArrayList<>();
-    private TaskAdapter taskAdapter;
-    private int position;
-    private TaskViewModel taskViewModel;
+    @JvmField
     @Inject
-    ViewModelProvider.Factory vmFactory;
-    Date from;
-    Date to;
-
-    public DayFragment() {
-        // Required empty public constructor
+    var vmFactory: ViewModelProvider.Factory? = null
+    var from: Date? = null
+    var to: Date? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        assert(arguments != null)
+        calendar = Calendar.getInstance(TimeZone.getDefault(), Locale.ENGLISH)
+        calendar?.timeInMillis = requireArguments().getLong(DATE)
+        position = requireArguments().getInt(POSITION)
+        (requireActivity().application as App).appComponent.inject(this)
+        setHasOptionsMenu(true)
     }
 
-    public static DayFragment newInstance(Calendar calendar, int position) {
-        DayFragment fragment = new DayFragment();
-        Bundle args = new Bundle();
-        args.putLong(DATE, calendar.getTimeInMillis());
-        args.putInt(POSITION, position);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        assert getArguments() != null;
-        calendar = Calendar.getInstance(TimeZone.getDefault(), Locale.ENGLISH);
-        calendar.setTimeInMillis(getArguments().getLong(DATE));
-        position = getArguments().getInt(POSITION);
-        ((App) requireActivity().getApplication()).getAppComponent().inject(this);
-        setHasOptionsMenu(true);
-    }
-
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding = FragmentDayBinding.inflate(inflater, container, false);
-        return binding.getRoot();
+        binding = FragmentDayBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        from = GeneralHelper.fromDate(calendar);
-        to = GeneralHelper.toDate(calendar);
+        from = GeneralHelper.fromDate(calendar)
+        to = GeneralHelper.toDate(calendar)
 
-        taskAdapter = new TaskAdapter(requireActivity(), tasks, this, GeneralHelper.MODE_DAY);
-        binding.task.setLayoutManager(new LinearLayoutManager(getActivity()));
-        binding.task.setAdapter(taskAdapter);
-
-        taskViewModel = new ViewModelProvider(this, vmFactory)
-                .get(TaskViewModel.class);
-
-        getLabel();
+        // Showing Task List
+        taskAdapter = TaskAdapter(requireActivity(), tasks, this, GeneralHelper.MODE_DAY)
+        binding.task.apply {
+            adapter = taskAdapter
+            layoutManager = LinearLayoutManager(activity)
+        }
 
         // Floating Action Button Add
-        binding.addTask.setOnClickListener(this);
-    }
+        binding.addTask.setOnClickListener(this)
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        getTaskWithLabel();
-        taskAdapter.notifyDataSetChanged();
-        String title;
-        switch (position){
-            case -1:
-                title = getString(R.string.title_yesterday);
-                break;
-            case 0:
-                title = getString(R.string.title_today);
-                break;
-            case 1:
-                title = getString(R.string.title_tomorrow);
-                break;
-            default:
-                title = GeneralHelper.dateFormatter().format(calendar.getTime());
-                break;
+        // Set task ViewModel
+        taskViewModel = ViewModelProvider(this, vmFactory!!).get(TaskViewModel::class.java)
+        taskViewModel.setFrom(from)
+        taskViewModel.setTo(to)
+        taskViewModel.apply {
+            tasksWithLabel.observe(viewLifecycleOwner) { handleListTask(it) }
+            label.observe(viewLifecycleOwner) { handleLabel(it) }
         }
-        ((MainActivity)requireParentFragment().requireActivity()).toolbar.setTitle(title);
 
     }
 
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.add_task) {
-            taskDialog(null);
+    override fun onResume() {
+        super.onResume()
+        taskAdapter!!.notifyDataSetChanged()
+        val title: String = when (position) {
+            -1 -> getString(R.string.title_yesterday)
+             0 -> getString(R.string.title_today)
+             1 -> getString(R.string.title_tomorrow)
+            else -> GeneralHelper.dateFormatter().format(calendar!!.time)
+        }
+        (requireParentFragment().requireActivity() as MainActivity).toolbar.title = title
+    }
+
+    override fun onClick(v: View) {
+        if (v.id == R.id.add_task) {
+            taskDialog(null)
         }
     }
 
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
+    override fun onLongClick(task: TaskWithLabel) {
+        taskDialog(task)
     }
 
-    @Override
-    public void onLongClick(TaskWithLabel task) {
-        taskDialog(task);
+    override fun onBoxChecked(task: TaskWithLabel) {
+        taskViewModel.update(task.task)
     }
 
-    @Override
-    public void onBoxChecked(TaskWithLabel task) { updateTask(task.getTask()); }
+    private fun handleLabel(labels: List<Label>?) {
+        this.labels.clear()
+        this.labels.addAll(labels ?: listOf())
+    }
 
-    private void taskDialog(final TaskWithLabel task){
-        final Dialog dialog = new Dialog(requireContext());
-        final DialogTaskBinding binding = DialogTaskBinding.inflate(getLayoutInflater());
-        dialog.setContentView(binding.getRoot());
+    private fun handleListTask(list: List<TaskWithLabel>?) {
+        tasks.clear()
+        tasks.addAll(list ?: listOf())
+        taskAdapter?.notifyDataSetChanged()
+        placeHolder()
+    }
+
+    private fun taskDialog(task: TaskWithLabel?) {
+        val dialog = Dialog(requireContext())
+        val binding = DialogTaskBinding.inflate(
+            layoutInflater
+        )
+        dialog.setContentView(binding.root)
 
         // Hide Keyboard
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Objects.requireNonNull(dialog.getWindow()).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+            Objects.requireNonNull(dialog.window)
+                ?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         }
 
         // Chip Adapter
-        ChipAdapter chipAdapter = new ChipAdapter(requireContext(), labels);
+        val chipAdapter = ChipAdapter(requireContext(), labels)
 
         // Match dialog window to screen width
-        Window window = dialog.getWindow();
-        assert window != null;
-        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.WRAP_CONTENT);
+        val window = dialog.window!!
+        window.setLayout(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
 
         // Views Setup
-        if(task != null){
-            chipAdapter.setSelectedLabels(task.getLabels());
-            binding.title.setText(task.getTask().getTitle());
-            binding.description.setText(task.getTask().getDescription());
-            binding.delete.setVisibility(View.VISIBLE);
+        if (task != null) {
+            chipAdapter.setSelectedLabels(task.labels)
+            binding.title.setText(task.task.title)
+            binding.description.setText(task.task.description)
+            binding.delete.visibility = View.VISIBLE
         }
-        binding.labels.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
-        binding.labels.setAdapter(chipAdapter);
+        binding.labels.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.labels.adapter = chipAdapter
 
 
         // Listeners
-        binding.save.setOnClickListener(v -> {
-            if(task == null) {
-                Task task1 = new Task(Objects.requireNonNull(binding.title.getText()).toString(),
-                        Objects.requireNonNull(binding.description.getText()).toString(),
-                        calendar.getTime());
-                task1.setLabels(chipAdapter.getSelectedLabels());
-                addTask(task1);
+        binding.save.setOnClickListener {
+            if (task == null) {
+                val task1 = Task(
+                    Objects.requireNonNull(binding.title.text).toString(),
+                    Objects.requireNonNull(binding.description.text).toString(),
+                    calendar!!.time
+                )
+                task1.labels = chipAdapter.getSelectedLabels()
+                taskViewModel.insert(task1)
             } else {
-                task.getTask().setTitle(Objects.requireNonNull(binding.title.getText()).toString());
-                task.getTask().setDescription(Objects.requireNonNull(binding.description.getText()).toString());
-                task.getTask().setLabels(chipAdapter.getSelectedLabels());
-                updateTask(task.getTask());
+                task.task.title = Objects.requireNonNull(binding.title.text).toString()
+                task.task.description = Objects.requireNonNull(binding.description.text).toString()
+                task.task.labels = chipAdapter.getSelectedLabels()
+                taskViewModel.update(task.task)
             }
-            dialog.dismiss();
-        });
-
-        binding.delete.setOnClickListener(v -> {
-            if(task != null) {
-                deleteTask(task.getTask());
+            dialog.dismiss()
+        }
+        binding.delete.setOnClickListener {
+            if (task != null) {
+                taskViewModel.delete(task.task)
             }
-            dialog.dismiss();
-        });
-
-        dialog.show();
+            dialog.dismiss()
+        }
+        dialog.show()
     }
 
-    private void getLabel(){
-        taskViewModel.getLabel().observe(getViewLifecycleOwner(), labels -> {
-            Log.d(TAG, "getLabel: Observer Label");
-            this.labels.clear();
-            this.labels.addAll(labels);
-        });
-    }
-
-    private void getTaskWithLabel(){
-        taskViewModel.getTaskWithLabel(from, to).observe(getViewLifecycleOwner(), tasksWithLabels -> {
-            Log.d(TAG, "getTaskWithLabel: Observer TaskWithLabel");
-            DayFragment.this.tasks.clear();
-            DayFragment.this.tasks.addAll(tasksWithLabels);
-            taskAdapter.notifyDataSetChanged();
-            placeHolder();
-        });
-    }
-
-    private void addTask(Task task) {
-        taskViewModel.insert(task);
-    }
-    
-    private void deleteTask(Task task) {
-        taskViewModel.delete(task);
-    }
-
-    private void updateTask(Task task){
-        taskViewModel.update(task);
-    }
-
-    private void placeHolder(){
-        if(tasks.isEmpty()){
-            binding.task.setVisibility(View.GONE);
-            binding.nodata.setVisibility(View.VISIBLE);
+    private fun placeHolder() {
+        if (tasks.isEmpty()) {
+            binding.task.visibility = View.GONE
+            binding.nodata.visibility = View.VISIBLE
         } else {
-            binding.task.setVisibility(View.VISIBLE);
-            binding.nodata.setVisibility(View.GONE);
+            binding.task.visibility = View.VISIBLE
+            binding.nodata.visibility = View.GONE
+        }
+    }
+
+    companion object {
+        const val DATE = "date"
+        const val POSITION = "position"
+
+        @JvmStatic
+        fun newInstance(calendar: Calendar, position: Int): DayFragment {
+            val fragment = DayFragment()
+            val args = Bundle()
+            args.putLong(DATE, calendar.timeInMillis)
+            args.putInt(POSITION, position)
+            fragment.arguments = args
+            return fragment
         }
     }
 }
