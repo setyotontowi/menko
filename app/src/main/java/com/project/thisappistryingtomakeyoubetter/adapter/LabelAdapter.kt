@@ -1,7 +1,9 @@
 package com.project.thisappistryingtomakeyoubetter.adapter
 
 import android.content.Context
-import android.util.Log
+import android.graphics.BlendMode
+import android.graphics.BlendModeColorFilter
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +11,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
@@ -18,7 +18,6 @@ import com.google.android.material.textfield.TextInputLayout
 import com.project.thisappistryingtomakeyoubetter.R
 import com.project.thisappistryingtomakeyoubetter.model.Label
 import com.project.thisappistryingtomakeyoubetter.model.LabelWithTask
-import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
 
 class LabelAdapter(
         private val context: Context,
@@ -59,7 +58,7 @@ class LabelAdapter(
 
         holder.textInputLayout.setStartIconOnClickListener {
             holder.colorView.visibility = View.VISIBLE
-            generateAdapter(holder.colorView)
+            generateAdapter(holder, label, editListener)
         }
     }
 
@@ -67,11 +66,24 @@ class LabelAdapter(
         return labels.size
     }
 
-    private fun generateAdapter(colorView: RecyclerView) {
+    private fun generateAdapter(
+        holder: LabelViewHolder,
+        label: Label,
+        editListener: ((label: Label) -> Unit)?
+    ) {
         val adapter = ColorAdapter(context, context.resources.getIntArray(R.array.color_array).toList())
-        colorView.layoutManager = LinearLayoutManager(context,
+        holder.colorView.layoutManager = LinearLayoutManager(context,
                 LinearLayoutManager.HORIZONTAL, false)
-        colorView.adapter = adapter
+        holder.colorView.adapter = adapter
+        adapter.listener = { color ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                holder.textInputLayout.startIconDrawable?.colorFilter = BlendModeColorFilter(color, BlendMode.SRC_IN)
+            } else {
+                holder.editLabel.setTextColor(color)
+            }
+            label.color = color
+            editListener?.invoke(label)
+        }
     }
 
     inner class LabelViewHolder(view: View) : RecyclerView.ViewHolder(view) {

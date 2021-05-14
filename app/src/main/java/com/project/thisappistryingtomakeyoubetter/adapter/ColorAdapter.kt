@@ -1,6 +1,7 @@
 package com.project.thisappistryingtomakeyoubetter.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +14,7 @@ class ColorAdapter(
         private val colors: List<Int>
 ): RecyclerView.Adapter<ColorAdapter.ColorViewHolder>() {
 
-    var listener: ((color:Int) -> Unit)?=null
+    lateinit var listener: ((color:Int) -> Unit)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ColorViewHolder {
         val v = LayoutInflater.from(context).inflate(R.layout.view_palette, parent, false)
@@ -25,7 +26,7 @@ class ColorAdapter(
         holder.colorView.setColorFilter(color)
 
         holder.colorView.setOnClickListener{
-            listener?.invoke(color)
+            listener.invoke(color)
         }
     }
 

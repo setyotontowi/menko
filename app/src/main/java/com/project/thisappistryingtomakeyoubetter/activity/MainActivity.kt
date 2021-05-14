@@ -10,6 +10,7 @@ import com.project.thisappistryingtomakeyoubetter.R
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
 import android.content.Intent
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
@@ -73,6 +74,8 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment?.navController
         Navigation.setViewNavController(binding!!.navView, navController)
 
+        openFragment(mainFragment)
+
         binding!!.navView.setOnNavigationItemSelectedListener { item: MenuItem ->
             if (item.itemId == R.id.action_main) {
                 openFragment(mainFragment)
@@ -93,6 +96,7 @@ class MainActivity : AppCompatActivity() {
     private fun openFragment(fragment: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.nav_host_fragment, fragment)
+        transaction.addToBackStack(null)
         transaction.commit()
     }
 
