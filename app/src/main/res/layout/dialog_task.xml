@@ -54,9 +54,9 @@
         <com.google.android.material.chip.ChipGroup
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:singleLine="true"
             app:chipSpacingHorizontal="5dp"
-            app:itemSpacing="5dp">
+            app:itemSpacing="5dp"
+            app:singleLine="true">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/labels"
@@ -81,14 +81,16 @@
             android:layout_gravity="start"
             android:layout_weight="1">
 
-            <Button
+            <ImageButton
                 android:id="@+id/delete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/alert"
+                android:backgroundTint="@android:color/transparent"
+                android:src="@drawable/ic_delete"
                 android:text="@string/add_task_delete_button"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
+                android:tint="@color/color_11"
                 android:visibility="gone"
                 tools:targetApi="lollipop" />
 
@@ -102,12 +104,14 @@
             android:gravity="end"
             android:orientation="horizontal">
 
-            <Button
+            <ImageButton
                 android:id="@+id/save"
                 style="@style/TextAppearance.AppCompat.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/success"
+                android:backgroundTint="@android:color/transparent"
+                android:src="@drawable/ic_check"
+                android:tint="@color/color_11"
                 android:text="@string/add_task_save_button"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
