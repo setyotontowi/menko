@@ -78,13 +78,19 @@ class MainActivity : AppCompatActivity() {
 
         binding!!.navView.setOnNavigationItemSelectedListener { item: MenuItem ->
             if (item.itemId == R.id.action_main) {
+                ADDITION++
+                if(ADDITION > 1){
+                    mainFragment.viewPager.currentItem = 1
+                }
                 openFragment(mainFragment)
                 return@setOnNavigationItemSelectedListener true
             } else if (item.itemId == R.id.action_history) {
+                ADDITION=0
                 toolbar.title = "History"
                 openFragment(historyFragment)
                 return@setOnNavigationItemSelectedListener true
             } else if (item.itemId == R.id.action_label) {
+                ADDITION=0
                 toolbar.title = "Label"
                 openFragment(labelFragment)
                 return@setOnNavigationItemSelectedListener true
@@ -112,5 +118,6 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val DAY_LIMIT = 5
         const val INCLUDE_YESTERDAY = true
+        var ADDITION = 0
     }
 }

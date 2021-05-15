@@ -4,16 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.viewpager2.widget.ViewPager2
 import com.project.thisappistryingtomakeyoubetter.App
-import com.project.thisappistryingtomakeyoubetter.R
 import com.project.thisappistryingtomakeyoubetter.activity.MainActivity
 import com.project.thisappistryingtomakeyoubetter.adapter.DayAdapter
 import com.project.thisappistryingtomakeyoubetter.databinding.FragmentMainBinding
 import com.project.thisappistryingtomakeyoubetter.util.DepthPageTransformer
-import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
 import java.util.*
 
 
@@ -22,11 +19,13 @@ class MainFragment : Fragment() {
     private var calendar: List<Calendar>? = null
     private var currentItem = if (MainActivity.INCLUDE_YESTERDAY) 1 else 0
     private lateinit var binding: FragmentMainBinding
-    private lateinit var dayAdapter: DayAdapter
+    lateinit var dayAdapter: DayAdapter
+    lateinit var viewPager: ViewPager2
 
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         // Inflate the layout for this fragment
         binding = FragmentMainBinding.inflate(layoutInflater)
         return binding.root
@@ -41,21 +40,24 @@ class MainFragment : Fragment() {
         calendar = generateCalendar(MainActivity.DAY_LIMIT, MainActivity.INCLUDE_YESTERDAY)
 
         // Create Fragment View Pager
-        dayAdapter = DayAdapter(childFragmentManager,
-                lifecycle,
-                calendar)
-        binding.frame.adapter = dayAdapter
-        binding.frame.setPageTransformer(DepthPageTransformer())
+        viewPager = binding.frame
+        dayAdapter = DayAdapter(
+            childFragmentManager,
+            lifecycle,
+            calendar
+        )
+        viewPager.adapter = dayAdapter
+        viewPager.setPageTransformer(DepthPageTransformer())
     }
 
     override fun onResume() {
         super.onResume()
-        binding.frame.currentItem = currentItem
+        viewPager.currentItem = currentItem
     }
 
     override fun onPause() {
         super.onPause()
-        currentItem = binding.frame.currentItem
+        currentItem = viewPager.currentItem
     }
 
     /**
