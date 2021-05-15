@@ -7,6 +7,9 @@ import com.project.thisappistryingtomakeyoubetter.model.Labeling
 @Dao
 interface LabelingDao {
 
+    @Query("SELECT * FROM Labeling")
+    fun getAllLabeling(): LiveData<List<Labeling>>
+
     @Query("SELECT * FROM Labeling WHERE taskId = :idTask")
     fun getEachLabelInTask(idTask: Int): LiveData<List<Labeling>>
 
@@ -14,13 +17,13 @@ interface LabelingDao {
     fun getEachTaskInLabel(idLabel: Int): LiveData<List<Labeling>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(labeling: Labeling)
+    fun insert(labeling: Labeling)
 
     @Delete
     suspend fun delete(labeling: Labeling)
 
     @Query("DELETE FROM Labeling WHERE taskId = :taskId")
-    suspend fun deleteLabelInTask(taskId: Int)
+    fun deleteLabelInTask(taskId: Int)
 
     @Query("DELETE FROM Labeling")
     suspend fun deleteAll()

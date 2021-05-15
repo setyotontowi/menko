@@ -3,12 +3,15 @@ package com.project.thisappistryingtomakeyoubetter.util
 import androidx.lifecycle.LiveData
 import com.project.thisappistryingtomakeyoubetter.model.Label
 import com.project.thisappistryingtomakeyoubetter.model.LabelWithTask
+import com.project.thisappistryingtomakeyoubetter.model.Labeling
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class LabelRepository @Inject constructor(private val labelDao: LabelDao) {
+class LabelRepository @Inject constructor(
+    private val labelDao: LabelDao,
+    private val labelingDao: LabelingDao) {
 
     suspend fun insert(label: Label?) {
         labelDao.insertAll(label)
@@ -23,4 +26,6 @@ class LabelRepository @Inject constructor(private val labelDao: LabelDao) {
     fun getAll(): LiveData<List<Label>?> { return labelDao.getAll }
 
     fun getLabelWithTasks(): LiveData<List<LabelWithTask>?> {return labelDao.getLabelWithTask()}
+
+    fun getAllLabeling(): LiveData<List<Labeling>> {return labelingDao.getAllLabeling()}
 }

@@ -15,7 +15,7 @@ class TaskRepository @Inject constructor(
         private val taskDao: TaskDao,
         private val labelingDao: LabelingDao
 ) {
-    suspend fun insert(task: Task){
+    fun insert(task: Task){
         val id = taskDao.insertAll(task)
         for (label in task.labels){
             val labeling = Labeling(id.toInt(), label.id)
@@ -23,7 +23,7 @@ class TaskRepository @Inject constructor(
         }
     }
 
-    suspend fun update(task: Task) {
+    fun update(task: Task) {
         taskDao.update(task)
         labelingDao.deleteLabelInTask(task.id)
         for(label in task.labels){

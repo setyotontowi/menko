@@ -1,7 +1,9 @@
 package com.project.thisappistryingtomakeyoubetter.util
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.project.thisappistryingtomakeyoubetter.model.Label
+import com.project.thisappistryingtomakeyoubetter.model.Labeling
 import com.project.thisappistryingtomakeyoubetter.model.Task
 import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
 import kotlinx.coroutines.Dispatchers.IO
@@ -27,11 +29,12 @@ class TaskViewModel @Inject constructor(
 
     val tasksWithLabel: LiveData<List<TaskWithLabel>?> = Transformations.switchMap(from) { from ->
         Transformations.switchMap(to) { to ->
-            taskRepository.getTaskWithLabel(from, to)
+                taskRepository.getTaskWithLabel(from, to)
         }
     }
 
     val label: LiveData<List<Label>?> = labelRepository.getAll()
+
 
     fun insert(task: Task) {
         viewModelScope.launch(IO) { taskRepository.insert(task) }

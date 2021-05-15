@@ -24,10 +24,10 @@ interface TaskDao {
     fun getAllTaskWithLabel():LiveData<List<TaskWithLabel>?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(task: Task): Long
+    fun insertAll(task: Task): Long
 
     @Update
-    suspend fun update(task: Task)
+    fun update(task: Task)
 
     @Delete
     suspend fun delete(task: Task)

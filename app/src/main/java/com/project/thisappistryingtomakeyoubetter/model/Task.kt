@@ -38,4 +38,9 @@ class Task {
         this.description = description
         this.date = date
     }
+
+    override fun toString(): String {
+        return "Task $title" +
+                " With label Label $labels}"
+    }
 }
