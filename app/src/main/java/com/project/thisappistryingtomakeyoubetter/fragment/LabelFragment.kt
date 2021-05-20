@@ -102,7 +102,7 @@ class LabelFragment : Fragment() {
 
         // Adapter OnLongClick Listener
         // TODO: 22/12/2020 give option to delete all task or only label (which means also labelling)
-        adapter.deleteListener = { /* deleteLabel(it) */ }
+        adapter.deleteListener = {  deleteLabel(it)  }
 
         adapter.editListener = { updateLabel(it) }
 

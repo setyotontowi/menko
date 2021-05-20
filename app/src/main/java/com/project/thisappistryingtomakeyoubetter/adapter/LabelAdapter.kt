@@ -4,10 +4,13 @@ import android.content.Context
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -44,7 +47,6 @@ class LabelAdapter(
             holder.textView.visibility = View.GONE
             holder.textEdit.visibility = View.VISIBLE
             holder.editLabel.setText(label.name)
-            deleteListener?.invoke(label)
             true
         }
 
@@ -59,6 +61,10 @@ class LabelAdapter(
         holder.textInputLayout.setStartIconOnClickListener {
             holder.colorView.visibility = View.VISIBLE
             generateAdapter(holder, label, editListener)
+        }
+
+        holder.delete.setOnClickListener {
+            popUpMenu(label, it)
         }
     }
 
@@ -86,6 +92,22 @@ class LabelAdapter(
         }
     }
 
+    private fun popUpMenu(label: Label, view: View) {
+        val popupMenu = PopupMenu(context, view)
+        popupMenu.apply {
+            inflate(R.menu.menu_label)
+
+            setOnMenuItemClickListener {
+                if(it.itemId == R.id.action_delete_all){
+                    deleteListener?.invoke(label)
+                }
+                true
+            }
+
+            show()
+        }
+    }
+
     inner class LabelViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val labelIcon: ImageView = view.findViewById(R.id.label_icon)
         val labelName: TextView = view.findViewById(R.id.label_name)
@@ -96,5 +118,6 @@ class LabelAdapter(
         val textInputLayout: TextInputLayout = view.findViewById(R.id.textlayout)
         val editLabel: TextInputEditText = view.findViewById(R.id.edit_label)
         val colorView: RecyclerView = view.findViewById(R.id.color_view)
+        val delete: ImageButton = view.findViewById(R.id.delete)
     }
 }
