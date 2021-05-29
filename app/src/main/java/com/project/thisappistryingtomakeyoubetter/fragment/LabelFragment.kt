@@ -1,5 +1,6 @@
 package com.project.thisappistryingtomakeyoubetter.fragment
 
+import android.app.Activity
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
 import android.os.Build
@@ -8,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -129,11 +131,16 @@ class LabelFragment : Fragment() {
         })
     }
 
-    private fun addLabel(label: Label){ labelViewModel.insert(label) }
+    private fun addLabel(label: Label){ labelViewModel.insert(label); hideKeyboard()}
 
-    private fun updateLabel(label: Label){ labelViewModel.update(label) }
+    private fun updateLabel(label: Label){ labelViewModel.update(label); hideKeyboard() }
 
     private fun deleteLabel(label: Label) {labelViewModel.delete(label)}
+
+    private fun hideKeyboard(){
+        val imm = requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(requireActivity().currentFocus?.windowToken, 0)
+    }
 
     companion object {
         /**
