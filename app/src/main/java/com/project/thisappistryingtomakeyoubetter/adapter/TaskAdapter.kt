@@ -2,58 +2,63 @@ package com.project.thisappistryingtomakeyoubetter.adapter
 
 import android.content.Context
 import android.util.Log
-import androidx.recyclerview.widget.RecyclerView
-import com.project.thisappistryingtomakeyoubetter.adapter.TaskAdapter.TaskViewHolder
-import android.view.ViewGroup
 import android.view.LayoutInflater
 import android.view.View
-import com.project.thisappistryingtomakeyoubetter.R
+import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.project.thisappistryingtomakeyoubetter.R
 import com.project.thisappistryingtomakeyoubetter.model.Task
 import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
 import java.util.*
+import kotlin.collections.HashMap
+import kotlin.collections.HashSet
 
 class TaskAdapter(
-        private val context: Context,
-        private val tasks: List<TaskWithLabel>,
-        private val listener: TaskCallback,
-        private val mode: Int
-) : RecyclerView.Adapter<TaskViewHolder>() {
+    private val context: Context,
+    private val tasks: List<TaskWithLabel>,
+    private val listener: TaskCallback
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var date = 0
     private val TAG = "TaskAdapter"
 
-    fun resetDate() {this.date = 0}
+    fun resetDate() {
+        this.date = 0
+    }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val v = LayoutInflater.from(context).inflate(R.layout.view_task, parent, false)
         return TaskViewHolder(v)
     }
 
-    override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
+    override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
         val task = tasks[position].task
         val labels = tasks[position].labels
         val adapter = LabelTaskAdapter(context, labels)
+
+        val holder = viewHolder as TaskViewHolder
 
         // Setter
         holder.title.text = task.title
         holder.title.isChecked = task.isFinish
         holder.label.adapter = adapter
-        holder.label.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, true)
+        holder.label.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, true)
 
         // Check Description
         checkDescription(task, holder)
 
-        // Check Date
-        if(!checkDate(task) && mode == GeneralHelper.MODE_HISTORY){
+        // Check Date (Also Change this, because it different holder)
+        /*if (!checkDate(task) && mode == GeneralHelper.MODE_HISTORY) {
             holder.date.visibility = View.VISIBLE
-            holder.date.text = GeneralHelper.dateFormatter().format(task.date?:Date())
+            holder.date.text = GeneralHelper.dateFormatter().format(task.date ?: Date())
         } else {
             holder.date.visibility = View.GONE
-        }
+        }*/
 
         // This, on multiple item
         holder.title.setOnClickListener {
@@ -84,11 +89,11 @@ class TaskAdapter(
         }
     }
 
-    private fun checkDate(task: Task): Boolean{
-        val calendar:Calendar = Calendar.getInstance()
+    private fun checkDate(task: Task): Boolean {
+        val calendar: Calendar = Calendar.getInstance()
         calendar.timeInMillis = task.date!!.time
         val mDate = calendar.get(Calendar.DAY_OF_MONTH)
-        if(mDate != this.date){
+        if (mDate != this.date) {
             this.date = mDate
             return false
         }

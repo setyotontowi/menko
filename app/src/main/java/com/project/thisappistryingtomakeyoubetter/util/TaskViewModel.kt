@@ -2,10 +2,7 @@ package com.project.thisappistryingtomakeyoubetter.util
 
 import android.util.Log
 import androidx.lifecycle.*
-import com.project.thisappistryingtomakeyoubetter.model.Label
-import com.project.thisappistryingtomakeyoubetter.model.Labeling
-import com.project.thisappistryingtomakeyoubetter.model.Task
-import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
+import com.project.thisappistryingtomakeyoubetter.model.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import java.util.*
@@ -31,6 +28,31 @@ class TaskViewModel @Inject constructor(
         Transformations.switchMap(to) { to ->
                 taskRepository.getTaskWithLabel(from, to)
         }
+    }
+
+    val taskGroup: LiveData<List<TaskGroup>> = Transformations.switchMap(tasksWithLabel){ list ->
+        val result = MutableLiveData<List<TaskGroup>>()
+        val taskGroup = mutableListOf<TaskGroup>()
+        val map = mutableMapOf<Date, List<TaskWithLabel>>()
+
+        list?.forEach {
+            // using map, find the associate date then assign value with list
+            val date = it.task.date?:Date()
+            val a = map.get(date)
+            if(a == null) {
+                map[date] = listOf(it)
+            } else {
+                val b = a.toMutableList()
+                b.add(it)
+                map[date] = b
+            }
+        }
+
+        map.forEach {
+            taskGroup.add(TaskGroup(it.key, it.value))
+        }
+        result.value = taskGroup
+        result
     }
 
     val label: LiveData<List<Label>?> = labelRepository.getAll()

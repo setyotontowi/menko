@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -18,6 +19,7 @@ import com.project.thisappistryingtomakeyoubetter.databinding.DialogTaskBinding
 import com.project.thisappistryingtomakeyoubetter.databinding.FragmentHistoryBinding
 import com.project.thisappistryingtomakeyoubetter.model.Label
 import com.project.thisappistryingtomakeyoubetter.model.Task
+import com.project.thisappistryingtomakeyoubetter.model.TaskGroup
 import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
 import com.project.thisappistryingtomakeyoubetter.util.TaskViewModel
@@ -33,12 +35,15 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
     private lateinit var taskAdapter: TaskAdapter
     private var tasks: MutableList<TaskWithLabel> = ArrayList()
     private val labels: MutableList<Label> = ArrayList()
+
     @Inject
     lateinit var vmFactory: ViewModelProvider.Factory
-    private val taskViewModel: TaskViewModel by viewModels { vmFactory}
+    private val taskViewModel: TaskViewModel by viewModels { vmFactory }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         // Inflate the layout for this fragment
         binding = FragmentHistoryBinding.inflate(layoutInflater, container, false)
         return binding.root
@@ -49,7 +54,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         (activity?.application as App).appComponent.inject(this)
         setHasOptionsMenu(true)
 
-        taskAdapter = TaskAdapter(requireActivity(), tasks, this, GeneralHelper.MODE_HISTORY)
+        taskAdapter = TaskAdapter(requireActivity(), tasks, this)
         binding.listTask.apply {
             adapter = taskAdapter
             layoutManager = LinearLayoutManager(activity)
@@ -58,8 +63,9 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         taskViewModel.setFrom(null)
         taskViewModel.setTo(null)
         taskViewModel.apply {
-            tasksWithLabel.observe(viewLifecycleOwner){handleListTask(it)}
-            label.observe(viewLifecycleOwner){handleLabel(it)}
+            tasksWithLabel.observe(viewLifecycleOwner) { handleListTask(it) }
+            label.observe(viewLifecycleOwner) { handleLabel(it) }
+            taskGroup.observe(viewLifecycleOwner) { }
         }
     }
 
@@ -69,7 +75,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        when (item.itemId) {
             R.id.action_delete_all -> {
                 deleteAll()
                 return true
@@ -101,10 +107,12 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         this.labels.addAll(labels ?: listOf())
     }
 
-    private fun deleteAll(){
-        GeneralHelper.confirmationDialog(context,
-                getString(R.string.history_delete_all_confirm),
-                this)
+    private fun deleteAll() {
+        GeneralHelper.confirmationDialog(
+            context,
+            getString(R.string.history_delete_all_confirm),
+            this
+        )
     }
 
     /** Confirmation Dialog implementation */
@@ -164,7 +172,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
 
         // Listeners
         binding.save.setOnClickListener {
-            task?.let{ task ->
+            task?.let { task ->
                 task.task.title = Objects.requireNonNull(binding.title.text).toString()
                 task.task.description = Objects.requireNonNull(binding.description.text).toString()
                 task.task.labels = chipAdapter.getSelectedLabels()

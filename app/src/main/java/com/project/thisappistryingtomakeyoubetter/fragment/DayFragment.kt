@@ -65,7 +65,7 @@ class DayFragment : Fragment(), View.OnClickListener, TaskCallback {
         to = GeneralHelper.toDate(calendar)
 
         // Showing Task List
-        taskAdapter = TaskAdapter(requireActivity(), tasks, this, GeneralHelper.MODE_DAY)
+        taskAdapter = TaskAdapter(requireActivity(), tasks, this)
         binding.task.apply {
             adapter = taskAdapter
             layoutManager = LinearLayoutManager(activity)
