@@ -52,14 +52,6 @@ class TaskAdapter(
         // Check Description
         checkDescription(task, holder)
 
-        // Check Date (Also Change this, because it different holder)
-        /*if (!checkDate(task) && mode == GeneralHelper.MODE_HISTORY) {
-            holder.date.visibility = View.VISIBLE
-            holder.date.text = GeneralHelper.dateFormatter().format(task.date ?: Date())
-        } else {
-            holder.date.visibility = View.GONE
-        }*/
-
         // This, on multiple item
         holder.title.setOnClickListener {
             task.isFinish = holder.title.isChecked

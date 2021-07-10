@@ -5,12 +5,13 @@ import androidx.lifecycle.*
 import com.project.thisappistryingtomakeyoubetter.model.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
 class TaskViewModel @Inject constructor(
     private val taskRepository: TaskRepository,
-    private val labelRepository: LabelRepository
+    labelRepository: LabelRepository
 ) : ViewModel() {
 
     private val from = MutableLiveData<Date?>()
@@ -37,8 +38,9 @@ class TaskViewModel @Inject constructor(
 
         list?.forEach {
             // using map, find the associate date then assign value with list
-            val date = it.task.date?:Date()
-            val a = map.get(date)
+            val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val date = formatter.parse(formatter.format(it.task.date?:Date())) ?: Date()
+            val a = map[date]
             if(a == null) {
                 map[date] = listOf(it)
             } else {

@@ -15,6 +15,7 @@ import com.project.thisappistryingtomakeyoubetter.App
 import com.project.thisappistryingtomakeyoubetter.R
 import com.project.thisappistryingtomakeyoubetter.adapter.ChipAdapter
 import com.project.thisappistryingtomakeyoubetter.adapter.TaskAdapter
+import com.project.thisappistryingtomakeyoubetter.adapter.TaskGroupAdapter
 import com.project.thisappistryingtomakeyoubetter.databinding.DialogTaskBinding
 import com.project.thisappistryingtomakeyoubetter.databinding.FragmentHistoryBinding
 import com.project.thisappistryingtomakeyoubetter.model.Label
@@ -32,8 +33,6 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
 
     private lateinit var binding: FragmentHistoryBinding
     private lateinit var toolbar: Toolbar
-    private lateinit var taskAdapter: TaskAdapter
-    private var tasks: MutableList<TaskWithLabel> = ArrayList()
     private val labels: MutableList<Label> = ArrayList()
 
     @Inject
@@ -54,18 +53,12 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         (activity?.application as App).appComponent.inject(this)
         setHasOptionsMenu(true)
 
-        taskAdapter = TaskAdapter(requireActivity(), tasks, this)
-        binding.listTask.apply {
-            adapter = taskAdapter
-            layoutManager = LinearLayoutManager(activity)
-        }
 
         taskViewModel.setFrom(null)
         taskViewModel.setTo(null)
         taskViewModel.apply {
-            tasksWithLabel.observe(viewLifecycleOwner) { handleListTask(it) }
             label.observe(viewLifecycleOwner) { handleLabel(it) }
-            taskGroup.observe(viewLifecycleOwner) { }
+            taskGroup.observe(viewLifecycleOwner) { handleTaskGroup(it) }
         }
     }
 
@@ -92,14 +85,16 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         taskViewModel.update(task.task)
     }
 
-    private fun handleListTask(tasks: List<TaskWithLabel>?) {
-        this.tasks.clear()
-        if (tasks != null) {
-            this.tasks.addAll(tasks)
+    private fun handleTaskGroup(it: List<TaskGroup>?) {
+        it?.let {
+            placeHolder(true)
+            binding.listTask.apply {
+                adapter = TaskGroupAdapter(it, this@HistoryFragment)
+                layoutManager = LinearLayoutManager(activity)
+            }
+        }?: run {
+            placeHolder(false)
         }
-        taskAdapter.resetDate()
-        taskAdapter.notifyDataSetChanged()
-        placeHolder()
     }
 
     private fun handleLabel(labels: List<Label>?) {
@@ -125,8 +120,8 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         dialogInterface.dismiss()
     }
 
-    private fun placeHolder() {
-        if (tasks.isEmpty()) {
+    private fun placeHolder(isExist: Boolean) {
+        if (!isExist) {
             binding.listTask.visibility = View.GONE
             binding.nodata.visibility = View.VISIBLE
         } else {
