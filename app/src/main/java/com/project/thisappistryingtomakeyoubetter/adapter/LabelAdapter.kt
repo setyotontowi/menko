@@ -39,6 +39,9 @@ class LabelAdapter(
     override fun onBindViewHolder(holder: LabelViewHolder, position: Int) {
         val label = labels[position].label
 
+        holder.textView.visibility = View.VISIBLE
+        holder.textEdit.visibility = View.GONE
+
         holder.labelName.text = label.name
         label.color?.let { holder.labelIcon.setColorFilter(it) }
         holder.labelCount.text = labels[position].tasks.size.toString()
