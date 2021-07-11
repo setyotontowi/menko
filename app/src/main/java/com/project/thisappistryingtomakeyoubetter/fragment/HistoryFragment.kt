@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -19,11 +18,10 @@ import com.project.thisappistryingtomakeyoubetter.adapter.TaskGroupAdapter
 import com.project.thisappistryingtomakeyoubetter.databinding.DialogTaskBinding
 import com.project.thisappistryingtomakeyoubetter.databinding.FragmentHistoryBinding
 import com.project.thisappistryingtomakeyoubetter.model.Label
-import com.project.thisappistryingtomakeyoubetter.model.Task
 import com.project.thisappistryingtomakeyoubetter.model.TaskGroup
 import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
-import com.project.thisappistryingtomakeyoubetter.util.TaskViewModel
+import com.project.thisappistryingtomakeyoubetter.viewmodel.TaskViewModel
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList

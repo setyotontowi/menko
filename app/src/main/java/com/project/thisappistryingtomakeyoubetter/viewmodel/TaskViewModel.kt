@@ -1,8 +1,9 @@
-package com.project.thisappistryingtomakeyoubetter.util
+package com.project.thisappistryingtomakeyoubetter.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.*
 import com.project.thisappistryingtomakeyoubetter.model.*
+import com.project.thisappistryingtomakeyoubetter.util.LabelRepository
+import com.project.thisappistryingtomakeyoubetter.util.TaskRepository
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -10,8 +11,8 @@ import java.util.*
 import javax.inject.Inject
 
 class TaskViewModel @Inject constructor(
-    private val taskRepository: TaskRepository,
-    labelRepository: LabelRepository
+        private val taskRepository: TaskRepository,
+        labelRepository: LabelRepository
 ) : ViewModel() {
 
     private val from = MutableLiveData<Date?>()

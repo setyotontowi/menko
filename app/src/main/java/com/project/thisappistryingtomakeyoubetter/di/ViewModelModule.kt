@@ -2,14 +2,14 @@ package com.project.thisappistryingtomakeyoubetter.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.project.thisappistryingtomakeyoubetter.util.LabelViewModel
-import com.project.thisappistryingtomakeyoubetter.util.TaskViewModel
-import com.project.thisappistryingtomakeyoubetter.util.ViewModelFactory
+import com.project.thisappistryingtomakeyoubetter.viewmodel.LabelViewModel
+import com.project.thisappistryingtomakeyoubetter.viewmodel.MainViewModel
+import com.project.thisappistryingtomakeyoubetter.viewmodel.TaskViewModel
+import com.project.thisappistryingtomakeyoubetter.viewmodel.ViewModelFactory
 import dagger.Binds
 import dagger.MapKey
 import dagger.Module
 import dagger.multibindings.IntoMap
-import javax.inject.Singleton
 import kotlin.reflect.KClass
 
 @Target(
@@ -36,4 +36,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(LabelViewModel::class)
     internal abstract fun labelViewModel(viewModel: LabelViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MainViewModel::class)
+    internal abstract fun mainViewModel(viewModel: MainViewModel): ViewModel
 }

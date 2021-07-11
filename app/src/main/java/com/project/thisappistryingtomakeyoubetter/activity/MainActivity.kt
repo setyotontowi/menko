@@ -15,6 +15,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.project.thisappistryingtomakeyoubetter.activity.IntroActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.NavController
@@ -24,6 +25,7 @@ import com.project.thisappistryingtomakeyoubetter.fragment.HistoryFragment
 import com.project.thisappistryingtomakeyoubetter.fragment.LabelFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.project.thisappistryingtomakeyoubetter.databinding.ActivityMainBinding
+import com.project.thisappistryingtomakeyoubetter.viewmodel.MainViewModel
 import java.util.*
 import javax.inject.Inject
 
@@ -31,6 +33,7 @@ class MainActivity : AppCompatActivity() {
     private val calendar: List<Calendar>? = null
     private var binding: ActivityMainBinding? = null
     lateinit var toolbar: Toolbar
+    lateinit var viewModel: MainViewModel
 
     @Inject
     lateinit var mainFragment: MainFragment
@@ -39,6 +42,9 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var labelFragment: LabelFragment
 
+    @JvmField
+    @Inject
+    var vmFactory: ViewModelProvider.Factory? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +54,10 @@ class MainActivity : AppCompatActivity() {
 
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+
+        // ViewModel
+        viewModel = ViewModelProvider(this, vmFactory!!).get(MainViewModel::class.java)
+        viewModel.currentPosition.observe(this, { })
 
         // App Intro Initiation
         val t = Thread {

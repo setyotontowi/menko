@@ -1,16 +1,12 @@
 package com.project.thisappistryingtomakeyoubetter.util
 
-import android.util.Log
 import com.project.thisappistryingtomakeyoubetter.model.Task
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.project.thisappistryingtomakeyoubetter.viewmodel.TaskViewModel
 import org.junit.Test
 
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)

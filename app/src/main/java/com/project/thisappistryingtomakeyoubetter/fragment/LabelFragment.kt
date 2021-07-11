@@ -5,7 +5,6 @@ import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +21,7 @@ import com.project.thisappistryingtomakeyoubetter.adapter.LabelAdapter
 import com.project.thisappistryingtomakeyoubetter.databinding.FragmentLabelBinding
 import com.project.thisappistryingtomakeyoubetter.model.Label
 import com.project.thisappistryingtomakeyoubetter.model.LabelWithTask
-import com.project.thisappistryingtomakeyoubetter.util.LabelViewModel
+import com.project.thisappistryingtomakeyoubetter.viewmodel.LabelViewModel
 import javax.inject.Inject
 
 /**

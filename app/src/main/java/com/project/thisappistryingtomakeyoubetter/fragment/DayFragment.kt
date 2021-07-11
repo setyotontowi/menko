@@ -3,7 +3,6 @@ package com.project.thisappistryingtomakeyoubetter.fragment
 import android.app.Dialog
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -20,7 +19,7 @@ import com.project.thisappistryingtomakeyoubetter.model.Label
 import com.project.thisappistryingtomakeyoubetter.model.Task
 import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
-import com.project.thisappistryingtomakeyoubetter.util.TaskViewModel
+import com.project.thisappistryingtomakeyoubetter.viewmodel.TaskViewModel
 import java.util.*
 import javax.inject.Inject
 

@@ -1,4 +1,4 @@
-package com.project.thisappistryingtomakeyoubetter.util
+package com.project.thisappistryingtomakeyoubetter.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.project.thisappistryingtomakeyoubetter.model.Label
 import com.project.thisappistryingtomakeyoubetter.model.LabelWithTask
+import com.project.thisappistryingtomakeyoubetter.util.LabelRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject

@@ -1,17 +1,21 @@
 package com.project.thisappistryingtomakeyoubetter.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.project.thisappistryingtomakeyoubetter.App
 import com.project.thisappistryingtomakeyoubetter.activity.MainActivity
 import com.project.thisappistryingtomakeyoubetter.adapter.DayAdapter
 import com.project.thisappistryingtomakeyoubetter.databinding.FragmentMainBinding
 import com.project.thisappistryingtomakeyoubetter.util.DepthPageTransformer
+import com.project.thisappistryingtomakeyoubetter.viewmodel.MainViewModel
 import java.util.*
+import javax.inject.Inject
 
 
 class MainFragment : Fragment() {
@@ -21,6 +25,11 @@ class MainFragment : Fragment() {
     private lateinit var binding: FragmentMainBinding
     lateinit var dayAdapter: DayAdapter
     lateinit var viewPager: ViewPager2
+    lateinit var viewModel: MainViewModel
+
+    @JvmField
+    @Inject
+    var vmFactory: ViewModelProvider.Factory? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,6 +44,9 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         (activity?.application as App).appComponent.inject(this)
+
+        // Set ViewModel
+        viewModel = ViewModelProvider(requireActivity(), vmFactory!!).get(MainViewModel::class.java)
 
         // Generate Calendar List
         calendar = generateCalendar(MainActivity.DAY_LIMIT, MainActivity.INCLUDE_YESTERDAY)
@@ -52,12 +64,13 @@ class MainFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewPager.currentItem = currentItem
+        viewPager.currentItem = viewModel.currentPosition.value?:(if (MainActivity.INCLUDE_YESTERDAY) 1 else 0)
     }
 
     override fun onPause() {
         super.onPause()
         currentItem = viewPager.currentItem
+        viewModel.currentPosition.value = viewPager.currentItem
     }
 
     /**
