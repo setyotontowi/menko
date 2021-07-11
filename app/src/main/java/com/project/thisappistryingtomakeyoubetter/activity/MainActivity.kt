@@ -84,7 +84,12 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment?.navController
         Navigation.setViewNavController(binding!!.navView, navController)
 
-        openFragment(mainFragment)
+        viewModel.currentFragment.value?.let {
+            openFragment(it)
+        }?: run {
+            openFragment(mainFragment)
+        }
+
 
         binding!!.navView.setOnNavigationItemSelectedListener { item: MenuItem ->
             if (item.itemId == R.id.action_main) {
@@ -93,16 +98,17 @@ class MainActivity : AppCompatActivity() {
                     mainFragment.viewPager.currentItem = 1
                 }
                 openFragment(mainFragment)
+                viewModel.currentFragment.value = mainFragment
                 return@setOnNavigationItemSelectedListener true
             } else if (item.itemId == R.id.action_history) {
                 ADDITION=0
-                toolbar.title = "History"
                 openFragment(historyFragment)
+                viewModel.currentFragment.value = historyFragment
                 return@setOnNavigationItemSelectedListener true
             } else if (item.itemId == R.id.action_label) {
                 ADDITION=0
-                toolbar.title = "Label"
                 openFragment(labelFragment)
+                viewModel.currentFragment.value = labelFragment
                 return@setOnNavigationItemSelectedListener true
             }
             false
@@ -128,6 +134,6 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val DAY_LIMIT = 5
         const val INCLUDE_YESTERDAY = true
-        var ADDITION = 0
+        var ADDITION = 0 // for jump to today
     }
 }

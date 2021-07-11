@@ -60,6 +60,7 @@ class LabelFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         (activity?.application as App).appComponent.inject(this)
+        requireActivity().title = "Label"
 
         // Color Adapter
         val colorAdapter = ColorAdapter(requireContext(), resources.getIntArray(R.array.color_array).toList())

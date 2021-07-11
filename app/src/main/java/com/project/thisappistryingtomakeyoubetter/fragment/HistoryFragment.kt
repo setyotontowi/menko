@@ -30,7 +30,6 @@ import kotlin.collections.ArrayList
 class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.ConfirmDialog {
 
     private lateinit var binding: FragmentHistoryBinding
-    private lateinit var toolbar: Toolbar
     private val labels: MutableList<Label> = ArrayList()
 
     @Inject
@@ -51,6 +50,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         (activity?.application as App).appComponent.inject(this)
         setHasOptionsMenu(true)
 
+        requireActivity().title = "History"
 
         taskViewModel.setFrom(null)
         taskViewModel.setTo(null)
