@@ -6,6 +6,8 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowActivityTransitions" tools:targetApi="lollipop">true</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="android:statusBarColor" tools:targetApi="m">@color/colorToolbar</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -36,6 +38,11 @@
         <item name="boxStrokeColor">@android:color/white</item>
         <item name="boxStrokeWidthFocused">1dp</item>
         <item name="boxStrokeWidth">0dp</item>
+    </style>
+
+    <style name="FAB" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="cornerSize">30%</item>
+        <item name="color">@color/alert</item>
     </style>
 
 </resources>
