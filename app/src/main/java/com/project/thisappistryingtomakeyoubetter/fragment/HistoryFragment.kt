@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,6 +22,7 @@ import com.project.thisappistryingtomakeyoubetter.model.Label
 import com.project.thisappistryingtomakeyoubetter.model.TaskGroup
 import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
+import com.project.thisappistryingtomakeyoubetter.viewmodel.MainViewModel
 import com.project.thisappistryingtomakeyoubetter.viewmodel.TaskViewModel
 import java.util.*
 import javax.inject.Inject
@@ -35,6 +37,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
     @Inject
     lateinit var vmFactory: ViewModelProvider.Factory
     private val taskViewModel: TaskViewModel by viewModels { vmFactory }
+    private val mainViewModel: MainViewModel by activityViewModels {vmFactory}
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,6 +52,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         super.onViewCreated(view, savedInstanceState)
         (activity?.application as App).appComponent.inject(this)
         setHasOptionsMenu(true)
+        mainViewModel.stateFromOutsideMainFragment.value = true
 
         requireActivity().title = "History"
 

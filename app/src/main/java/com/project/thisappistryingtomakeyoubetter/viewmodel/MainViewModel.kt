@@ -19,4 +19,6 @@ class MainViewModel @Inject constructor() : ViewModel() {
 
     val currentFragment = MutableLiveData<Fragment>()
 
+    val stateFromOutsideMainFragment = MutableLiveData<Boolean>()
+
 }

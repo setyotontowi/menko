@@ -50,29 +50,40 @@ class MainFragment : Fragment() {
         // Set ViewModel
         viewModel = ViewModelProvider(requireActivity(), vmFactory!!).get(MainViewModel::class.java)
 
+        createDay()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(viewModel.stateFromOutsideMainFragment.value == true){
+            createDay()
+        } else {
+            viewPager.currentItem = viewModel.currentPosition.value?:(if (MainActivity.INCLUDE_YESTERDAY) 1 else 0)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("DEBUGGING", "onPause: ")
+        currentItem = viewPager.currentItem
+        viewModel.currentPosition.value = viewPager.currentItem
+        viewModel.stateFromOutsideMainFragment.value = false
+    }
+
+    fun createDay() {
         // Generate Calendar List
         calendar = generateCalendar(MainActivity.DAY_LIMIT, MainActivity.INCLUDE_YESTERDAY)
 
         // Create Fragment View Pager
         viewPager = binding.frame
+
         dayAdapter = DayAdapter(
-            childFragmentManager,
-            lifecycle,
-            calendar
+                childFragmentManager,
+                lifecycle,
+                calendar
         )
         viewPager.adapter = dayAdapter
         viewPager.setPageTransformer(DepthPageTransformer())
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewPager.currentItem = viewModel.currentPosition.value?:(if (MainActivity.INCLUDE_YESTERDAY) 1 else 0)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        currentItem = viewPager.currentItem
-        viewModel.currentPosition.value = viewPager.currentItem
     }
 
     /**
