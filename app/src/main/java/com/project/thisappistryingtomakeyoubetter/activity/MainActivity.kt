@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity() {
                     mainFragment.viewPager.currentItem = 1
                 }
                 openFragment(mainFragment)
-                viewModel.currentFragment.value = mainFragment
+                viewModel.currentFragment.value = null
                 return@setOnNavigationItemSelectedListener true
             } else if (item.itemId == R.id.action_history) {
                 ADDITION=0

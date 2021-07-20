@@ -9,10 +9,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.project.thisappistryingtomakeyoubetter.App
+import com.project.thisappistryingtomakeyoubetter.R
 import com.project.thisappistryingtomakeyoubetter.activity.MainActivity
 import com.project.thisappistryingtomakeyoubetter.adapter.DayAdapter
 import com.project.thisappistryingtomakeyoubetter.databinding.FragmentMainBinding
 import com.project.thisappistryingtomakeyoubetter.util.DepthPageTransformer
+import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
 import com.project.thisappistryingtomakeyoubetter.viewmodel.MainViewModel
 import java.util.*
 import javax.inject.Inject
