@@ -8,6 +8,7 @@
         <item name="android:windowActivityTransitions" tools:targetApi="lollipop">true</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <item name="android:statusBarColor" tools:targetApi="m">@color/colorToolbar</item>
+        <item name="actionMenuTextColor">@color/textPrimaryDark</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -15,14 +16,21 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" >
-        <item name="popupMenuBackground">@color/textPrimary</item>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.ActionBar" >
+        <item name="popupMenuBackground">@color/colorToolbar</item>
     </style>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light">
+        <item name="android:iconTint" tools:targetApi="o">@color/textPrimary</item>
+        <item name="actionMenuTextColor">@color/textPrimary</item>
+    </style>
 
     <style name="FullscreenTheme" parent="AppTheme.NoActionBar"> 
         <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <style name="Menu" parent="TextAppearance.AppCompat.Widget.ActionBar.Menu">
+        <item name="actionMenuTextColor">@color/textPrimary</item>
     </style>
 
     <style name="FullscreenActionBarStyle" parent="Widget.MaterialComponents.ActionBar.Primary">
