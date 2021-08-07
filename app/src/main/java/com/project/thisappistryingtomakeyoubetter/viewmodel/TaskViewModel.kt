@@ -1,5 +1,6 @@
 package com.project.thisappistryingtomakeyoubetter.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.project.thisappistryingtomakeyoubetter.model.*
 import com.project.thisappistryingtomakeyoubetter.util.LabelRepository
@@ -25,10 +26,18 @@ class TaskViewModel @Inject constructor(
         this.to.value = to
     }
 
+    val page = MutableLiveData<Int>()
+    fun setPage(i: Int){
+        Log.d("DEBUGGING", "setPage: $i")
+        this.page.value = i
+    }
+
 
     val tasksWithLabel: LiveData<List<TaskWithLabel>?> = Transformations.switchMap(from) { from ->
         Transformations.switchMap(to) { to ->
-                taskRepository.getTaskWithLabel(from, to)
+            Transformations.switchMap(page) { page ->
+                taskRepository.getTaskWithLabel(from, to, page)
+            }
         }
     }
 

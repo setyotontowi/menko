@@ -12,9 +12,10 @@ import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
 
 class TaskGroupAdapter(
-    val list: List<TaskGroup>,
     val callback: TaskAdapter.TaskCallback
 ): RecyclerView.Adapter<TaskGroupAdapter.ViewHolder>() {
+
+    var list = mutableListOf<TaskGroup>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.view_task_group, parent, false)
@@ -31,6 +32,11 @@ class TaskGroupAdapter(
     }
 
     override fun getItemCount(): Int = list.size
+
+    fun addList(list: List<TaskGroup>){
+        this.list.addAll(list)
+        notifyDataSetChanged()
+    }
 
     inner class ViewHolder(view: View): RecyclerView.ViewHolder(view){
         val date: TextView = view.findViewById(R.id.date)

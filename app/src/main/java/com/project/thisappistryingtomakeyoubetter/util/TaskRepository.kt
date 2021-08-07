@@ -15,6 +15,11 @@ class TaskRepository @Inject constructor(
         private val taskDao: TaskDao,
         private val labelingDao: LabelingDao
 ) {
+
+    companion object {
+        private val LIMIT = 10
+    }
+
     fun insert(task: Task){
         val id = taskDao.insertAll(task)
         for (label in task.labels){
@@ -47,11 +52,13 @@ class TaskRepository @Inject constructor(
         }
     }
 
-    fun getTaskWithLabel(from: Date?, to: Date?): LiveData<List<TaskWithLabel>?>{
-        return if (from == null && to == null) {
+    fun getTaskWithLabel(from: Date?, to: Date?, page: Int): LiveData<List<TaskWithLabel>?>{
+        return if (from == null && to == null && page == -1) {
             taskDao.getAllTaskWithLabel()
-        } else {
+        } else if (page == -1){
             taskDao.getTasksWithLabel(from, to)
+        } else {
+            taskDao.getTaskWithLabelLimited(LIMIT, LIMIT*page)
         }
     }
 
