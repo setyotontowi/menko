@@ -46,7 +46,8 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }} 
       - name: Upload APK
-        uses: actions/upload-artifact@v1
+        id: upload_release_asset
+        uses: actions/upload-release-asset@v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -58,6 +59,6 @@ jobs:
           name: apk
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: apk/app-debug.apk
-          asset_name: MensaApp.apk
+          asset_name: MenkoApp.apk
           asset_content_type: application/zip
 
