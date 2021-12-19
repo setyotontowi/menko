@@ -37,15 +37,27 @@ jobs:
           java-version: 1.8
       - name: Build APK
         run: bash ./gradlew assembleDebug --stacktrace
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }} 
       - name: Upload APK
         uses: actions/upload-artifact@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           name: apk
           path: app/build/outputs/apk/debug/app-debug.apk 
-      - name: Build Android release APK when create new tag
-        uses: kyze8439690/action-release-releaseapk@1.0.0
       - name: Download a Build Artifact
         uses: actions/download-artifact@v2.1.0
         with: 
           name: apk
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: apk/app-debug.apk
+          asset_name: MensaApp.apk
+          asset_content_type: application/zip
 
