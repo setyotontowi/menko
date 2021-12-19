@@ -42,3 +42,10 @@ jobs:
         with:
           name: apk
           path: app/build/outputs/apk/debug/app-debug.apk 
+      - name: Build Android release APK when create new tag
+        uses: kyze8439690/action-release-releaseapk@1.0.0
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@v2.1.0
+        with: 
+          name: apk
+
