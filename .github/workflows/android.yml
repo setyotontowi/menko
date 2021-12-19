@@ -50,11 +50,6 @@ jobs:
         uses: actions/upload-release-asset@v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          name: apk
-          path: app/build/outputs/apk/debug/app-debug.apk 
-      - name: Download a Build Artifact
-        uses: actions/download-artifact@v2.1.0
         with: 
           name: apk
           upload_url: ${{ steps.create_release.outputs.upload_url }}
