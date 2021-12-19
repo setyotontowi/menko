@@ -77,6 +77,7 @@ class DayFragment : Fragment(), View.OnClickListener, TaskCallback {
         taskViewModel = ViewModelProvider(this, vmFactory!!).get(TaskViewModel::class.java)
         taskViewModel.setFrom(from)
         taskViewModel.setTo(to)
+        taskViewModel.setPage(-1)
         taskViewModel.apply {
             tasksWithLabel.observe(viewLifecycleOwner) { handleListTask(it) }
             label.observe(viewLifecycleOwner) { handleLabel(it) }

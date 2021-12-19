@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -11,6 +12,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.project.thisappistryingtomakeyoubetter.App
 import com.project.thisappistryingtomakeyoubetter.R
 import com.project.thisappistryingtomakeyoubetter.adapter.ChipAdapter
@@ -37,11 +39,11 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
     @Inject
     lateinit var vmFactory: ViewModelProvider.Factory
     private val taskViewModel: TaskViewModel by viewModels { vmFactory }
-    private val mainViewModel: MainViewModel by activityViewModels {vmFactory}
+    private val mainViewModel: MainViewModel by activityViewModels { vmFactory }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
         binding = FragmentHistoryBinding.inflate(layoutInflater, container, false)
@@ -56,12 +58,57 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
 
         requireActivity().title = "History"
 
+        setupView()
+
         taskViewModel.setFrom(null)
         taskViewModel.setTo(null)
+        taskViewModel.setPage(0)
         taskViewModel.apply {
             label.observe(viewLifecycleOwner) { handleLabel(it) }
             taskGroup.observe(viewLifecycleOwner) { handleTaskGroup(it) }
         }
+    }
+
+    var taskAdapter = TaskGroupAdapter(this@HistoryFragment)
+    private fun setupView() {
+        val linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+
+        binding.listTask.apply {
+            adapter = taskAdapter
+            layoutManager = linearLayoutManager
+        }
+
+        var previousTotal = 0
+        var firstVisibleItem: Int
+        var visibleItemCount: Int
+        var totalItemCount: Int
+        val visibleTreshold = 5
+        var loading = true
+
+
+        binding.listTask.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                visibleItemCount = recyclerView.childCount
+                totalItemCount = linearLayoutManager.itemCount
+                firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition()
+
+                if (loading) {
+                    if (totalItemCount > previousTotal) {
+                        loading = false
+                        previousTotal = totalItemCount
+                    }
+                }
+
+                if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleTreshold)) {
+                    val page = taskViewModel.page.value ?: 0
+                    taskViewModel.setPage(page + 1)
+                    loading = true
+                }
+
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -88,13 +135,11 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
     }
 
     private fun handleTaskGroup(it: List<TaskGroup>?) {
+        Log.d("DEBUGGING", "handleTaskGroup: ${it?.size}")
         it?.let {
             placeHolder(true)
-            binding.listTask.apply {
-                adapter = TaskGroupAdapter(it, this@HistoryFragment)
-                layoutManager = LinearLayoutManager(activity)
-            }
-        }?: run {
+            taskAdapter.addList(it)
+        } ?: run {
             placeHolder(false)
         }
     }
@@ -106,9 +151,9 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
 
     private fun deleteAll() {
         GeneralHelper.confirmationDialog(
-            context,
-            getString(R.string.history_delete_all_confirm),
-            this
+                context,
+                getString(R.string.history_delete_all_confirm),
+                this
         )
     }
 
@@ -135,14 +180,14 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
     private fun taskDialog(task: TaskWithLabel?) {
         val dialog = Dialog(requireContext())
         val binding = DialogTaskBinding.inflate(
-            layoutInflater
+                layoutInflater
         )
         dialog.setContentView(binding.root)
 
         // Hide Keyboard
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Objects.requireNonNull(dialog.window)
-                ?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+                    ?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         }
 
         // Chip Adapter
@@ -151,8 +196,8 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         // Match dialog window to screen width
         val window = dialog.window!!
         window.setLayout(
-            WindowManager.LayoutParams.MATCH_PARENT,
-            WindowManager.LayoutParams.WRAP_CONTENT
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.WRAP_CONTENT
         )
 
         // Views Setup
@@ -163,7 +208,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
             binding.delete.visibility = View.VISIBLE
         }
         binding.labels.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.labels.adapter = chipAdapter
 
 
