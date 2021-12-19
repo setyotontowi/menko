@@ -41,9 +41,12 @@
         android:layout_alignBottom="@id/container"
         android:layout_alignEnd="@id/container"
         android:layout_alignRight="@id/container"
+        app:shapeAppearanceOverlay="@style/FAB"
         app:rippleColor="@color/main_background"
         android:src="@drawable/ic_add"
         app:tint="@android:color/white"
-        android:contentDescription="@string/add_task_title_hint" />
+        android:backgroundTint="@color/colorAccent"
+        android:contentDescription="@string/add_task_title_hint"
+        tools:ignore="UnusedAttribute" />
 
 </RelativeLayout>

@@ -2,25 +2,27 @@
 <resources>
     <color name="colorPrimary">#F1F1F1</color>
     <color name="colorPrimaryDark">#2B2B2B</color>
-    <color name="colorAccent">#03DAC5</color>
+    <color name="colorToolbar">#EDEDED</color>
+    <color name="colorAccent">#FF06BB</color>
 
     <color name="textPrimary">#2B2B2B</color>
     <color name="textPrimaryDark">#F1F1F1</color>
     <color name="black_overlay">#66000000</color>
+    <color name="grey">#989898</color>
 
     <color name="main_background">#EDEDED</color>
 
     <color name="success">#03DAC5</color>
     <color name="alert">#FF4141</color>
 
-    <color name="color_0">#2CB897</color>
-    <color name="color_1">#4A87BC</color>
-    <color name="color_2">#6243AE</color>
-    <color name="color_3">#D37CF8</color>
-    <color name="color_4">#A84C9C</color>
-    <color name="color_5">#F86E95</color>
-    <color name="color_6">#F4A26B</color>
-    <color name="color_7">#F4E76D</color>
+    <color name="color_0">#02F6BD</color>
+    <color name="color_1">#0585F4</color>
+    <color name="color_2">#551CE1</color>
+    <color name="color_3">#BE24FF</color>
+    <color name="color_4">#AA2999</color>
+    <color name="color_5">#FF3E75</color>
+    <color name="color_6">#FF8432</color>
+    <color name="color_7">#FFEB2B</color>
     <color name="color_8">#8DEF72</color>
     <color name="color_9">#65FA5A</color>
     <color name="color_10">#1C1C1C</color>

@@ -23,6 +23,10 @@ interface TaskDao {
     @Query("SELECT * FROM task ORDER BY date DESC")
     fun getAllTaskWithLabel():LiveData<List<TaskWithLabel>?>
 
+    @Transaction
+    @Query("SELECT * FROM task ORDER BY date DESC LIMIT :limit OFFSET :offset")
+    fun getTaskWithLabelLimited(limit: Int, offset: Int): LiveData<List<TaskWithLabel>?>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(task: Task): Long
 

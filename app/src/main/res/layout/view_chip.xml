@@ -10,5 +10,5 @@
     android:checkable="true"
     android:checked="false"
     android:text="@string/app_name"
-    app:checkedIconEnabled="true"
+    app:checkedIconEnabled="false"
     app:chipBackgroundColor="@color/chip_selector" />
