@@ -1,14 +1,12 @@
 package com.project.thisappistryingtomakeyoubetter
 
 import android.content.Context
-import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import java.util.jar.Attributes
 
 class ColorList : RecyclerView {
 
@@ -47,7 +45,7 @@ class ColorList : RecyclerView {
             }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolders {
-            val v = LayoutInflater.from(parent.context).inflate(R.layout.view_palette, parent, false)
+            val v = LayoutInflater.from(context).inflate(R.layout.view_palette, parent, false)
             return ViewHolders(v)
         }
 
@@ -62,7 +60,7 @@ class ColorList : RecyclerView {
 
         override fun getItemCount(): Int = list.size
 
-        inner class ViewHolders(val view: View): RecyclerView.ViewHolder(view){
+        inner class ViewHolders(view: View): RecyclerView.ViewHolder(view){
             var colorViews: ImageView = view.findViewById(R.id.color)
         }
 

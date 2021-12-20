@@ -35,6 +35,6 @@ class ColorAdapter(
     }
 
     inner class ColorViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        var colorView = itemView.findViewById<ImageView>(R.id.color_view)
+        var colorView = itemView.findViewById<ImageView>(R.id.color)
     }
 }
