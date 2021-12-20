@@ -4,6 +4,6 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:src="@drawable/color"
-    android:id="@+id/color_view"
+    android:id="@+id/color"
     android:layout_margin="5dp" />
 

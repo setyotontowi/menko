@@ -2,15 +2,36 @@ package com.project.thisappistryingtomakeyoubetter
 
 import android.content.Context
 import android.graphics.Canvas
+import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import java.util.jar.Attributes
 
-class ColorList(val ctx: Context) : RecyclerView(ctx) {
+class ColorList : RecyclerView {
 
-    var adapter = ColorList.Adapter()
+    var ctx: Context
+    var adapter: Adapter
+
+    constructor(ctx: Context, attr: AttributeSet) : super(ctx, attr) {
+        this.ctx = ctx
+        adapter = Adapter(ctx)
+        setAdapter(adapter)
+    }
+
+    constructor(ctx: Context) : super(ctx) {
+        this.ctx = ctx
+        adapter = Adapter(ctx)
+        setAdapter(adapter)
+    }
+
+    constructor(ctx: Context, attrs: AttributeSet, defStyleAttr: Int): super(ctx, attrs, defStyleAttr){
+        this.ctx = ctx
+        adapter = Adapter(ctx)
+        setAdapter(adapter)
+    }
 
     var list: List<Int> = listOf()
         set(list: List<Int>){
@@ -18,36 +39,35 @@ class ColorList(val ctx: Context) : RecyclerView(ctx) {
             adapter.list = list
         }
 
-    class Adapter: RecyclerView.Adapter<ViewHolder>(){
+    class Adapter(val context: Context): RecyclerView.Adapter<Adapter.ViewHolders>(){
         var list = listOf<Int>()
             set(value) {
                 field = value
-                notifyDataSetChanged()
+                //notifyDataSetChanged()
             }
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolders {
             val v = LayoutInflater.from(parent.context).inflate(R.layout.view_palette, parent, false)
-            return ViewHolder(v)
+            return ViewHolders(v)
         }
 
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        override fun onBindViewHolder(holder: ViewHolders, position: Int) {
             val color = list[position]
-            holder.colorView.setColorFilter(color)
+            holder.colorViews.setColorFilter(color)
 
-            holder.colorView.setOnClickListener{
+            holder.colorViews.setOnClickListener{
 
             }
         }
 
         override fun getItemCount(): Int = list.size
 
+        inner class ViewHolders(val view: View): RecyclerView.ViewHolder(view){
+            var colorViews: ImageView = view.findViewById(R.id.color)
+        }
+
     }
 
-    class ViewHolder(val view: View): RecyclerView.ViewHolder(view){
-        var colorView: ImageView = itemView.findViewById(R.id.color_view)
-    }
 
-    init {
-        super.setAdapter(adapter)
-    }
+
 }

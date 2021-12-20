@@ -64,9 +64,8 @@ class LabelFragment : Fragment() {
 
         // Color Adapter
         val colorAdapter = ColorAdapter(requireContext(), resources.getIntArray(R.array.color_array).toList())
-        binding.colorView.layoutManager = LinearLayoutManager(requireContext(),
-                LinearLayoutManager.HORIZONTAL, false)
-        binding.colorView.adapter = colorAdapter
+        binding.colorView.list = resources.getIntArray(R.array.color_array).toList()
+
         this.color = binding.addLabel.currentTextColor
 
         // Label Adapter
