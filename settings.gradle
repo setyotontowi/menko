@@ -1,2 +1,3 @@
 include ':app'
 rootProject.name = "This App Is Trying To Make You Better"
+include ':view'
