@@ -104,7 +104,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:src="@drawable/ic_more"
-                android:tint="@color/color_11"
+                app:tint="@color/color_11"
                 android:layout_marginEnd="12dp"
                 android:layout_marginRight="12dp"
                 android:background="@android:color/transparent"
@@ -112,7 +112,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
+        <com.project.thisappistryingtomakeyoubetter.ColorList
             android:id="@+id/color_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

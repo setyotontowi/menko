@@ -12,22 +12,29 @@ class ColorList : RecyclerView {
 
     var ctx: Context
     var adapter: Adapter
+    var listener: ((color:Int) -> Unit)? = null
 
     constructor(ctx: Context, attr: AttributeSet) : super(ctx, attr) {
         this.ctx = ctx
-        adapter = Adapter(ctx)
+        adapter = Adapter(ctx) {
+            listener?.invoke(it)
+        }
         setAdapter(adapter)
     }
 
     constructor(ctx: Context) : super(ctx) {
         this.ctx = ctx
-        adapter = Adapter(ctx)
+        adapter = Adapter(ctx) {
+            listener?.invoke(it)
+        }
         setAdapter(adapter)
     }
 
     constructor(ctx: Context, attrs: AttributeSet, defStyleAttr: Int): super(ctx, attrs, defStyleAttr){
         this.ctx = ctx
-        adapter = Adapter(ctx)
+        adapter = Adapter(ctx) {
+            listener?.invoke(it)
+        }
         setAdapter(adapter)
     }
 
@@ -37,7 +44,7 @@ class ColorList : RecyclerView {
             adapter.list = list
         }
 
-    class Adapter(val context: Context): RecyclerView.Adapter<Adapter.ViewHolders>(){
+    class Adapter(val context: Context, val listener:((color:Int) -> Unit)): RecyclerView.Adapter<Adapter.ViewHolders>(){
         var list = listOf<Int>()
             set(value) {
                 field = value
@@ -54,7 +61,7 @@ class ColorList : RecyclerView {
             holder.colorViews.setColorFilter(color)
 
             holder.colorViews.setOnClickListener{
-
+                listener.invoke(color)
             }
         }
 

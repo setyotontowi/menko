@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.project.thisappistryingtomakeyoubetter.ColorList
 import com.project.thisappistryingtomakeyoubetter.R
 import com.project.thisappistryingtomakeyoubetter.model.Label
 import com.project.thisappistryingtomakeyoubetter.model.LabelWithTask
@@ -63,7 +64,16 @@ class LabelAdapter(
 
         holder.textInputLayout.setStartIconOnClickListener {
             holder.colorView.visibility = View.VISIBLE
-            generateAdapter(holder, label, editListener)
+            holder.colorView.list = context.resources.getIntArray(R.array.color_array).toList()
+            holder.colorView.listener = { color ->
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    holder.textInputLayout.startIconDrawable?.colorFilter = BlendModeColorFilter(color, BlendMode.SRC_IN)
+                } else {
+                    holder.editLabel.setTextColor(color)
+                }
+                label.color = color
+                editListener?.invoke(label)
+            }
         }
 
         holder.delete.setOnClickListener {
@@ -73,26 +83,6 @@ class LabelAdapter(
 
     override fun getItemCount(): Int {
         return labels.size
-    }
-
-    private fun generateAdapter(
-        holder: LabelViewHolder,
-        label: Label,
-        editListener: ((label: Label) -> Unit)?
-    ) {
-        val adapter = ColorAdapter(context, context.resources.getIntArray(R.array.color_array).toList())
-        holder.colorView.layoutManager = LinearLayoutManager(context,
-                LinearLayoutManager.HORIZONTAL, false)
-        holder.colorView.adapter = adapter
-        adapter.listener = { color ->
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                holder.textInputLayout.startIconDrawable?.colorFilter = BlendModeColorFilter(color, BlendMode.SRC_IN)
-            } else {
-                holder.editLabel.setTextColor(color)
-            }
-            label.color = color
-            editListener?.invoke(label)
-        }
     }
 
     private fun popUpMenu(label: Label, view: View) {
@@ -120,7 +110,7 @@ class LabelAdapter(
         val textEdit: ConstraintLayout = view.findViewById(R.id.text_edit)
         val textInputLayout: TextInputLayout = view.findViewById(R.id.textlayout)
         val editLabel: TextInputEditText = view.findViewById(R.id.edit_label)
-        val colorView: RecyclerView = view.findViewById(R.id.color_view)
+        val colorView: ColorList = view.findViewById(R.id.color_view)
         val delete: ImageButton = view.findViewById(R.id.delete)
     }
 }
