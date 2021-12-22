@@ -33,6 +33,8 @@ class TaskViewModel @Inject constructor(
     }
 
 
+    /* taskWithLabel is a LiveData, return from getTaskWithLabel is also a live data.
+    *  So it will trigger any change in room and straight observing it */
     val tasksWithLabel: LiveData<List<TaskWithLabel>?> = Transformations.switchMap(from) { from ->
         Transformations.switchMap(to) { to ->
             Transformations.switchMap(page) { page ->

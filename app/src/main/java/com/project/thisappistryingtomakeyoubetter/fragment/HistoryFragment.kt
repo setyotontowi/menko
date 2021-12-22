@@ -62,7 +62,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
 
         taskViewModel.setFrom(null)
         taskViewModel.setTo(null)
-        taskViewModel.setPage(0)
+        taskViewModel.setPage(-1)
         taskViewModel.apply {
             label.observe(viewLifecycleOwner) { handleLabel(it) }
             taskGroup.observe(viewLifecycleOwner) { handleTaskGroup(it) }
@@ -90,7 +90,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                visibleItemCount = recyclerView.childCount
+                /*visibleItemCount = recyclerView.childCount
                 totalItemCount = linearLayoutManager.itemCount
                 firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition()
 
@@ -105,7 +105,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
                     val page = taskViewModel.page.value ?: 0
                     taskViewModel.setPage(page + 1)
                     loading = true
-                }
+                }*/
 
             }
         })
@@ -138,6 +138,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         Log.d("DEBUGGING", "handleTaskGroup: ${it?.size}")
         it?.let {
             placeHolder(true)
+            taskAdapter.list.clear()
             taskAdapter.addList(it)
         } ?: run {
             placeHolder(false)
