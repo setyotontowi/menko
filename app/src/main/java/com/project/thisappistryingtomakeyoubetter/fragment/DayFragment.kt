@@ -7,6 +7,8 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.project.thisappistryingtomakeyoubetter.App
 import com.project.thisappistryingtomakeyoubetter.R
 import com.project.thisappistryingtomakeyoubetter.activity.MainActivity
@@ -124,65 +126,59 @@ class DayFragment : Fragment(), View.OnClickListener, TaskCallback {
     }
 
     private fun taskDialog(task: TaskWithLabel?) {
-        val dialog = Dialog(requireContext())
-        val binding = DialogTaskBinding.inflate(
-            layoutInflater
-        )
-        dialog.setContentView(binding.root)
+        BottomSheetDialog(requireContext()).apply {
+            val binding = DialogTaskBinding.inflate(
+                layoutInflater
+            )
+            setContentView(binding.root)
 
-        // Hide Keyboard
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Objects.requireNonNull(dialog.window)
+            // Hide Keyboard
+            Objects.requireNonNull(window)
                 ?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
-        }
 
-        // Chip Adapter
-        val chipAdapter = ChipAdapter(requireContext(), labels)
-
-        // Match dialog window to screen width
-        val window = dialog.window!!
-        window.setLayout(
-            WindowManager.LayoutParams.MATCH_PARENT,
-            WindowManager.LayoutParams.WRAP_CONTENT
-        )
-
-        // Views Setup
-        if (task != null) {
-            chipAdapter.setSelectedLabels(task.labels)
-            binding.title.setText(task.task.title)
-            binding.description.setText(task.task.description)
-            binding.delete.visibility = View.VISIBLE
-        }
-        binding.labels.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        binding.labels.adapter = chipAdapter
+            // Chip Adapter
+            val chipAdapter = ChipAdapter(requireContext(), labels)
 
 
-        // Listeners
-        binding.save.setOnClickListener {
-            if (task == null) {
-                val task1 = Task(
-                    Objects.requireNonNull(binding.title.text).toString(),
-                    Objects.requireNonNull(binding.description.text).toString(),
-                    calendar!!.time
-                )
-                task1.labels = chipAdapter.getSelectedLabels()
-                taskViewModel.insert(task1)
-            } else {
-                task.task.title = Objects.requireNonNull(binding.title.text).toString()
-                task.task.description = Objects.requireNonNull(binding.description.text).toString()
-                task.task.labels = chipAdapter.getSelectedLabels()
-                taskViewModel.update(task.task)
-            }
-            dialog.dismiss()
-        }
-        binding.delete.setOnClickListener {
+            // Views Setup
             if (task != null) {
-                taskViewModel.delete(task.task)
+                chipAdapter.setSelectedLabels(task.labels)
+                binding.title.setText(task.task.title)
+                binding.description.setText(task.task.description)
+                binding.delete.visibility = View.VISIBLE
             }
-            dialog.dismiss()
+            binding.labels.layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            binding.labels.adapter = chipAdapter
+
+
+            // Listeners
+            binding.save.setOnClickListener {
+                if (task == null) {
+                    val task1 = Task(
+                        Objects.requireNonNull(binding.title.text).toString(),
+                        Objects.requireNonNull(binding.description.text).toString(),
+                        calendar!!.time
+                    )
+                    task1.labels = chipAdapter.getSelectedLabels()
+                    taskViewModel.insert(task1)
+                } else {
+                    task.task.title = Objects.requireNonNull(binding.title.text).toString()
+                    task.task.description = Objects.requireNonNull(binding.description.text).toString()
+                    task.task.labels = chipAdapter.getSelectedLabels()
+                    taskViewModel.update(task.task)
+                }
+                dismiss()
+            }
+            binding.delete.setOnClickListener {
+                if (task != null) {
+                    taskViewModel.delete(task.task)
+                }
+                dismiss()
+            }
+
+            show()
         }
-        dialog.show()
     }
 
     private fun placeHolder() {

@@ -4,15 +4,18 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.21666666666666667" />
+        <entry key="app/src/main/res/drawable/bg_top_round.xml" value="0.3707692307692308" />
         <entry key="app/src/main/res/drawable/color.xml" value="0.2609375" />
         <entry key="app/src/main/res/drawable/ic_note.xml" value="0.24114583333333334" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.2803442028985507" />
-        <entry key="app/src/main/res/layout/fragment_day.xml" value="0.9" />
+        <entry key="app/src/main/res/layout/dialog_task.xml" value="0.18072916666666666" />
+        <entry key="app/src/main/res/layout/fragment_day.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/fragment_history.xml" value="0.18020833333333333" />
         <entry key="app/src/main/res/layout/fragment_label.xml" value="0.24479166666666666" />
         <entry key="app/src/main/res/layout/view_label.xml" value="0.24479166666666666" />
         <entry key="app/src/main/res/layout/view_marker.xml" value="0.22447916666666667" />
         <entry key="app/src/main/res/layout/view_palette.xml" value="0.24479166666666666" />
-        <entry key="app/src/main/res/layout/view_task.xml" value="0.225" />
+        <entry key="app/src/main/res/layout/view_task.xml" value="0.25" />
         <entry key="app/src/main/res/layout/view_task_group.xml" value="0.22447916666666667" />
         <entry key="view/src/main/res/drawable/color.xml" value="0.2609375" />
         <entry key="view/src/main/res/drawable/view_pallete.xml" value="0.2609375" />

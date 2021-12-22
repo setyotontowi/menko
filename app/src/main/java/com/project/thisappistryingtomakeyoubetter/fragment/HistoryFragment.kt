@@ -13,6 +13,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.project.thisappistryingtomakeyoubetter.App
 import com.project.thisappistryingtomakeyoubetter.R
 import com.project.thisappistryingtomakeyoubetter.adapter.ChipAdapter
@@ -21,6 +23,7 @@ import com.project.thisappistryingtomakeyoubetter.adapter.TaskGroupAdapter
 import com.project.thisappistryingtomakeyoubetter.databinding.DialogTaskBinding
 import com.project.thisappistryingtomakeyoubetter.databinding.FragmentHistoryBinding
 import com.project.thisappistryingtomakeyoubetter.model.Label
+import com.project.thisappistryingtomakeyoubetter.model.Task
 import com.project.thisappistryingtomakeyoubetter.model.TaskGroup
 import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
@@ -179,57 +182,53 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
     }
 
     private fun taskDialog(task: TaskWithLabel?) {
-        val dialog = Dialog(requireContext())
-        val binding = DialogTaskBinding.inflate(
+        BottomSheetDialog(requireContext()).apply {
+            val binding = DialogTaskBinding.inflate(
                 layoutInflater
-        )
-        dialog.setContentView(binding.root)
-
-        // Hide Keyboard
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Objects.requireNonNull(dialog.window)
-                    ?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
-        }
-
-        // Chip Adapter
-        val chipAdapter = ChipAdapter(requireContext(), labels)
-
-        // Match dialog window to screen width
-        val window = dialog.window!!
-        window.setLayout(
-                WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.WRAP_CONTENT
-        )
-
-        // Views Setup
-        if (task != null) {
-            chipAdapter.setSelectedLabels(task.labels)
-            binding.title.setText(task.task.title)
-            binding.description.setText(task.task.description)
-            binding.delete.visibility = View.VISIBLE
-        }
-        binding.labels.layoutManager =
-                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        binding.labels.adapter = chipAdapter
+            )
+            setContentView(binding.root)
 
 
-        // Listeners
-        binding.save.setOnClickListener {
-            task?.let { task ->
-                task.task.title = Objects.requireNonNull(binding.title.text).toString()
-                task.task.description = Objects.requireNonNull(binding.description.text).toString()
-                task.task.labels = chipAdapter.getSelectedLabels()
-                taskViewModel.update(task.task)
-            }
-            dialog.dismiss()
-        }
-        binding.delete.setOnClickListener {
+            // Chip Adapter
+            val chipAdapter = ChipAdapter(requireContext(), labels)
+
+
+            // Views Setup
             if (task != null) {
-                taskViewModel.delete(task.task)
+                chipAdapter.setSelectedLabels(task.labels)
+                binding.title.setText(task.task.title)
+                binding.description.setText(task.task.description)
+                binding.delete.visibility = View.VISIBLE
             }
-            dialog.dismiss()
+            binding.labels.layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            binding.labels.adapter = chipAdapter
+
+
+            // Listeners
+            binding.save.setOnClickListener {
+                task?.let { task ->
+                    task.task.title = Objects.requireNonNull(binding.title.text).toString()
+                    task.task.description = Objects.requireNonNull(binding.description.text).toString()
+                    task.task.labels = chipAdapter.getSelectedLabels()
+                    taskViewModel.update(task.task)
+                }
+                dismiss()
+            }
+            binding.delete.setOnClickListener {
+                if (task != null) {
+                    taskViewModel.delete(task.task)
+                }
+                dismiss()
+            }
+
+            /*setOnShowListener {
+                val behavior = BottomSheetBehavior.from(binding.layout)
+                behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            }*/
+
+            show()
         }
-        dialog.show()
     }
 
     companion object {
