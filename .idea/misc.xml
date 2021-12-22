@@ -6,9 +6,11 @@
         <entry key="../../../../layout/custom_preview.xml" value="0.21666666666666667" />
         <entry key="app/src/main/res/drawable/color.xml" value="0.2609375" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.2803442028985507" />
+        <entry key="app/src/main/res/layout/fragment_day.xml" value="0.225" />
         <entry key="app/src/main/res/layout/fragment_label.xml" value="0.24479166666666666" />
         <entry key="app/src/main/res/layout/view_label.xml" value="0.24479166666666666" />
         <entry key="app/src/main/res/layout/view_palette.xml" value="0.24479166666666666" />
+        <entry key="app/src/main/res/layout/view_task.xml" value="0.225" />
         <entry key="view/src/main/res/drawable/color.xml" value="0.2609375" />
         <entry key="view/src/main/res/drawable/view_pallete.xml" value="0.2609375" />
         <entry key="view/src/main/res/layout/view_palette.xml" value="0.24479166666666666" />

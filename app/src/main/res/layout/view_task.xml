@@ -24,49 +24,45 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/card_inbetween"
         android:clickable="true"
-        android:focusable="true"
         android:elevation="0dp"
+        android:focusable="true"
         android:foreground="?android:attr/selectableItemBackground"
-        app:cardCornerRadius="@dimen/padding20"
+        app:cardCornerRadius="@dimen/padding10"
         tools:targetApi="lollipop">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <LinearLayout
+            <CheckBox
+                android:id="@+id/title"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="@dimen/padding20">
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/padding10"
+                android:text="@string/app_name"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <CheckBox
-                    android:id="@+id/title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/app_name"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="@dimen/task_padding"
-                    android:paddingLeft="@dimen/task_padding"
-                    android:paddingEnd="@dimen/task_padding"
-                    android:text="@string/hello_blank_fragment"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/title" />
-
-            </LinearLayout>
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/description_background"
+                android:paddingStart="@dimen/padding20"
+                android:paddingTop="@dimen/padding10"
+                android:paddingEnd="@dimen/task_padding"
+                android:paddingBottom="@dimen/padding10"
+                android:text="@string/hello_blank_fragment"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/title" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/labels"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/padding10"
-                android:layout_marginRight="@dimen/padding10"
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintRight_toRightOf="parent"
