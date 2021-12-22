@@ -2,9 +2,10 @@
 <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/label_icon"
-    android:layout_width="@dimen/padding20"
+    android:layout_width="10dp"
     android:layout_height="wrap_content"
-    android:src="@drawable/ic_label_task"
+    android:layout_marginEnd="2dp"
+    android:src="@drawable/color"
     app:tint="@color/colorAccent"
     android:contentDescription="@string/menu_label"
     android:rotation="90">
