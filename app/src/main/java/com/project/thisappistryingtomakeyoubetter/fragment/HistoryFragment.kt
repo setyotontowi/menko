@@ -90,6 +90,8 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         val visibleTreshold = 5
         var loading = true
 
+        val behavior = BottomSheetBehavior.from(binding.linearLayout)
+        behavior.peekHeight = 1700
 
         binding.listTask.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
