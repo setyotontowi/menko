@@ -200,6 +200,8 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
             )
             setContentView(binding.root)
 
+            Objects.requireNonNull(window)
+                ?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
 
             // Chip Adapter
             val chipAdapter = ChipAdapter(requireContext(), labels)
