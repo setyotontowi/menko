@@ -20,6 +20,7 @@ import com.project.thisappistryingtomakeyoubetter.R
 import com.project.thisappistryingtomakeyoubetter.adapter.ChipAdapter
 import com.project.thisappistryingtomakeyoubetter.adapter.TaskAdapter
 import com.project.thisappistryingtomakeyoubetter.adapter.TaskGroupAdapter
+import com.project.thisappistryingtomakeyoubetter.databinding.ComponentSummaryBinding
 import com.project.thisappistryingtomakeyoubetter.databinding.DialogTaskBinding
 import com.project.thisappistryingtomakeyoubetter.databinding.FragmentHistoryBinding
 import com.project.thisappistryingtomakeyoubetter.model.Label
@@ -139,7 +140,12 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
     }
 
     private fun handleSummary(summary: Triple<Int, Int, Int>){
-
+        val component = binding.componentSummary
+        component.apply {
+            tvAll.text = summary.first.toString()
+            tvFinished.text = summary.second.toString()
+            tvUnfinished.text = summary.third.toString()
+        }
     }
 
     private fun handleTaskGroup(it: List<TaskGroup>?) {
