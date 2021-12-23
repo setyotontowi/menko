@@ -71,6 +71,16 @@ class TaskViewModel @Inject constructor(
 
     val label: LiveData<List<Label>?> = labelRepository.getAll()
 
+    val summary = Transformations.switchMap(tasksWithLabel){ list ->
+        val result = MutableLiveData<Triple<Int, Int, Int>>() // all, completed, uncompleted
+
+        val all = list?.size?:0
+        val completed = list?.filter { it.task.isFinish }?.size?:0
+        val uncompleted = list?.filter { !it.task.isFinish }?.size?:0
+
+        result.value = Triple(all, completed, uncompleted)
+        result
+    }
 
     fun insert(task: Task) {
         viewModelScope.launch(IO) { taskRepository.insert(task) }

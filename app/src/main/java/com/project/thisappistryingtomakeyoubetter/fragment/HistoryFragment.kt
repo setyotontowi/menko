@@ -69,6 +69,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         taskViewModel.apply {
             label.observe(viewLifecycleOwner) { handleLabel(it) }
             taskGroup.observe(viewLifecycleOwner) { handleTaskGroup(it) }
+            summary.observe(viewLifecycleOwner) { handleSummary(it) }
         }
     }
 
@@ -137,8 +138,11 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         taskViewModel.update(task.task)
     }
 
+    private fun handleSummary(summary: Triple<Int, Int, Int>){
+
+    }
+
     private fun handleTaskGroup(it: List<TaskGroup>?) {
-        Log.d("DEBUGGING", "handleTaskGroup: ${it?.size}")
         it?.let {
             placeHolder(true)
             taskAdapter.list.clear()
