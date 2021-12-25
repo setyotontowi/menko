@@ -12,8 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="@dimen/padding20"
-        android:textStyle="bold"
-        android:text="Filter Tugas" />
+        android:text="Filter Tugas"
+        android:textStyle="bold" />
 
     <LinearLayout
         android:id="@+id/layout_label"
@@ -50,20 +50,28 @@
         android:text="Status" />
 
     <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chip_status"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/padding10"
         app:chipSpacingHorizontal="5dp"
-        app:itemSpacing="5dp">
+        app:itemSpacing="5dp"
+        app:singleSelection="true">
 
         <com.google.android.material.chip.Chip
+            android:id="@+id/chip_completed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:checkable="true"
+            android:checked="false"
             android:text="Completed" />
 
         <com.google.android.material.chip.Chip
+            android:id="@+id/chip_uncompleted"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:checkable="true"
+            android:checked="false"
             android:text="Uncompleted" />
 
     </com.google.android.material.chip.ChipGroup>

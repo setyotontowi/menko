@@ -161,28 +161,6 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         return false
     }
 
-    private fun showFilterDialog(){
-        BottomSheetDialog(requireContext()).apply {
-            val binding = LayoutFilterBinding.inflate(layoutInflater)
-            setContentView(binding.root)
-
-            binding.apply {
-                layoutLabel.toggle(labels.isNotEmpty())
-                val listLabel = this@HistoryFragment.labels
-                val chipAdapter = ChipAdapter(requireContext(), listLabel) {
-                    taskViewModel.filter(it)
-                }
-                chipAdapter.setSelectedLabels(taskViewModel.filteredLabel.value?: mutableListOf())
-
-                labels.apply {
-                    adapter = chipAdapter
-                    layoutManager = FlexboxLayoutManager(requireContext())
-                }
-            }
-            show()
-        }
-    }
-
     override fun onLongClick(task: TaskWithLabel) {
         taskDialog(task)
     }
@@ -291,6 +269,37 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
                 behavior.state = BottomSheetBehavior.STATE_EXPANDED
             }*/
 
+            show()
+        }
+    }
+
+    private fun showFilterDialog(){
+        BottomSheetDialog(requireContext()).apply {
+            val binding = LayoutFilterBinding.inflate(layoutInflater)
+            setContentView(binding.root)
+
+            binding.apply {
+                layoutLabel.toggle(labels.isNotEmpty())
+                val listLabel = this@HistoryFragment.labels
+                val chipAdapter = ChipAdapter(requireContext(), listLabel) {
+                    taskViewModel.filter(it)
+                }
+                chipAdapter.setSelectedLabels(taskViewModel.filteredLabel.value?: mutableListOf())
+
+                labels.apply {
+                    adapter = chipAdapter
+                    layoutManager = FlexboxLayoutManager(requireContext())
+                }
+
+                taskViewModel.filteredStatus.value?.let {
+                    chipCompleted.isChecked = it.first
+                    chipUncompleted.isChecked = it.second
+                }
+
+                chipStatus.setOnCheckedChangeListener { group, checkedId ->
+                    taskViewModel.filter(chipCompleted.isChecked, chipUncompleted.isChecked)
+                }
+            }
             show()
         }
     }

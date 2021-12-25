@@ -45,43 +45,56 @@ class TaskViewModel @Inject constructor(
 
     val taskGroup: LiveData<List<TaskGroup>> = Transformations.switchMap(tasksWithLabel){ list ->
         Transformations.switchMap(filteredLabel) { filteredLabel ->
+            Transformations.switchMap(filteredStatus) { filteredStatus ->
 
-            val filteredList = mutableListOf<TaskWithLabel>()
-            if(!filteredLabel.isNullOrEmpty()) {
-                filteredLabel.forEach { label ->
-                    val tasks = list?.filter { it.labels.contains(label) }
-                    filteredList.addAll(tasks?: listOf())
-                }
-            } else {
-                filteredList.addAll(list?: listOf())
-            }
-
-            filteredList.sortByDescending { it.task.date }
-
-            val result = MutableLiveData<List<TaskGroup>>()
-            val taskGroup = mutableListOf<TaskGroup>()
-            val map = mutableMapOf<Date, List<TaskWithLabel>>()
-
-            filteredList.forEach {
-                // using map, find the associate date then assign value with list
-                val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                val date = formatter.parse(formatter.format(it.task.date ?: Date())) ?: Date()
-                val a = map[date]
-                if (a == null) {
-                    map[date] = listOf(it)
+                val filteredList = mutableListOf<TaskWithLabel>()
+                if (!filteredLabel.isNullOrEmpty()) {
+                    filteredLabel.forEach { label ->
+                        val tasks = list?.filter { it.labels.contains(label) }
+                        filteredList.addAll(tasks ?: listOf())
+                    }
                 } else {
-                    val b = a.toMutableList()
-                    b.add(it)
-                    map[date] = b
+                    filteredList.addAll(list ?: listOf())
                 }
-            }
 
-            map.forEach {
-                taskGroup.add(TaskGroup(it.key, it.value))
-            }
+                val filteredStatusList = mutableListOf<TaskWithLabel>()
+                if(filteredStatus.first != filteredStatus.second) {
+                    if(filteredStatus.first) {
+                        filteredStatusList.addAll(filteredList.filter { it.task.isFinish })
+                    } else {
+                        filteredStatusList.addAll(filteredList.filter { !it.task.isFinish })
+                    }
+                } else {
+                    filteredStatusList.addAll(filteredList)
+                }
 
-            result.value = taskGroup
-            result
+                filteredStatusList.sortByDescending { it.task.date }
+
+                val result = MutableLiveData<List<TaskGroup>>()
+                val taskGroup = mutableListOf<TaskGroup>()
+                val map = mutableMapOf<Date, List<TaskWithLabel>>()
+
+                filteredStatusList.forEach {
+                    // using map, find the associate date then assign value with list
+                    val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                    val date = formatter.parse(formatter.format(it.task.date ?: Date())) ?: Date()
+                    val a = map[date]
+                    if (a == null) {
+                        map[date] = listOf(it)
+                    } else {
+                        val b = a.toMutableList()
+                        b.add(it)
+                        map[date] = b
+                    }
+                }
+
+                map.forEach {
+                    taskGroup.add(TaskGroup(it.key, it.value))
+                }
+
+                result.value = taskGroup
+                result
+            }
         }
     }
 
@@ -94,6 +107,16 @@ class TaskViewModel @Inject constructor(
     }
     fun filter(list: List<Label>){
         filteredLabel.postValue(list)
+    }
+
+    // first: complete, second: uncompleted
+    val filteredStatus: MutableLiveData<Pair<Boolean, Boolean>> by lazy {
+        val result = MutableLiveData<Pair<Boolean, Boolean>>()
+        result.value = Pair(false, false)
+        result
+    }
+    fun filter(complete: Boolean = false, uncomplete: Boolean = false){
+        filteredStatus.postValue(Pair(complete, uncomplete))
     }
 
     val summary = Transformations.switchMap(tasksWithLabel){ list ->
