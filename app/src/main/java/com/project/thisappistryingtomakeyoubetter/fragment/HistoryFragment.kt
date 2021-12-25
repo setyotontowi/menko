@@ -168,10 +168,14 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
 
             binding.apply {
                 layoutLabel.toggle(labels.isNotEmpty())
+                val listLabel = this@HistoryFragment.labels
+                val chipAdapter = ChipAdapter(requireContext(), listLabel) {
+                    taskViewModel.filter(it)
+                }
+                chipAdapter.setSelectedLabels(taskViewModel.filteredLabel.value?: mutableListOf())
 
                 labels.apply {
-                    val listLabel = this@HistoryFragment.labels
-                    adapter = ChipAdapter(requireContext(), listLabel)
+                    adapter = chipAdapter
                     layoutManager = FlexboxLayoutManager(requireContext())
                 }
             }

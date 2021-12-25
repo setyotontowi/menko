@@ -44,32 +44,57 @@ class TaskViewModel @Inject constructor(
     }
 
     val taskGroup: LiveData<List<TaskGroup>> = Transformations.switchMap(tasksWithLabel){ list ->
-        val result = MutableLiveData<List<TaskGroup>>()
-        val taskGroup = mutableListOf<TaskGroup>()
-        val map = mutableMapOf<Date, List<TaskWithLabel>>()
+        Transformations.switchMap(filteredLabel) { filteredLabel ->
 
-        list?.forEach {
-            // using map, find the associate date then assign value with list
-            val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-            val date = formatter.parse(formatter.format(it.task.date?:Date())) ?: Date()
-            val a = map[date]
-            if(a == null) {
-                map[date] = listOf(it)
+            val filteredList = mutableListOf<TaskWithLabel>()
+            if(!filteredLabel.isNullOrEmpty()) {
+                filteredLabel.forEach { label ->
+                    val tasks = list?.filter { it.labels.contains(label) }
+                    filteredList.addAll(tasks?: listOf())
+                }
             } else {
-                val b = a.toMutableList()
-                b.add(it)
-                map[date] = b
+                filteredList.addAll(list?: listOf())
             }
-        }
 
-        map.forEach {
-            taskGroup.add(TaskGroup(it.key, it.value))
+            filteredList.sortByDescending { it.task.date }
+
+            val result = MutableLiveData<List<TaskGroup>>()
+            val taskGroup = mutableListOf<TaskGroup>()
+            val map = mutableMapOf<Date, List<TaskWithLabel>>()
+
+            filteredList.forEach {
+                // using map, find the associate date then assign value with list
+                val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                val date = formatter.parse(formatter.format(it.task.date ?: Date())) ?: Date()
+                val a = map[date]
+                if (a == null) {
+                    map[date] = listOf(it)
+                } else {
+                    val b = a.toMutableList()
+                    b.add(it)
+                    map[date] = b
+                }
+            }
+
+            map.forEach {
+                taskGroup.add(TaskGroup(it.key, it.value))
+            }
+
+            result.value = taskGroup
+            result
         }
-        result.value = taskGroup
-        result
     }
 
     val label: LiveData<List<Label>?> = labelRepository.getAll()
+
+    val filteredLabel: MutableLiveData<List<Label>> by lazy {
+        val result = MutableLiveData<List<Label>>()
+        result.value = listOf()
+        result
+    }
+    fun filter(list: List<Label>){
+        filteredLabel.postValue(list)
+    }
 
     val summary = Transformations.switchMap(tasksWithLabel){ list ->
         val result = MutableLiveData<Triple<Int, Int, Int>>() // all, completed, uncompleted

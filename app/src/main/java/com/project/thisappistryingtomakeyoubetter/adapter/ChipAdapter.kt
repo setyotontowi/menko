@@ -15,11 +15,12 @@ import java.lang.NullPointerException
 
 class ChipAdapter(
         private val context: Context,
-        private val labels: MutableList<Label>
+        private val labels: MutableList<Label>,
+        private val onSelected: ((list: List<Label>) -> Unit)? = null
 ): RecyclerView.Adapter<ChipAdapter.ChipViewHolder>() {
     private val selectedLabels: MutableList<Label> = ArrayList()
 
-    fun setSelectedLabels(labels: MutableList<Label>){
+    fun setSelectedLabels(labels: List<Label>){
         selectedLabels.clear()
         selectedLabels.addAll(labels)
         notifyDataSetChanged()
@@ -55,6 +56,7 @@ class ChipAdapter(
                     Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
                 }
             }
+            onSelected?.invoke(selectedLabels)
         }
     }
 
