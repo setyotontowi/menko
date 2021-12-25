@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.Toolbar
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -96,7 +97,6 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         binding.listTask.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-
                 /*visibleItemCount = recyclerView.childCount
                 totalItemCount = linearLayoutManager.itemCount
                 firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition()
@@ -113,9 +113,26 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
                     taskViewModel.setPage(page + 1)
                     loading = true
                 }*/
-
             }
         })
+
+        binding.linearLayout.setOnScrollChangeListener(object: NestedScrollView.OnScrollChangeListener{
+            override fun onScrollChange(
+                v: NestedScrollView?,
+                scrollX: Int,
+                scrollY: Int,
+                oldScrollX: Int,
+                oldScrollY: Int
+            ) {
+                if(scrollY > oldScrollY){
+                    behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                } else if (scrollY == 0) {
+                    behavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                }
+            }
+
+        })
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
