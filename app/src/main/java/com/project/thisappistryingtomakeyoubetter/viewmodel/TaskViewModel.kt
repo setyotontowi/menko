@@ -43,6 +43,8 @@ class TaskViewModel @Inject constructor(
         }
     }
 
+    private val activeTask = MutableLiveData<List<TaskWithLabel>?>()
+
     val taskGroup: LiveData<List<TaskGroup>> = Transformations.switchMap(tasksWithLabel){ list ->
         Transformations.switchMap(filteredLabel) { filteredLabel ->
             Transformations.switchMap(filteredStatus) { filteredStatus ->
@@ -69,6 +71,7 @@ class TaskViewModel @Inject constructor(
                 }
 
                 filteredStatusList.sortByDescending { it.task.date }
+                activeTask.value = filteredStatusList
 
                 val result = MutableLiveData<List<TaskGroup>>()
                 val taskGroup = mutableListOf<TaskGroup>()
@@ -119,7 +122,7 @@ class TaskViewModel @Inject constructor(
         filteredStatus.postValue(Pair(complete, uncomplete))
     }
 
-    val summary = Transformations.switchMap(tasksWithLabel){ list ->
+    val summary = Transformations.switchMap(activeTask){ list ->
         val result = MutableLiveData<Triple<Int, Int, Int>>() // all, completed, uncompleted
 
         val all = list?.size?:0
