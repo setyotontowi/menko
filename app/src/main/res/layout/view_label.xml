@@ -115,7 +115,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.project.thisappistryingtomakeyoubetter.ColorList
+        <com.project.thisappistryingtomakeyoubetter.view.ColorList
             android:id="@+id/color_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
