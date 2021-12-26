@@ -51,7 +51,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
 
     @Inject
     lateinit var vmFactory: ViewModelProvider.Factory
-    private val taskViewModel: TaskViewModel by viewModels { vmFactory }
+    private val taskViewModel: TaskViewModel by activityViewModels { vmFactory }
     private val mainViewModel: MainViewModel by activityViewModels { vmFactory }
 
     override fun onCreateView(
@@ -67,7 +67,9 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         super.onViewCreated(view, savedInstanceState)
         (activity?.application as App).appComponent.inject(this)
         setHasOptionsMenu(true)
-        mainViewModel.stateFromOutsideMainFragment.value = true
+        if(mainViewModel.standAlone.value == false){
+            mainViewModel.stateFromOutsideMainFragment.value = true
+        }
 
         requireActivity().title = "History"
 
@@ -124,22 +126,26 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
             }
         })
 
-        binding.linearLayout.setOnScrollChangeListener(object: NestedScrollView.OnScrollChangeListener{
-            override fun onScrollChange(
-                v: NestedScrollView?,
-                scrollX: Int,
-                scrollY: Int,
-                oldScrollX: Int,
-                oldScrollY: Int
-            ) {
-                if(scrollY > oldScrollY){
-                    behavior.state = BottomSheetBehavior.STATE_EXPANDED
-                } else if (scrollY == 0) {
-                    behavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        if(mainViewModel.standAlone.value == false) {
+            binding.linearLayout.setOnScrollChangeListener(object :
+                NestedScrollView.OnScrollChangeListener {
+                override fun onScrollChange(
+                    v: NestedScrollView?,
+                    scrollX: Int,
+                    scrollY: Int,
+                    oldScrollX: Int,
+                    oldScrollY: Int
+                ) {
+                    if (scrollY > oldScrollY) {
+                        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                    } else if (scrollY == 0) {
+                        behavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                    }
                 }
-            }
-
-        })
+            })
+        } else {
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
 
     }
 
@@ -307,5 +313,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
     companion object {
         @JvmStatic
         fun newInstance() = HistoryFragment()
+        const val STANDALONE = "standalone"
+        const val EXTRA_FILTER = "filter"
     }
 }

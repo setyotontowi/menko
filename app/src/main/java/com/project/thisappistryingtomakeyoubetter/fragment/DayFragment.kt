@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -32,11 +33,12 @@ class DayFragment : Fragment(), View.OnClickListener, TaskCallback {
     private val labels: MutableList<Label> = ArrayList()
     private var taskAdapter: TaskAdapter? = null
     private var position = 0
-    private lateinit var taskViewModel: TaskViewModel
 
-    @JvmField
     @Inject
-    var vmFactory: ViewModelProvider.Factory? = null
+    lateinit var vmFactory: ViewModelProvider.Factory
+
+    private val taskViewModel: TaskViewModel by activityViewModels { vmFactory }
+
     var from: Date? = null
     var to: Date? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,7 +78,6 @@ class DayFragment : Fragment(), View.OnClickListener, TaskCallback {
         binding.addTask.setOnClickListener(this)
 
         // Set task ViewModel
-        taskViewModel = ViewModelProvider(this, vmFactory!!).get(TaskViewModel::class.java)
         taskViewModel.setFrom(from)
         taskViewModel.setTo(to)
         taskViewModel.setPage(-1)

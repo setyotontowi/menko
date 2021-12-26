@@ -1,6 +1,7 @@
 package com.project.thisappistryingtomakeyoubetter.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
 import android.os.Build
@@ -20,6 +21,8 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.project.thisappistryingtomakeyoubetter.ColorList
 import com.project.thisappistryingtomakeyoubetter.R
+import com.project.thisappistryingtomakeyoubetter.activity.FragmentActivity
+import com.project.thisappistryingtomakeyoubetter.fragment.HistoryFragment
 import com.project.thisappistryingtomakeyoubetter.model.Label
 import com.project.thisappistryingtomakeyoubetter.model.LabelWithTask
 
@@ -52,6 +55,12 @@ class LabelAdapter(
             holder.textEdit.visibility = View.VISIBLE
             holder.editLabel.setText(label.name)
             true
+        }
+
+        holder.cardLayout.setOnClickListener {
+            val intent = Intent(context, FragmentActivity::class.java)
+            intent.putExtra(HistoryFragment.EXTRA_FILTER, label)
+            context.startActivity(intent)
         }
 
         holder.textInputLayout.setEndIconOnClickListener {
