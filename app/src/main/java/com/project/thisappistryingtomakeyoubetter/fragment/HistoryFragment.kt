@@ -1,23 +1,15 @@
 package com.project.thisappistryingtomakeyoubetter.fragment
 
-import android.app.Dialog
 import android.content.DialogInterface
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import androidx.appcompat.widget.Toolbar
-import androidx.core.view.isEmpty
 import androidx.core.view.isNotEmpty
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.google.android.flexbox.FlexDirection.COLUMN
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -26,22 +18,19 @@ import com.project.thisappistryingtomakeyoubetter.R
 import com.project.thisappistryingtomakeyoubetter.adapter.ChipAdapter
 import com.project.thisappistryingtomakeyoubetter.adapter.TaskAdapter
 import com.project.thisappistryingtomakeyoubetter.adapter.TaskGroupAdapter
-import com.project.thisappistryingtomakeyoubetter.databinding.ComponentSummaryBinding
 import com.project.thisappistryingtomakeyoubetter.databinding.DialogTaskBinding
 import com.project.thisappistryingtomakeyoubetter.databinding.FragmentHistoryBinding
 import com.project.thisappistryingtomakeyoubetter.databinding.LayoutFilterBinding
 import com.project.thisappistryingtomakeyoubetter.model.Label
-import com.project.thisappistryingtomakeyoubetter.model.Task
 import com.project.thisappistryingtomakeyoubetter.model.TaskGroup
 import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
-import com.project.thisappistryingtomakeyoubetter.toggle
+import com.project.thisappistryingtomakeyoubetter.view.toggle
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
 import com.project.thisappistryingtomakeyoubetter.viewmodel.MainViewModel
 import com.project.thisappistryingtomakeyoubetter.viewmodel.TaskViewModel
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
-import kotlin.math.ceil
 
 
 class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.ConfirmDialog {

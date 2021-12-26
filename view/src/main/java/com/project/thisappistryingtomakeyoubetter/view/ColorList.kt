@@ -1,4 +1,4 @@
-package com.project.thisappistryingtomakeyoubetter
+package com.project.thisappistryingtomakeyoubetter.view
 
 import android.content.Context
 import android.util.AttributeSet
@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.project.thisappistryingtomakeyoubetter.view.R
 
 class ColorList : RecyclerView {
 
