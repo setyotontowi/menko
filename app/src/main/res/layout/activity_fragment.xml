@@ -22,6 +22,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorToolbar"
             app:popupTheme="@style/AppTheme.AppBarOverlay"
+            app:title="Label"
             app:titleTextColor="@color/textPrimary" />
 
     </com.google.android.material.appbar.AppBarLayout>

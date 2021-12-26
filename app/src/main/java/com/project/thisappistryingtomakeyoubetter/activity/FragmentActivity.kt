@@ -37,12 +37,20 @@ class FragmentActivity: AppCompatActivity() {
 
         binding.apply {
             val label = intent.getSerializableExtra(HistoryFragment.EXTRA_FILTER) as Label
+
+            toolbar.title = label.name
+
             taskViewModel.filter(listOf(label))
-            mainViewModel.standAlone.postValue(true)
+            mainViewModel.standAlone.value = true
             mainViewModel.stateFromOutsideMainFragment.postValue(false)
 
             openFragment(historyFragment)
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
     }
 
     private fun openFragment(fragment: Fragment) {
