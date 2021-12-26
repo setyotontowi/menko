@@ -51,7 +51,7 @@ class TaskViewModel @Inject constructor(
 
                 val filteredList = mutableListOf<TaskWithLabel>()
                 if (!filteredLabel.isNullOrEmpty()) {
-                    filteredLabel.forEach { label ->
+                    for (label in filteredLabel){
                         val tasks = list?.filter { it.labels.contains(label) }
                         filteredList.addAll(tasks ?: listOf())
                     }
