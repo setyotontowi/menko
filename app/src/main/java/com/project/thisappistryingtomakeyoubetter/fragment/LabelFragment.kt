@@ -63,10 +63,8 @@ class LabelFragment : Fragment() {
         requireActivity().title = "Label"
 
         // Color Adapter
-        val colorAdapter = ColorAdapter(requireContext(), resources.getIntArray(R.array.color_array).toList())
-        binding.colorView.layoutManager = LinearLayoutManager(requireContext(),
-                LinearLayoutManager.HORIZONTAL, false)
-        binding.colorView.adapter = colorAdapter
+        binding.colorView.list = resources.getIntArray(R.array.color_array).toList()
+
         this.color = binding.addLabel.currentTextColor
 
         // Label Adapter
@@ -109,7 +107,7 @@ class LabelFragment : Fragment() {
         adapter.editListener = { updateLabel(it) }
 
 
-        colorAdapter.listener = { color ->
+        binding.colorView.listener = { color ->
             this.color = color
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 binding.addTextlayout.startIconDrawable?.colorFilter = BlendModeColorFilter(color, BlendMode.SRC_IN)

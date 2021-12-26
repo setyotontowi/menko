@@ -1,6 +1,7 @@
 package com.project.thisappistryingtomakeyoubetter.di
 
 import android.content.Context
+import com.project.thisappistryingtomakeyoubetter.activity.FragmentActivity
 import com.project.thisappistryingtomakeyoubetter.activity.MainActivity
 import com.project.thisappistryingtomakeyoubetter.fragment.DayFragment
 import com.project.thisappistryingtomakeyoubetter.fragment.HistoryFragment
@@ -20,6 +21,7 @@ interface AppComponent {
     fun inject(dayFragment: DayFragment)
     fun inject(historyFragment: HistoryFragment)
     fun inject(labelFragment: LabelFragment)
+    fun inject(fragmentActivity: FragmentActivity)
 
     @Component.Factory
     interface Factory{

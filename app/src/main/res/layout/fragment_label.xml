@@ -41,7 +41,7 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
+        <com.project.thisappistryingtomakeyoubetter.ColorList
             android:id="@+id/color_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -56,8 +56,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/add_textlayout"
             android:paddingBottom="@dimen/padding5"
-            tools:itemCount="12"
-            tools:listitem="@layout/view_palette" />
+            tools:itemCount="12" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

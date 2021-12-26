@@ -7,28 +7,41 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isEmpty
+import androidx.core.view.isNotEmpty
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.google.android.flexbox.FlexDirection.COLUMN
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.project.thisappistryingtomakeyoubetter.App
 import com.project.thisappistryingtomakeyoubetter.R
 import com.project.thisappistryingtomakeyoubetter.adapter.ChipAdapter
 import com.project.thisappistryingtomakeyoubetter.adapter.TaskAdapter
 import com.project.thisappistryingtomakeyoubetter.adapter.TaskGroupAdapter
+import com.project.thisappistryingtomakeyoubetter.databinding.ComponentSummaryBinding
 import com.project.thisappistryingtomakeyoubetter.databinding.DialogTaskBinding
 import com.project.thisappistryingtomakeyoubetter.databinding.FragmentHistoryBinding
+import com.project.thisappistryingtomakeyoubetter.databinding.LayoutFilterBinding
 import com.project.thisappistryingtomakeyoubetter.model.Label
+import com.project.thisappistryingtomakeyoubetter.model.Task
 import com.project.thisappistryingtomakeyoubetter.model.TaskGroup
 import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
+import com.project.thisappistryingtomakeyoubetter.toggle
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
 import com.project.thisappistryingtomakeyoubetter.viewmodel.MainViewModel
 import com.project.thisappistryingtomakeyoubetter.viewmodel.TaskViewModel
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
+import kotlin.math.ceil
 
 
 class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.ConfirmDialog {
@@ -38,7 +51,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
 
     @Inject
     lateinit var vmFactory: ViewModelProvider.Factory
-    private val taskViewModel: TaskViewModel by viewModels { vmFactory }
+    private val taskViewModel: TaskViewModel by activityViewModels { vmFactory }
     private val mainViewModel: MainViewModel by activityViewModels { vmFactory }
 
     override fun onCreateView(
@@ -54,7 +67,9 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         super.onViewCreated(view, savedInstanceState)
         (activity?.application as App).appComponent.inject(this)
         setHasOptionsMenu(true)
-        mainViewModel.stateFromOutsideMainFragment.value = true
+        if(mainViewModel.standAlone.value == false){
+            mainViewModel.stateFromOutsideMainFragment.value = true
+        }
 
         requireActivity().title = "History"
 
@@ -62,10 +77,11 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
 
         taskViewModel.setFrom(null)
         taskViewModel.setTo(null)
-        taskViewModel.setPage(0)
+        taskViewModel.setPage(-1)
         taskViewModel.apply {
             label.observe(viewLifecycleOwner) { handleLabel(it) }
             taskGroup.observe(viewLifecycleOwner) { handleTaskGroup(it) }
+            summary.observe(viewLifecycleOwner) { handleSummary(it) }
         }
     }
 
@@ -85,12 +101,13 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         val visibleTreshold = 5
         var loading = true
 
+        val behavior = BottomSheetBehavior.from(binding.linearLayout)
+        behavior.peekHeight = 1700
 
         binding.listTask.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-
-                visibleItemCount = recyclerView.childCount
+                /*visibleItemCount = recyclerView.childCount
                 totalItemCount = linearLayoutManager.itemCount
                 firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition()
 
@@ -105,10 +122,31 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
                     val page = taskViewModel.page.value ?: 0
                     taskViewModel.setPage(page + 1)
                     loading = true
-                }
-
+                }*/
             }
         })
+
+        if(mainViewModel.standAlone.value == false) {
+            binding.linearLayout.setOnScrollChangeListener(object :
+                NestedScrollView.OnScrollChangeListener {
+                override fun onScrollChange(
+                    v: NestedScrollView?,
+                    scrollX: Int,
+                    scrollY: Int,
+                    oldScrollX: Int,
+                    oldScrollY: Int
+                ) {
+                    if (scrollY > oldScrollY) {
+                        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                    } else if (scrollY == 0) {
+                        behavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                    }
+                }
+            })
+        } else {
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -122,6 +160,9 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
                 deleteAll()
                 return true
             }
+            R.id.action_filter -> {
+                showFilterDialog()
+            }
         }
         return false
     }
@@ -134,10 +175,19 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         taskViewModel.update(task.task)
     }
 
+    private fun handleSummary(summary: Triple<Int, Int, Int>){
+        val component = binding.componentSummary
+        component.apply {
+            tvAll.text = summary.first.toString()
+            tvFinished.text = summary.second.toString()
+            tvUnfinished.text = summary.third.toString()
+        }
+    }
+
     private fun handleTaskGroup(it: List<TaskGroup>?) {
-        Log.d("DEBUGGING", "handleTaskGroup: ${it?.size}")
         it?.let {
             placeHolder(true)
+            taskAdapter.list.clear()
             taskAdapter.addList(it)
         } ?: run {
             placeHolder(false)
@@ -178,61 +228,92 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
     }
 
     private fun taskDialog(task: TaskWithLabel?) {
-        val dialog = Dialog(requireContext())
-        val binding = DialogTaskBinding.inflate(
+        BottomSheetDialog(requireContext()).apply {
+            val binding = DialogTaskBinding.inflate(
                 layoutInflater
-        )
-        dialog.setContentView(binding.root)
+            )
+            setContentView(binding.root)
 
-        // Hide Keyboard
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Objects.requireNonNull(dialog.window)
-                    ?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
-        }
+            Objects.requireNonNull(window)
+                ?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
 
-        // Chip Adapter
-        val chipAdapter = ChipAdapter(requireContext(), labels)
-
-        // Match dialog window to screen width
-        val window = dialog.window!!
-        window.setLayout(
-                WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.WRAP_CONTENT
-        )
-
-        // Views Setup
-        if (task != null) {
-            chipAdapter.setSelectedLabels(task.labels)
-            binding.title.setText(task.task.title)
-            binding.description.setText(task.task.description)
-            binding.delete.visibility = View.VISIBLE
-        }
-        binding.labels.layoutManager =
-                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        binding.labels.adapter = chipAdapter
+            // Chip Adapter
+            val chipAdapter = ChipAdapter(requireContext(), labels)
 
 
-        // Listeners
-        binding.save.setOnClickListener {
-            task?.let { task ->
-                task.task.title = Objects.requireNonNull(binding.title.text).toString()
-                task.task.description = Objects.requireNonNull(binding.description.text).toString()
-                task.task.labels = chipAdapter.getSelectedLabels()
-                taskViewModel.update(task.task)
-            }
-            dialog.dismiss()
-        }
-        binding.delete.setOnClickListener {
+            // Views Setup
             if (task != null) {
-                taskViewModel.delete(task.task)
+                chipAdapter.setSelectedLabels(task.labels)
+                binding.title.setText(task.task.title)
+                binding.description.setText(task.task.description)
+                binding.delete.visibility = View.VISIBLE
             }
-            dialog.dismiss()
+            binding.labels.layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            binding.labels.adapter = chipAdapter
+
+
+            // Listeners
+            binding.save.setOnClickListener {
+                task?.let { task ->
+                    task.task.title = Objects.requireNonNull(binding.title.text).toString()
+                    task.task.description = Objects.requireNonNull(binding.description.text).toString()
+                    task.task.labels = chipAdapter.getSelectedLabels()
+                    taskViewModel.update(task.task)
+                }
+                dismiss()
+            }
+            binding.delete.setOnClickListener {
+                if (task != null) {
+                    taskViewModel.delete(task.task)
+                }
+                dismiss()
+            }
+
+            /*setOnShowListener {
+                val behavior = BottomSheetBehavior.from(binding.layout)
+                behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            }*/
+
+            show()
         }
-        dialog.show()
+    }
+
+    private fun showFilterDialog(){
+        BottomSheetDialog(requireContext()).apply {
+            val binding = LayoutFilterBinding.inflate(layoutInflater)
+            setContentView(binding.root)
+
+            binding.apply {
+                layoutLabel.toggle(labels.isNotEmpty())
+                val listLabel = this@HistoryFragment.labels
+                val chipAdapter = ChipAdapter(requireContext(), listLabel) {
+                    taskViewModel.filter(it)
+                }
+                chipAdapter.setSelectedLabels(taskViewModel.filteredLabel.value?: mutableListOf())
+
+                labels.apply {
+                    adapter = chipAdapter
+                    layoutManager = FlexboxLayoutManager(requireContext())
+                }
+
+                taskViewModel.filteredStatus.value?.let {
+                    chipCompleted.isChecked = it.first
+                    chipUncompleted.isChecked = it.second
+                }
+
+                chipStatus.setOnCheckedChangeListener { group, checkedId ->
+                    taskViewModel.filter(chipCompleted.isChecked, chipUncompleted.isChecked)
+                }
+            }
+            show()
+        }
     }
 
     companion object {
         @JvmStatic
         fun newInstance() = HistoryFragment()
+        const val STANDALONE = "standalone"
+        const val EXTRA_FILTER = "filter"
     }
 }

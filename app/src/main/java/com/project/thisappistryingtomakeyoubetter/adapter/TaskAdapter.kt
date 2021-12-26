@@ -81,19 +81,7 @@ class TaskAdapter(
         }
     }
 
-    private fun checkDate(task: Task): Boolean {
-        val calendar: Calendar = Calendar.getInstance()
-        calendar.timeInMillis = task.date!!.time
-        val mDate = calendar.get(Calendar.DAY_OF_MONTH)
-        if (mDate != this.date) {
-            this.date = mDate
-            return false
-        }
-        return true
-    }
-
     inner class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var date: TextView = itemView.findViewById(R.id.date)
         var title: CheckBox = itemView.findViewById(R.id.title)
         var description: TextView = itemView.findViewById(R.id.description)
         var wrapper: CardView = itemView.findViewById(R.id.wrapper)
