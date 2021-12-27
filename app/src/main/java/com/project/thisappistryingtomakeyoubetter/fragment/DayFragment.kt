@@ -37,7 +37,7 @@ class DayFragment : Fragment(), View.OnClickListener, TaskCallback {
     @Inject
     lateinit var vmFactory: ViewModelProvider.Factory
 
-    private val taskViewModel: TaskViewModel by activityViewModels { vmFactory }
+    private lateinit var taskViewModel: TaskViewModel
 
     var from: Date? = null
     var to: Date? = null
@@ -78,6 +78,7 @@ class DayFragment : Fragment(), View.OnClickListener, TaskCallback {
         binding.addTask.setOnClickListener(this)
 
         // Set task ViewModel
+        taskViewModel = ViewModelProvider(this, vmFactory).get(TaskViewModel::class.java)
         taskViewModel.setFrom(from)
         taskViewModel.setTo(to)
         taskViewModel.setPage(-1)
