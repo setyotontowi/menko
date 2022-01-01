@@ -91,7 +91,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         var loading = true
 
         val behavior = BottomSheetBehavior.from(binding.linearLayout)
-        behavior.peekHeight = 1700
+        behavior.peekHeight = arguments?.getInt(EXTRA_PEEK_HEIGHT, 1700)?:1700
 
         binding.listTask.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -116,20 +116,11 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         })
 
         if(mainViewModel.standAlone.value == false) {
-            binding.linearLayout.setOnScrollChangeListener(object :
-                NestedScrollView.OnScrollChangeListener {
-                override fun onScrollChange(
-                    v: NestedScrollView?,
-                    scrollX: Int,
-                    scrollY: Int,
-                    oldScrollX: Int,
-                    oldScrollY: Int
-                ) {
-                    if (scrollY > oldScrollY) {
-                        behavior.state = BottomSheetBehavior.STATE_EXPANDED
-                    } else if (scrollY == 0) {
-                        behavior.state = BottomSheetBehavior.STATE_COLLAPSED
-                    }
+            binding.linearLayout.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+                if (scrollY > oldScrollY) {
+                    behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                } else if (scrollY == 0) {
+                    behavior.state = BottomSheetBehavior.STATE_COLLAPSED
                 }
             })
         } else {
@@ -304,5 +295,6 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         fun newInstance() = HistoryFragment()
         const val STANDALONE = "standalone"
         const val EXTRA_FILTER = "filter"
+        const val EXTRA_PEEK_HEIGHT = "peek"
     }
 }

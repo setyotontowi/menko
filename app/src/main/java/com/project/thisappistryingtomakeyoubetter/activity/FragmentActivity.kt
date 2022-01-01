@@ -16,7 +16,12 @@ import javax.inject.Inject
 class FragmentActivity: AppCompatActivity() {
 
     val historyFragment: HistoryFragment by lazy {
-        HistoryFragment.newInstance()
+        val fragment = HistoryFragment.newInstance()
+        val bundle = Bundle().apply{
+            putInt(HistoryFragment.EXTRA_PEEK_HEIGHT, 1900)
+        }
+        fragment.arguments = bundle
+        fragment
     }
 
     @Inject
