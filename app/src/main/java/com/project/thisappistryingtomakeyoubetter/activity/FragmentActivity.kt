@@ -18,7 +18,7 @@ class FragmentActivity: AppCompatActivity() {
     val historyFragment: HistoryFragment by lazy {
         val fragment = HistoryFragment.newInstance()
         val bundle = Bundle().apply{
-            putInt(HistoryFragment.EXTRA_PEEK_HEIGHT, 1900)
+            putInt(HistoryFragment.EXTRA_PEEK_HEIGHT, 1850)
         }
         fragment.arguments = bundle
         fragment
