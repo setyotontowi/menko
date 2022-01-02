@@ -23,4 +23,6 @@ class MainViewModel @Inject constructor() : ViewModel() {
 
     val standAlone = MutableLiveData(false)
 
+    val dayTitle = MutableLiveData<String>()
+
 }

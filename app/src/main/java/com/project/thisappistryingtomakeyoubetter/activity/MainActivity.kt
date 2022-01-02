@@ -101,17 +101,14 @@ class MainActivity : AppCompatActivity() {
                     mainFragment.viewPager.currentItem = 1
                 }
                 openFragment(mainFragment)
-                viewModel.currentFragment.value = null
                 return@setOnNavigationItemSelectedListener true
             } else if (item.itemId == R.id.action_history) {
                 ADDITION=0
                 openFragment(historyFragment)
-                viewModel.currentFragment.value = historyFragment
                 return@setOnNavigationItemSelectedListener true
             } else if (item.itemId == R.id.action_label) {
                 ADDITION=0
                 openFragment(labelFragment)
-                viewModel.currentFragment.value = labelFragment
                 return@setOnNavigationItemSelectedListener true
             }
             false
@@ -119,10 +116,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openFragment(fragment: Fragment) {
+        val currentFragment = viewModel.currentFragment.value
         val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.nav_host_fragment, fragment)
-        transaction.addToBackStack(null)
+        currentFragment?.let {
+            transaction.hide(it)
+            transaction.show(fragment)
+        }?.run {
+            transaction.replace(R.id.nav_host_fragment, fragment)
+        }
         transaction.commit()
+        viewModel.currentFragment.value = fragment
     }
 
     override fun onSupportNavigateUp(): Boolean {

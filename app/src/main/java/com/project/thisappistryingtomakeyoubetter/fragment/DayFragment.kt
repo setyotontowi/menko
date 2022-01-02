@@ -3,6 +3,7 @@ package com.project.thisappistryingtomakeyoubetter.fragment
 import android.app.Dialog
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels

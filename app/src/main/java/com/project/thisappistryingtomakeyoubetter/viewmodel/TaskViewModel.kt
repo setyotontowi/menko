@@ -28,7 +28,6 @@ class TaskViewModel @Inject constructor(
 
     val page = MutableLiveData<Int>()
     fun setPage(i: Int){
-        Log.d("DEBUGGING", "setPage: $i")
         this.page.value = i
     }
 

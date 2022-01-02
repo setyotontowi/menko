@@ -5,7 +5,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.project.thisappistryingtomakeyoubetter.App
@@ -27,7 +29,7 @@ class MainFragment : Fragment() {
     private lateinit var binding: FragmentMainBinding
     lateinit var dayAdapter: DayAdapter
     lateinit var viewPager: ViewPager2
-    lateinit var viewModel: MainViewModel
+    val viewModel: MainViewModel by activityViewModels()
 
     @JvmField
     @Inject
@@ -47,43 +49,44 @@ class MainFragment : Fragment() {
 
         (activity?.application as App).appComponent.inject(this)
 
-        // Set ViewModel
-        viewModel = ViewModelProvider(requireActivity(), vmFactory!!).get(MainViewModel::class.java)
-
         createDay()
     }
 
     override fun onResume() {
         super.onResume()
-        if(viewModel.stateFromOutsideMainFragment.value == true){
+        if(viewModel.stateFromOutsideMainFragment.value == false){
             createDay()
         } else {
-            viewPager.currentItem = viewModel.currentPosition.value?:(if (MainActivity.INCLUDE_YESTERDAY) 1 else 0)
+            currentItem = viewModel.currentPosition.value?:(if (MainActivity.INCLUDE_YESTERDAY) 1 else 0)
+            viewPager.doOnPreDraw {
+                viewPager.currentItem = currentItem
+                viewPager.invalidate()
+            }
+            (requireActivity() as MainActivity).toolbar.title = viewModel.dayTitle.value.toString()
         }
     }
 
     override fun onPause() {
         super.onPause()
-        Log.d("DEBUGGING", "onPause: ")
         currentItem = viewPager.currentItem
         viewModel.currentPosition.value = viewPager.currentItem
-        viewModel.stateFromOutsideMainFragment.value = false
+        viewModel.dayTitle.value = (requireActivity() as MainActivity).toolbar.title.toString()
     }
 
-    fun createDay() {
+    private fun createDay() {
         // Generate Calendar List
         calendar = generateCalendar(MainActivity.DAY_LIMIT, MainActivity.INCLUDE_YESTERDAY)
 
         // Create Fragment View Pager
         viewPager = binding.frame
-
+        viewPager.offscreenPageLimit = 5
         dayAdapter = DayAdapter(
                 childFragmentManager,
                 lifecycle,
                 calendar
         )
         viewPager.adapter = dayAdapter
-        viewPager.setPageTransformer(DepthPageTransformer())
+        //viewPager.setPageTransformer(DepthPageTransformer())
     }
 
     /**

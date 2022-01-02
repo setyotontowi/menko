@@ -21,6 +21,8 @@ public class DayAdapter extends FragmentStateAdapter {
         this.calendars = calendars;
     }
 
+
+
     @NonNull
     @Override
     public Fragment createFragment(int position) {
