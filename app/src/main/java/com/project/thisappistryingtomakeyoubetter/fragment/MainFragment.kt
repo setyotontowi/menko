@@ -10,6 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.project.thisappistryingtomakeyoubetter.App
 import com.project.thisappistryingtomakeyoubetter.R
 import com.project.thisappistryingtomakeyoubetter.activity.MainActivity
@@ -87,6 +89,15 @@ class MainFragment : Fragment() {
         )
         viewPager.adapter = dayAdapter
         //viewPager.setPageTransformer(DepthPageTransformer())
+        TabLayoutMediator(binding.tabLayout, viewPager){ tab, position ->
+            val title: String = when (position) {
+                0 -> if(MainActivity.INCLUDE_YESTERDAY) getString(R.string.title_yesterday) else getString(R.string.title_today)
+                1 -> if(MainActivity.INCLUDE_YESTERDAY) getString(R.string.title_today) else getString(R.string.title_tomorrow)
+                2 -> if(MainActivity.INCLUDE_YESTERDAY) getString(R.string.title_tomorrow) else GeneralHelper.dayFormatter().format(calendar!![position].time)
+                else -> GeneralHelper.dayFormatter().format(calendar!![position].time)
+            }
+            tab.text = title
+        }.attach()
     }
 
     /**
