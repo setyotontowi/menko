@@ -1,8 +1,10 @@
 package com.project.thisappistryingtomakeyoubetter.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.*
-import com.project.thisappistryingtomakeyoubetter.model.*
+import com.project.thisappistryingtomakeyoubetter.model.Label
+import com.project.thisappistryingtomakeyoubetter.model.Task
+import com.project.thisappistryingtomakeyoubetter.model.TaskGroup
+import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
 import com.project.thisappistryingtomakeyoubetter.util.LabelRepository
 import com.project.thisappistryingtomakeyoubetter.util.TaskRepository
 import kotlinx.coroutines.Dispatchers.IO
@@ -12,8 +14,8 @@ import java.util.*
 import javax.inject.Inject
 
 class TaskViewModel @Inject constructor(
-        private val taskRepository: TaskRepository,
-        labelRepository: LabelRepository
+    private val taskRepository: TaskRepository,
+    labelRepository: LabelRepository
 ) : ViewModel() {
 
     private val from = MutableLiveData<Date?>()
@@ -27,7 +29,7 @@ class TaskViewModel @Inject constructor(
     }
 
     val page = MutableLiveData<Int>()
-    fun setPage(i: Int){
+    fun setPage(i: Int) {
         this.page.value = i
     }
 
@@ -44,58 +46,73 @@ class TaskViewModel @Inject constructor(
 
     private val activeTask = MutableLiveData<List<TaskWithLabel>?>()
 
-    val taskGroup: LiveData<List<TaskGroup>> = Transformations.switchMap(tasksWithLabel){ list ->
-        Transformations.switchMap(filteredLabel) { filteredLabel ->
-            Transformations.switchMap(filteredStatus) { filteredStatus ->
-
-                val filteredList = mutableListOf<TaskWithLabel>()
-                if (!filteredLabel.isNullOrEmpty()) {
-                    for (label in filteredLabel){
-                        val tasks = list?.filter { it.labels.contains(label) }
-                        filteredList.addAll(tasks ?: listOf())
-                    }
-                } else {
-                    filteredList.addAll(list ?: listOf())
+    private val fromToPage: LiveData<Triple<Date?, Date?, Int>> =
+        Transformations.switchMap(from) { from ->
+            Transformations.switchMap(to) { to ->
+                Transformations.switchMap(page) { page ->
+                    val result = MutableLiveData<Triple<Date?, Date?, Int>>()
+                    result.value = Triple(from, to, page)
+                    result
                 }
+            }
+        }
 
-                val filteredStatusList = mutableListOf<TaskWithLabel>()
-                if(filteredStatus.first != filteredStatus.second) {
-                    if(filteredStatus.first) {
-                        filteredStatusList.addAll(filteredList.filter { it.task.isFinish })
+    // Go with observing? Transformation switch map getTaskWithLabel(from, to, page)
+    val taskGroup: LiveData<List<TaskGroup>> = Transformations.switchMap(fromToPage) {
+        Transformations.switchMap(taskRepository.getTaskWithLabel(it.first, it.second, it.third)) { list ->
+            Transformations.switchMap(filteredLabel) { filteredLabel ->
+                Transformations.switchMap(filteredStatus) { filteredStatus ->
+
+                    val filteredList = mutableListOf<TaskWithLabel>()
+                    if (!filteredLabel.isNullOrEmpty()) {
+                        for (label in filteredLabel) {
+                            val tasks = list?.filter { it.labels.contains(label) }
+                            filteredList.addAll(tasks ?: listOf())
+                        }
                     } else {
-                        filteredStatusList.addAll(filteredList.filter { !it.task.isFinish })
+                        filteredList.addAll(list ?: listOf())
                     }
-                } else {
-                    filteredStatusList.addAll(filteredList)
-                }
 
-                filteredStatusList.sortByDescending { it.task.date }
-                activeTask.value = filteredStatusList
-
-                val result = MutableLiveData<List<TaskGroup>>()
-                val taskGroup = mutableListOf<TaskGroup>()
-                val map = mutableMapOf<Date, List<TaskWithLabel>>()
-
-                filteredStatusList.forEach {
-                    // using map, find the associate date then assign value with list
-                    val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                    val date = formatter.parse(formatter.format(it.task.date ?: Date())) ?: Date()
-                    val a = map[date]
-                    if (a == null) {
-                        map[date] = listOf(it)
+                    val filteredStatusList = mutableListOf<TaskWithLabel>()
+                    if (filteredStatus.first != filteredStatus.second) {
+                        if (filteredStatus.first) {
+                            filteredStatusList.addAll(filteredList.filter { it.task.isFinish })
+                        } else {
+                            filteredStatusList.addAll(filteredList.filter { !it.task.isFinish })
+                        }
                     } else {
-                        val b = a.toMutableList()
-                        b.add(it)
-                        map[date] = b
+                        filteredStatusList.addAll(filteredList)
                     }
-                }
 
-                map.forEach {
-                    taskGroup.add(TaskGroup(it.key, it.value))
-                }
+                    filteredStatusList.sortByDescending { it.task.date }
+                    activeTask.value = filteredStatusList
 
-                result.value = taskGroup
-                result
+                    val result = MutableLiveData<List<TaskGroup>>()
+                    val taskGroup = mutableListOf<TaskGroup>()
+                    val map = mutableMapOf<Date, List<TaskWithLabel>>()
+
+                    filteredStatusList.forEach {
+                        // using map, find the associate date then assign value with list
+                        val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                        val date =
+                            formatter.parse(formatter.format(it.task.date ?: Date())) ?: Date()
+                        val a = map[date]
+                        if (a == null) {
+                            map[date] = listOf(it)
+                        } else {
+                            val b = a.toMutableList()
+                            b.add(it)
+                            map[date] = b
+                        }
+                    }
+
+                    map.forEach {
+                        taskGroup.add(TaskGroup(it.key, it.value))
+                    }
+
+                    result.value = taskGroup
+                    result
+                }
             }
         }
     }
@@ -107,7 +124,8 @@ class TaskViewModel @Inject constructor(
         result.value = listOf()
         result
     }
-    fun filter(list: List<Label>){
+
+    fun filter(list: List<Label>) {
         filteredLabel.postValue(list)
     }
 
@@ -117,16 +135,17 @@ class TaskViewModel @Inject constructor(
         result.value = Pair(false, false)
         result
     }
-    fun filter(complete: Boolean = false, uncomplete: Boolean = false){
+
+    fun filter(complete: Boolean = false, uncomplete: Boolean = false) {
         filteredStatus.postValue(Pair(complete, uncomplete))
     }
 
-    val summary = Transformations.switchMap(activeTask){ list ->
+    val summary = Transformations.switchMap(activeTask) { list ->
         val result = MutableLiveData<Triple<Int, Int, Int>>() // all, completed, uncompleted
 
-        val all = list?.size?:0
-        val completed = list?.filter { it.task.isFinish }?.size?:0
-        val uncompleted = list?.filter { !it.task.isFinish }?.size?:0
+        val all = list?.size ?: 0
+        val completed = list?.filter { it.task.isFinish }?.size ?: 0
+        val uncompleted = list?.filter { !it.task.isFinish }?.size ?: 0
 
         result.value = Triple(all, completed, uncompleted)
         result
