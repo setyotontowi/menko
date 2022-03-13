@@ -17,7 +17,7 @@ class TaskRepository @Inject constructor(
 ) {
 
     companion object {
-        private val LIMIT = 10
+        private val LIMIT = 3
     }
 
     fun insert(task: Task){

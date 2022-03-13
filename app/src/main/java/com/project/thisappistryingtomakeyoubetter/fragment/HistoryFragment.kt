@@ -52,6 +52,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         return binding.root
     }
 
+    // TODO: The problem is this always reload onViewCreated on OnResume 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity?.application as App).appComponent.inject(this)
@@ -87,7 +88,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         var firstVisibleItem: Int
         var visibleItemCount: Int
         var totalItemCount: Int
-        val visibleTreshold = 5
+        val visibleTreshold = 10
         var loading = true
 
         val behavior = BottomSheetBehavior.from(binding.linearLayout)
@@ -96,6 +97,24 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         binding.listTask.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
+                val itemCount = linearLayoutManager.itemCount
+                val lastVisibleItem = linearLayoutManager.findLastCompletelyVisibleItemPosition()
+                val isLastPosition = itemCount.minus(1) == lastVisibleItem
+
+                if(isLastPosition) {
+                    val page = taskViewModel.page.value ?: 0
+                    taskViewModel.setPage(page + 1)
+                    loading = true
+                }
+
+                if (loading) {
+                    if (itemCount > previousTotal) {
+                        loading = false
+                        previousTotal = itemCount
+                    }
+                }
+
+                /*
                 visibleItemCount = recyclerView.childCount
                 totalItemCount = linearLayoutManager.itemCount
                 firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition()
@@ -107,16 +126,17 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
                     }
                 }
 
+                // TODO: 17/01/22 Logic for setter page here
                 if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleTreshold)) {
                     val page = taskViewModel.page.value ?: 0
                     taskViewModel.setPage(page + 1)
                     loading = true
-                }
+                } */
             }
         })
 
         if(mainViewModel.standAlone.value == false) {
-            binding.linearLayout.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+            binding.linearLayout.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
                 if (scrollY > oldScrollY) {
                     behavior.state = BottomSheetBehavior.STATE_EXPANDED
                 } else if (scrollY == 0) {

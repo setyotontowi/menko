@@ -58,7 +58,8 @@ class TaskViewModel @Inject constructor(
         }
 
     // Go with observing? Transformation switch map getTaskWithLabel(from, to, page)
-    val taskGroup: LiveData<List<TaskGroup>> = Transformations.switchMap(fromToPage) {
+    // TODO: 17/01/22 Issues: multiple data in history.
+    val taskGroup: LiveData<List<TaskGroup>> = Transformations.switchMap(fromToPage) { it ->
         Transformations.switchMap(taskRepository.getTaskWithLabel(it.first, it.second, it.third)) { list ->
             Transformations.switchMap(filteredLabel) { filteredLabel ->
                 Transformations.switchMap(filteredStatus) { filteredStatus ->

@@ -48,4 +48,8 @@ class LabelViewModel @Inject constructor(
 
     fun getLabelWithTask(): LiveData<List<LabelWithTask>?> { return labelRepository.getLabelWithTasks()}
 
+    enum class State(var value: Int) {
+        LOADING(0), SUCCESS(1), FAILED(-1);
+    }
+
 }
