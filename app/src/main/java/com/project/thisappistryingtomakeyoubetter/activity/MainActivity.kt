@@ -36,13 +36,11 @@ class MainActivity : AppCompatActivity() {
     lateinit var toolbar: Toolbar
     lateinit var viewModel: MainViewModel
     lateinit var taskViewModel: TaskViewModel
-
-    @Inject
-    lateinit var mainFragment: MainFragment
-    @Inject
-    lateinit var historyFragment: HistoryFragment
-    @Inject
-    lateinit var labelFragment: LabelFragment
+    
+    val mainFragment = MainFragment()
+    val historyFragment = HistoryFragment()
+    val labelFragment = LabelFragment()
+    var currentFragment: Fragment? = null
 
     @JvmField
     @Inject
@@ -64,7 +62,6 @@ class MainActivity : AppCompatActivity() {
 
         // App Intro Initiation
         val t = Thread {
-
             // Shared Preferences
             val getPrefs = getSharedPreferences(getString(R.string.prefSetting),
                     MODE_PRIVATE)
@@ -87,45 +84,59 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment?.navController
         Navigation.setViewNavController(binding!!.navView, navController)
 
-        viewModel.currentFragment.value?.let {
-            openFragment(it)
-        }?: run {
-            openFragment(mainFragment)
-        }
+        currentFragment = mainFragment
 
+        setupFragment()
+        openFragment(mainFragment)
 
         binding!!.navView.setOnNavigationItemSelectedListener { item: MenuItem ->
-            if (item.itemId == R.id.action_main) {
-                ADDITION++
-                if(ADDITION > 1){
-                    mainFragment.viewPager.currentItem = 1
+            when (item.itemId) {
+                R.id.action_main -> {
+                    ADDITION++
+                    if(ADDITION > 1){
+                        mainFragment.viewPager.currentItem = 1
+                    }
+                    openFragment(mainFragment, currentFragment)
+                    return@setOnNavigationItemSelectedListener true
                 }
-                openFragment(mainFragment)
-                return@setOnNavigationItemSelectedListener true
-            } else if (item.itemId == R.id.action_history) {
-                ADDITION=0
-                openFragment(historyFragment)
-                return@setOnNavigationItemSelectedListener true
-            } else if (item.itemId == R.id.action_label) {
-                ADDITION=0
-                openFragment(labelFragment)
-                return@setOnNavigationItemSelectedListener true
+                R.id.action_history -> {
+                    ADDITION=0
+                    openFragment(historyFragment, currentFragment)
+                    return@setOnNavigationItemSelectedListener true
+                }
+                R.id.action_label -> {
+                    ADDITION=0
+                    openFragment(labelFragment, currentFragment)
+                    return@setOnNavigationItemSelectedListener true
+                }
+                else -> false
             }
-            false
         }
     }
 
-    private fun openFragment(fragment: Fragment) {
-        val currentFragment = viewModel.currentFragment.value
-        val transaction = supportFragmentManager.beginTransaction()
+    private fun openFragment(fragment: Fragment, currentFragment: Fragment? = null) {
         currentFragment?.let {
-            transaction.hide(it)
-            transaction.show(fragment)
-        }?.run {
-            transaction.replace(R.id.nav_host_fragment, fragment)
+            supportFragmentManager.beginTransaction()
+                .hide(it)
+                .show(fragment).commit()
         }
-        transaction.commit()
-        viewModel.currentFragment.value = fragment
+        this.currentFragment = fragment
+    }
+
+    private fun setupFragment(){
+        supportFragmentManager.beginTransaction()
+                .add(R.id.nav_host_fragment, mainFragment)
+                .hide(mainFragment)
+                .commit()
+        supportFragmentManager.beginTransaction()
+                .add(R.id.nav_host_fragment, historyFragment)
+                .hide(historyFragment)
+                .commit()
+        supportFragmentManager.beginTransaction()
+                .add(R.id.nav_host_fragment, labelFragment)
+                .hide(labelFragment)
+                .commit()
+
     }
 
     override fun onSupportNavigateUp(): Boolean {
