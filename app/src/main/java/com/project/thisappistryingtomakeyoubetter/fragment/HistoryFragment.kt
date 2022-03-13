@@ -69,12 +69,12 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         taskViewModel.setPage(0)
         taskViewModel.apply {
             label.observe(viewLifecycleOwner) { handleLabel(it) }
-            taskGroup.observe(viewLifecycleOwner) { handleTaskGroup(it) }
+            taskGroup.observe(viewLifecycleOwner) { handleTaskWithLabel(it) }
             summary.observe(viewLifecycleOwner) { handleSummary(it) }
         }
     }
 
-    var taskAdapter = TaskGroupAdapter(this@HistoryFragment)
+    var taskAdapter = TaskGroupAdapter(mutableMapOf(), this@HistoryFragment)
     private fun setupView() {
         val linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
@@ -164,10 +164,10 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         }
     }
 
-    private fun handleTaskGroup(it: List<TaskGroup>?) {
+    private fun handleTaskWithLabel(it: List<TaskWithLabel>?) {
         it?.let {
             placeHolder(true)
-            taskAdapter.addList(it)
+            taskAdapter.addListTaskWithLabel(it)
         } ?: run {
             placeHolder(false)
         }

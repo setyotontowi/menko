@@ -58,8 +58,7 @@ class TaskViewModel @Inject constructor(
         }
 
     // Go with observing? Transformation switch map getTaskWithLabel(from, to, page)
-    private val activeTaskGroup = MutableLiveData<List<TaskGroup>>()
-    val taskGroup: LiveData<List<TaskGroup>> = Transformations.switchMap(fromToPage) { it ->
+    val taskGroup: LiveData<List<TaskWithLabel>> = Transformations.switchMap(fromToPage) { it ->
         Transformations.switchMap(taskRepository.getTaskWithLabel(it.first, it.second, it.third)) { list ->
             Transformations.switchMap(filteredLabel) { filteredLabel ->
                 Transformations.switchMap(filteredStatus) { filteredStatus ->
@@ -88,24 +87,8 @@ class TaskViewModel @Inject constructor(
                     filteredStatusList.sortByDescending { it.task.date }
                     activeTask.value = filteredStatusList
 
-                    val result = MutableLiveData<List<TaskGroup>>()
-                    val taskGroup = mutableListOf<TaskGroup>()
-                    val map = listToMap(filteredStatusList)
-
-                    activeTaskGroup.value?.forEach {
-                        val listTaskInMap = map[it.date]
-                        val listTaskInTaskGroup = it.tasks
-
-                        listTaskInTaskGroup.toMutableList().addAll(listTaskInMap ?: listOf())
-                        it.tasks = listTaskInTaskGroup
-                    }
-
-                    map.forEach {
-                        taskGroup.add(TaskGroup(it.key, it.value))
-                    }
-
-                    result.value = taskGroup
-                    activeTaskGroup.value = taskGroup
+                    val result = MutableLiveData<List<TaskWithLabel>>()
+                    result.value = filteredStatusList
                     result
                 }
             }
