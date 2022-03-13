@@ -58,7 +58,7 @@ class TaskViewModel @Inject constructor(
         }
 
     // Go with observing? Transformation switch map getTaskWithLabel(from, to, page)
-    // TODO: 17/01/22 Issues: multiple data in history.
+    private val activeTaskGroup = MutableLiveData<List<TaskGroup>>()
     val taskGroup: LiveData<List<TaskGroup>> = Transformations.switchMap(fromToPage) { it ->
         Transformations.switchMap(taskRepository.getTaskWithLabel(it.first, it.second, it.third)) { list ->
             Transformations.switchMap(filteredLabel) { filteredLabel ->
@@ -90,21 +90,14 @@ class TaskViewModel @Inject constructor(
 
                     val result = MutableLiveData<List<TaskGroup>>()
                     val taskGroup = mutableListOf<TaskGroup>()
-                    val map = mutableMapOf<Date, List<TaskWithLabel>>()
+                    val map = listToMap(filteredStatusList)
 
-                    filteredStatusList.forEach {
-                        // using map, find the associate date then assign value with list
-                        val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                        val date =
-                            formatter.parse(formatter.format(it.task.date ?: Date())) ?: Date()
-                        val a = map[date]
-                        if (a == null) {
-                            map[date] = listOf(it)
-                        } else {
-                            val b = a.toMutableList()
-                            b.add(it)
-                            map[date] = b
-                        }
+                    activeTaskGroup.value?.forEach {
+                        val listTaskInMap = map[it.date]
+                        val listTaskInTaskGroup = it.tasks
+
+                        listTaskInTaskGroup.toMutableList().addAll(listTaskInMap ?: listOf())
+                        it.tasks = listTaskInTaskGroup
                     }
 
                     map.forEach {
@@ -112,10 +105,30 @@ class TaskViewModel @Inject constructor(
                     }
 
                     result.value = taskGroup
+                    activeTaskGroup.value = taskGroup
                     result
                 }
             }
         }
+    }
+
+    // using map, find the associate date then assign value with list
+    private fun listToMap(list: List<TaskWithLabel>): MutableMap<Date, List<TaskWithLabel>>{
+        val map = mutableMapOf<Date, List<TaskWithLabel>>()
+        list.forEach {
+            val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val date =
+                    formatter.parse(formatter.format(it.task.date ?: Date())) ?: Date()
+            val a = map[date]
+            if (a == null) {
+                map[date] = listOf(it)
+            } else {
+                val b = a.toMutableList()
+                b.add(it)
+                map[date] = b
+            }
+        }
+        return map
     }
 
     val label: LiveData<List<Label>?> = labelRepository.getAll()

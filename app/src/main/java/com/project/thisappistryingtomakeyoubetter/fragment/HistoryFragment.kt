@@ -52,7 +52,6 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         return binding.root
     }
 
-    // TODO: The problem is this always reload onViewCreated on OnResume 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity?.application as App).appComponent.inject(this)
@@ -113,25 +112,6 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
                         previousTotal = itemCount
                     }
                 }
-
-                /*
-                visibleItemCount = recyclerView.childCount
-                totalItemCount = linearLayoutManager.itemCount
-                firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition()
-
-                if (loading) {
-                    if (totalItemCount > previousTotal) {
-                        loading = false
-                        previousTotal = totalItemCount
-                    }
-                }
-
-                // TODO: 17/01/22 Logic for setter page here
-                if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleTreshold)) {
-                    val page = taskViewModel.page.value ?: 0
-                    taskViewModel.setPage(page + 1)
-                    loading = true
-                } */
             }
         })
 
@@ -187,7 +167,6 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
     private fun handleTaskGroup(it: List<TaskGroup>?) {
         it?.let {
             placeHolder(true)
-            //taskAdapter.list.clear()
             taskAdapter.addList(it)
         } ?: run {
             placeHolder(false)
