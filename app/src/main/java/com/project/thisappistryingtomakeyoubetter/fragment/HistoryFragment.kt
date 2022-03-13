@@ -22,6 +22,7 @@ import com.project.thisappistryingtomakeyoubetter.databinding.DialogTaskBinding
 import com.project.thisappistryingtomakeyoubetter.databinding.FragmentHistoryBinding
 import com.project.thisappistryingtomakeyoubetter.databinding.LayoutFilterBinding
 import com.project.thisappistryingtomakeyoubetter.model.Label
+import com.project.thisappistryingtomakeyoubetter.model.Task
 import com.project.thisappistryingtomakeyoubetter.model.TaskGroup
 import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
 import com.project.thisappistryingtomakeyoubetter.view.toggle
@@ -147,12 +148,16 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         return false
     }
 
-    override fun onLongClick(task: TaskWithLabel) {
-        taskDialog(task)
-    }
-
     override fun onBoxChecked(task: TaskWithLabel) {
         taskViewModel.update(task.task)
+    }
+
+    override fun onUpdate(task: Task) {
+        taskViewModel.update(task)
+    }
+
+    override fun onDelete(task: Task) {
+        taskViewModel.delete(task)
     }
 
     private fun handleSummary(summary: Triple<Int, Int, Int>){
@@ -203,58 +208,6 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         } else {
             binding.listTask.visibility = View.VISIBLE
             binding.nodata.visibility = View.GONE
-        }
-    }
-
-    private fun taskDialog(task: TaskWithLabel?) {
-        BottomSheetDialog(requireContext()).apply {
-            val binding = DialogTaskBinding.inflate(
-                layoutInflater
-            )
-            setContentView(binding.root)
-
-            Objects.requireNonNull(window)
-                ?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
-
-            // Chip Adapter
-            val chipAdapter = ChipAdapter(requireContext(), labels)
-
-
-            // Views Setup
-            if (task != null) {
-                chipAdapter.setSelectedLabels(task.labels)
-                binding.title.setText(task.task.title)
-                binding.description.setText(task.task.description)
-                binding.delete.visibility = View.VISIBLE
-            }
-            binding.labels.layoutManager =
-                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-            binding.labels.adapter = chipAdapter
-
-
-            // Listeners
-            binding.save.setOnClickListener {
-                task?.let { task ->
-                    task.task.title = Objects.requireNonNull(binding.title.text).toString()
-                    task.task.description = Objects.requireNonNull(binding.description.text).toString()
-                    task.task.labels = chipAdapter.getSelectedLabels()
-                    taskViewModel.update(task.task)
-                }
-                dismiss()
-            }
-            binding.delete.setOnClickListener {
-                if (task != null) {
-                    taskViewModel.delete(task.task)
-                }
-                dismiss()
-            }
-
-            /*setOnShowListener {
-                val behavior = BottomSheetBehavior.from(binding.layout)
-                behavior.state = BottomSheetBehavior.STATE_EXPANDED
-            }*/
-
-            show()
         }
     }
 

@@ -108,12 +108,16 @@ class DayFragment : Fragment(), View.OnClickListener, TaskCallback {
         }
     }
 
-    override fun onLongClick(task: TaskWithLabel) {
-        taskDialog(task)
-    }
-
     override fun onBoxChecked(task: TaskWithLabel) {
         taskViewModel.update(task.task)
+    }
+
+    override fun onUpdate(task: Task) {
+        taskViewModel.update(task)
+    }
+
+    override fun onDelete(task: Task) {
+        taskViewModel.delete(task)
     }
 
     private fun handleLabel(labels: List<Label>?) {

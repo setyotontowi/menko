@@ -33,7 +33,7 @@ class TaskGroupAdapter(
         date?.let {
             holder.date.text = GeneralHelper.dateFormatter().format(date)
             holder.viewList.apply {
-                adapter = TaskAdapter(context, item?: listOf(), callback)
+                adapter = TaskAdapter(context, item?: mutableListOf(), callback)
                 layoutManager = LinearLayoutManager(context)
             }
         }

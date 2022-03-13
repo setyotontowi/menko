@@ -31,6 +31,7 @@ class TaskViewModel @Inject constructor(
     val page = MutableLiveData<Int>()
     fun setPage(i: Int) {
         this.page.value = i
+        this.updated.value = false
     }
 
 
@@ -62,34 +63,38 @@ class TaskViewModel @Inject constructor(
         Transformations.switchMap(taskRepository.getTaskWithLabel(it.first, it.second, it.third)) { list ->
             Transformations.switchMap(filteredLabel) { filteredLabel ->
                 Transformations.switchMap(filteredStatus) { filteredStatus ->
+                    Transformations.switchMap(updated) { updated ->
 
-                    val filteredList = mutableListOf<TaskWithLabel>()
-                    if (!filteredLabel.isNullOrEmpty()) {
-                        for (label in filteredLabel) {
-                            val tasks = list?.filter { it.labels.contains(label) }
-                            filteredList.addAll(tasks ?: listOf())
+                        val filteredStatusList = mutableListOf<TaskWithLabel>()
+                        if(!updated) {
+                            val filteredList = mutableListOf<TaskWithLabel>()
+                            if (!filteredLabel.isNullOrEmpty()) {
+                                for (label in filteredLabel) {
+                                    val tasks = list?.filter { it.labels.contains(label) }
+                                    filteredList.addAll(tasks ?: listOf())
+                                }
+                            } else {
+                                filteredList.addAll(list ?: listOf())
+                            }
+
+                            if (filteredStatus.first != filteredStatus.second) {
+                                if (filteredStatus.first) {
+                                    filteredStatusList.addAll(filteredList.filter { it.task.isFinish })
+                                } else {
+                                    filteredStatusList.addAll(filteredList.filter { !it.task.isFinish })
+                                }
+                            } else {
+                                filteredStatusList.addAll(filteredList)
+                            }
+
+                            filteredStatusList.sortByDescending { it.task.date }
+                            activeTask.value = filteredStatusList
                         }
-                    } else {
-                        filteredList.addAll(list ?: listOf())
+
+                        val result = MutableLiveData<List<TaskWithLabel>>()
+                        result.value = filteredStatusList
+                        result
                     }
-
-                    val filteredStatusList = mutableListOf<TaskWithLabel>()
-                    if (filteredStatus.first != filteredStatus.second) {
-                        if (filteredStatus.first) {
-                            filteredStatusList.addAll(filteredList.filter { it.task.isFinish })
-                        } else {
-                            filteredStatusList.addAll(filteredList.filter { !it.task.isFinish })
-                        }
-                    } else {
-                        filteredStatusList.addAll(filteredList)
-                    }
-
-                    filteredStatusList.sortByDescending { it.task.date }
-                    activeTask.value = filteredStatusList
-
-                    val result = MutableLiveData<List<TaskWithLabel>>()
-                    result.value = filteredStatusList
-                    result
                 }
             }
         }
@@ -152,15 +157,19 @@ class TaskViewModel @Inject constructor(
         viewModelScope.launch(IO) { taskRepository.insert(task) }
     }
 
+    private val updated = MutableLiveData<Boolean>()
     fun update(task: Task) {
+        updated.value = true
         viewModelScope.launch(IO) { taskRepository.update(task) }
     }
 
     fun delete(task: Task) {
+        updated.value = true
         viewModelScope.launch(IO) { taskRepository.delete(task) }
     }
 
     fun deleteAll() {
+        updated.value = false
         viewModelScope.launch(IO) { taskRepository.deleteAll() }
     }
 
