@@ -148,6 +148,13 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         return false
     }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        if(!hidden){
+            requireActivity().title = "History"
+        }
+        super.onHiddenChanged(hidden)
+    }
+
     override fun onBoxChecked(task: TaskWithLabel) {
         taskViewModel.update(task.task)
     }

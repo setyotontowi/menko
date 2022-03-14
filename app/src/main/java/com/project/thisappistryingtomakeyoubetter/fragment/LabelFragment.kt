@@ -120,13 +120,20 @@ class LabelFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        labelViewModel.getLabelWithTask().observe(this, { labels ->
+        labelViewModel.getLabelWithTask().observe(this) { labels ->
             labels?.let {
                 this.labels.clear()
                 this.labels.addAll(it)
             }
             adapter.notifyDataSetChanged()
-        })
+        }
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        if(!hidden){
+            requireActivity().title = "Label"
+        }
+        super.onHiddenChanged(hidden)
     }
 
     private fun addLabel(label: Label){ labelViewModel.insert(label); hideKeyboard()}

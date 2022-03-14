@@ -75,6 +75,15 @@ class MainFragment : Fragment() {
         viewModel.dayTitle.value = (requireActivity() as MainActivity).toolbar.title.toString()
     }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        if(!hidden){
+            (requireActivity() as MainActivity).toolbar.title = viewModel.dayTitle.value.toString()
+        } else {
+            viewModel.dayTitle.value = (requireActivity() as MainActivity).toolbar.title.toString()
+        }
+        super.onHiddenChanged(hidden)
+    }
+
     private fun createDay() {
         // Generate Calendar List
         calendar = generateCalendar(MainActivity.DAY_LIMIT, MainActivity.INCLUDE_YESTERDAY)
