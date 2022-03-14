@@ -38,4 +38,13 @@ interface TaskDao {
 
     @Query("DELETE FROM task")
     suspend fun deleteAll()
+
+    @Query("SELECT COUNT(*) as total FROM task")
+    fun countAllTask(): Int
+
+    @Query("SELECT COUNT(*) as totalFinished FROM task WHERE finish = 1 ")
+    fun countFinishedTask(): Int
+
+    @Query("SELECT COUNT(*) as totalFinished FROM task WHERE finish = 0 ")
+    fun countUnfinishedTask(): Int
 }

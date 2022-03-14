@@ -118,14 +118,11 @@ class TaskViewModel @Inject constructor(
         filteredStatus.postValue(Pair(complete, uncomplete))
     }
 
-    val summary = Transformations.switchMap(activeTask) { list ->
+    val summary: LiveData<Triple<Int, Int, Int>> by lazy{
         val result = MutableLiveData<Triple<Int, Int, Int>>() // all, completed, uncompleted
-
-        val all = list?.size ?: 0
-        val completed = list?.filter { it.task.isFinish }?.size ?: 0
-        val uncompleted = list?.filter { !it.task.isFinish }?.size ?: 0
-
-        result.value = Triple(all, completed, uncompleted)
+        viewModelScope.launch(IO) {
+            result.postValue(taskRepository.getSummary())
+        }
         result
     }
 
