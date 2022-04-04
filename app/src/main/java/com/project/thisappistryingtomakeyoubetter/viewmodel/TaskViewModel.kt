@@ -62,33 +62,17 @@ class TaskViewModel @Inject constructor(
         Transformations.switchMap(taskRepository.getTaskWithLabel(it.first, it.second, it.third)) { list ->
             Transformations.switchMap(filteredLabel) { filteredLabel ->
                 Transformations.switchMap(filteredStatus) { filteredStatus ->
+                        val a = fromToPage.value
 
-                        val filteredStatusList = mutableListOf<TaskWithLabel>()
-                        val filteredList = mutableListOf<TaskWithLabel>()
-                        if (!filteredLabel.isNullOrEmpty()) {
-                            for (label in filteredLabel) {
-                                val tasks = list?.filter { it.labels.contains(label) }
-                                filteredList.addAll(tasks ?: listOf())
-                            }
-                        } else {
-                            filteredList.addAll(list ?: listOf())
-                        }
+                        val filteredList = list
+                            .filterByLabel(filteredLabel)
+                            .filterByStatus(filteredStatus)
+                            .sortedByDescending { it.task.date }
 
-                        if (filteredStatus.first != filteredStatus.second) {
-                            if (filteredStatus.first) {
-                                filteredStatusList.addAll(filteredList.filter { it.task.isFinish })
-                            } else {
-                                filteredStatusList.addAll(filteredList.filter { !it.task.isFinish })
-                            }
-                        } else {
-                            filteredStatusList.addAll(filteredList)
-                        }
-
-                        filteredStatusList.sortByDescending { it.task.date }
-                        activeTask.value = filteredStatusList
+                        activeTask.value = filteredList
 
                         val result = MutableLiveData<List<TaskWithLabel>>()
-                        result.value = filteredStatusList
+                        result.value = filteredList
                         result
                 }
             }
@@ -96,6 +80,37 @@ class TaskViewModel @Inject constructor(
     }
 
     val label: LiveData<List<Label>?> = labelRepository.getAll()
+
+    private fun List<TaskWithLabel>?.filterByLabel(filteredLabel: List<Label>?): List<TaskWithLabel>{
+        val filteredList = mutableListOf<TaskWithLabel>()
+        val list = this
+        if (!filteredLabel.isNullOrEmpty()) {
+            for (label in filteredLabel) {
+                val tasks = list?.filter { it.labels.contains(label) }
+                filteredList.addAll(tasks ?: listOf())
+            }
+        } else {
+            filteredList.addAll(list ?: listOf())
+        }
+
+        return filteredList
+    }
+
+    private fun List<TaskWithLabel>.filterByStatus(filteredStatus: Pair<Boolean, Boolean>): List<TaskWithLabel>{
+        val filteredStatusList = mutableListOf<TaskWithLabel>()
+        val filteredList = this
+        if (filteredStatus.first != filteredStatus.second) {
+            if (filteredStatus.first) {
+                filteredStatusList.addAll(filteredList.filter { it.task.isFinish })
+            } else {
+                filteredStatusList.addAll(filteredList.filter { !it.task.isFinish })
+            }
+        } else {
+            filteredStatusList.addAll(filteredList)
+        }
+
+        return filteredStatusList
+    }
 
     val filteredLabel: MutableLiveData<List<Label>> by lazy {
         val result = MutableLiveData<List<Label>>()

@@ -98,7 +98,8 @@ class TaskGroupAdapter(
         }
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition].task.date == newList[newItemPosition].task.date
+            return ((oldList[oldItemPosition].task.date == newList[newItemPosition].task.date) &&
+                    (oldList[oldItemPosition].task.isFinish == newList[newItemPosition].task.isFinish))
         }
     }
 
