@@ -62,7 +62,6 @@ class TaskViewModel @Inject constructor(
         Transformations.switchMap(taskRepository.getTaskWithLabel(it.first, it.second, it.third)) { list ->
             Transformations.switchMap(filteredLabel) { filteredLabel ->
                 Transformations.switchMap(filteredStatus) { filteredStatus ->
-                        val a = fromToPage.value
 
                         val filteredList = list
                             .filterByLabel(filteredLabel)
@@ -75,6 +74,20 @@ class TaskViewModel @Inject constructor(
                         result.value = filteredList
                         result
                 }
+            }
+        }
+    }
+
+    val taskHistory: LiveData<List<TaskWithLabel>> = Transformations.switchMap(taskRepository.getTaskWithLabel(null, null, -1)) { list ->
+        Transformations.switchMap(filteredLabel) { filteredLabel ->
+            Transformations.switchMap(filteredStatus) { filteredStatus ->
+                val result = MutableLiveData<List<TaskWithLabel>>()
+                val filteredList = list
+                    .filterByLabel(filteredLabel)
+                    .filterByStatus(filteredStatus)
+                    .sortedByDescending { it.task.date }
+                result.value = filteredList
+                result
             }
         }
     }

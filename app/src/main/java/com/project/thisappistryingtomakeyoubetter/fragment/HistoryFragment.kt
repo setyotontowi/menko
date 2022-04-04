@@ -70,7 +70,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         taskViewModel.setPage(0)
         taskViewModel.apply {
             label.observe(viewLifecycleOwner) { handleLabel(it) }
-            taskGroup.observe(viewLifecycleOwner) { handleTaskWithLabel(it) }
+            taskHistory.observe(viewLifecycleOwner) { handleTaskWithLabel(it) }
             summary.observe(viewLifecycleOwner) { handleSummary(it) }
         }
     }
@@ -179,6 +179,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
     private fun handleTaskWithLabel(it: List<TaskWithLabel>?) {
         it?.let {
             placeHolder(true)
+            taskAdapter.list = mutableMapOf()
             taskAdapter.addListTaskWithLabel(it)
         } ?: run {
             placeHolder(false)
