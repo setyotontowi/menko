@@ -56,16 +56,16 @@ class MainFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if(viewModel.stateFromOutsideMainFragment.value == false){
+        /*if(viewModel.stateFromOutsideMainFragment.value == false){
             createDay()
-        } else {
+        } else {*/
             currentItem = viewModel.currentPosition.value?:(if (MainActivity.INCLUDE_YESTERDAY) 1 else 0)
             viewPager.doOnPreDraw {
                 viewPager.currentItem = currentItem
                 viewPager.invalidate()
             }
             (requireActivity() as MainActivity).toolbar.title = viewModel.dayTitle.value.toString()
-        }
+        /*}*/
     }
 
     override fun onPause() {
