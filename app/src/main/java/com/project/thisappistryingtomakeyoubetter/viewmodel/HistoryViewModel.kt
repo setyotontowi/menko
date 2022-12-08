@@ -1,11 +1,15 @@
 package com.project.thisappistryingtomakeyoubetter.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.*
+import androidx.lifecycle.Transformations.switchMap
 import com.project.thisappistryingtomakeyoubetter.model.Label
 import com.project.thisappistryingtomakeyoubetter.model.Task
 import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
 import com.project.thisappistryingtomakeyoubetter.util.LabelRepository
 import com.project.thisappistryingtomakeyoubetter.util.TaskRepository
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*

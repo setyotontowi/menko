@@ -104,8 +104,8 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
                 val isLastPosition = itemCount.minus(1) == lastVisibleItem
 
                 if(isLastPosition) {
-                    val page = taskViewModel.page.value ?: 0
-                    taskViewModel.setPage(page + 1)
+                    /*val page = taskViewModel.page.value ?: 0
+                    taskViewModel.setPage(page + 1)*/
                     loading = true
                 }
 
