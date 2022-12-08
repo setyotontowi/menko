@@ -1,6 +1,8 @@
 package com.project.thisappistryingtomakeyoubetter.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.*
+import androidx.lifecycle.Transformations.switchMap
 import com.project.thisappistryingtomakeyoubetter.model.Label
 import com.project.thisappistryingtomakeyoubetter.model.Task
 import com.project.thisappistryingtomakeyoubetter.model.TaskGroup
@@ -8,6 +10,7 @@ import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
 import com.project.thisappistryingtomakeyoubetter.util.LabelRepository
 import com.project.thisappistryingtomakeyoubetter.util.TaskRepository
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -19,33 +22,24 @@ class TaskViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val from = MutableLiveData<Date?>()
-    fun setFrom(from: Date?) {
-        this.from.value = from
-    }
-
     private val to = MutableLiveData<Date?>()
-    fun setTo(to: Date?) {
+    private val page = MutableLiveData<Int>()
+
+    private val refresh = MutableLiveData<Boolean>()
+    fun init(from: Date?, to: Date?, page: Int){
+        this.from.value = from
         this.to.value = to
+        this.page.value = page
+        this.refresh.value = true
     }
 
-    val page = MutableLiveData<Int>()
-    fun setPage(i: Int) {
-        this.page.value = i
-    }
-
-
-    /* taskWithLabel is a LiveData, return from getTaskWithLabel is also a live data.
-    *  So it will trigger any change in room and straight observing it */
-    val tasksWithLabel: LiveData<List<TaskWithLabel>?> = Transformations.switchMap(from) { from ->
-        Transformations.switchMap(to) { to ->
-            Transformations.switchMap(page) { page ->
-                taskRepository.getTaskWithLabel(from, to, page)
-            }
-        }
+    val tasksWithLabel: LiveData<List<TaskWithLabel>?> = switchMap(refresh){
+        taskRepository.getTaskWithLabel(from.value, to.value, page.value?:0)
     }
 
     private val activeTask = MutableLiveData<List<TaskWithLabel>?>()
 
+    // to history
     private val fromToPage: LiveData<Triple<Date?, Date?, Int>> =
         Transformations.switchMap(from) { from ->
             Transformations.switchMap(to) { to ->
@@ -95,6 +89,7 @@ class TaskViewModel @Inject constructor(
         }
     }
 
+    // to history?
     val label: LiveData<List<Label>?> = labelRepository.getAll()
 
     val filteredLabel: MutableLiveData<List<Label>> by lazy {

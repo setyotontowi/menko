@@ -41,6 +41,8 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
 
     @Inject
     lateinit var vmFactory: ViewModelProvider.Factory
+
+    // TODO: This cannot be allowed having two viewmodels in one activity 
     private val taskViewModel: TaskViewModel by activityViewModels { vmFactory }
     private val mainViewModel: MainViewModel by activityViewModels { vmFactory }
 
@@ -65,9 +67,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
 
         setupView()
 
-        taskViewModel.setFrom(null)
-        taskViewModel.setTo(null)
-        taskViewModel.setPage(0)
+        taskViewModel.init(null, null, 0)
         taskViewModel.apply {
             label.observe(viewLifecycleOwner) { handleLabel(it) }
             taskGroup.observe(viewLifecycleOwner) { handleTaskWithLabel(it) }
@@ -102,8 +102,8 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
                 val isLastPosition = itemCount.minus(1) == lastVisibleItem
 
                 if(isLastPosition) {
-                    val page = taskViewModel.page.value ?: 0
-                    taskViewModel.setPage(page + 1)
+                    /*val page = taskViewModel.page.value ?: 0
+                    taskViewModel.setPage(page + 1)*/
                     loading = true
                 }
 

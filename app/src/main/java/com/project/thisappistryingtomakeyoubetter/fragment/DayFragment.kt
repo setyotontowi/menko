@@ -42,14 +42,16 @@ class DayFragment : Fragment(), View.OnClickListener, TaskCallback {
 
     var from: Date? = null
     var to: Date? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        (requireActivity().application as App).appComponent.inject(this)
+        setHasOptionsMenu(true)
         assert(arguments != null)
+
         calendar = Calendar.getInstance(TimeZone.getDefault(), Locale.ENGLISH)
         calendar?.timeInMillis = requireArguments().getLong(DATE)
         position = requireArguments().getInt(POSITION)
-        (requireActivity().application as App).appComponent.inject(this)
-        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -64,30 +66,8 @@ class DayFragment : Fragment(), View.OnClickListener, TaskCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        from = GeneralHelper.fromDate(calendar)
-        to = GeneralHelper.toDate(calendar)
-
-        // Showing Task List
-        taskAdapter = TaskAdapter(requireActivity(), tasks, this)
-        binding.task.apply {
-            adapter = taskAdapter
-            layoutManager = LinearLayoutManager(activity)
-        }
-
-        // Floating Action Button Add
-        binding.addTask.setOnClickListener(this)
-
-        // Set task ViewModel
-        taskViewModel = ViewModelProvider(this, vmFactory).get(TaskViewModel::class.java)
-        taskViewModel.setFrom(from)
-        taskViewModel.setTo(to)
-        taskViewModel.setPage(-1)
-        taskViewModel.apply {
-            tasksWithLabel.observe(viewLifecycleOwner) { handleListTask(it) }
-            label.observe(viewLifecycleOwner) { handleLabel(it) }
-        }
-
+        initData()
+        setupView()
     }
 
     override fun onResume() {
@@ -100,6 +80,32 @@ class DayFragment : Fragment(), View.OnClickListener, TaskCallback {
             else -> GeneralHelper.dateFormatter().format(calendar!!.time)
         }
         (requireParentFragment().requireActivity() as MainActivity).toolbar.title = title
+    }
+
+    fun initData(){
+        from = GeneralHelper.fromDate(calendar)
+        to = GeneralHelper.toDate(calendar)
+
+        // Set task ViewModel
+        taskViewModel = ViewModelProvider(this, vmFactory).get(TaskViewModel::class.java)
+        taskViewModel.init(from, to, -1)
+
+        taskViewModel.apply {
+            tasksWithLabel.observe(viewLifecycleOwner) { handleListTask(it) }
+            label.observe(viewLifecycleOwner) { handleLabel(it) }
+        }
+    }
+
+    fun setupView(){
+        // Showing Task List
+        taskAdapter = TaskAdapter(requireActivity(), tasks, this)
+        binding.task.apply {
+            adapter = taskAdapter
+            layoutManager = LinearLayoutManager(activity)
+        }
+
+        // Floating Action Button Add
+        binding.addTask.setOnClickListener(this)
     }
 
     override fun onClick(v: View) {
@@ -138,10 +144,6 @@ class DayFragment : Fragment(), View.OnClickListener, TaskCallback {
                 layoutInflater
             )
             setContentView(binding.root)
-
-            // Hide Keyboard
-            Objects.requireNonNull(window)
-                ?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
 
             // Chip Adapter
             val chipAdapter = ChipAdapter(requireContext(), labels)
