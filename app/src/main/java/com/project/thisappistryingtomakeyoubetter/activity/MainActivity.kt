@@ -17,7 +17,7 @@ import com.project.thisappistryingtomakeyoubetter.fragment.HistoryFragment
 import com.project.thisappistryingtomakeyoubetter.fragment.LabelFragment
 import com.project.thisappistryingtomakeyoubetter.databinding.ActivityMainBinding
 import com.project.thisappistryingtomakeyoubetter.viewmodel.MainViewModel
-import com.project.thisappistryingtomakeyoubetter.viewmodel.TaskViewModel
+import com.project.thisappistryingtomakeyoubetter.viewmodel.DayViewModel
 import java.util.*
 import javax.inject.Inject
 
@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
     private var binding: ActivityMainBinding? = null
     lateinit var toolbar: Toolbar
     lateinit var viewModel: MainViewModel
-    lateinit var taskViewModel: TaskViewModel
+    lateinit var taskViewModel: DayViewModel
     
     val mainFragment = MainFragment()
     val historyFragment = HistoryFragment()
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         // ViewModel
         viewModel = ViewModelProvider(this, vmFactory!!).get(MainViewModel::class.java)
         viewModel.currentPosition.observe(this, { })
-        taskViewModel = ViewModelProvider(this, vmFactory!!).get(TaskViewModel::class.java)
+        taskViewModel = ViewModelProvider(this, vmFactory!!).get(DayViewModel::class.java)
 
         // App Intro Initiation
         val t = Thread {

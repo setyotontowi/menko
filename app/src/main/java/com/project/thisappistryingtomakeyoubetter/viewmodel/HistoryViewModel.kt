@@ -1,29 +1,27 @@
 package com.project.thisappistryingtomakeyoubetter.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.*
-import androidx.lifecycle.Transformations.switchMap
 import com.project.thisappistryingtomakeyoubetter.model.Label
 import com.project.thisappistryingtomakeyoubetter.model.Task
-import com.project.thisappistryingtomakeyoubetter.model.TaskGroup
 import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
 import com.project.thisappistryingtomakeyoubetter.util.LabelRepository
 import com.project.thisappistryingtomakeyoubetter.util.TaskRepository
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-class TaskViewModel @Inject constructor(
-    private val taskRepository: TaskRepository,
-    labelRepository: LabelRepository
-) : ViewModel() {
+class HistoryViewModel @Inject constructor(
+    val taskRepository: TaskRepository,
+    val labelRepository: LabelRepository
+): ViewModel() {
 
     private val from = MutableLiveData<Date?>()
     private val to = MutableLiveData<Date?>()
-    private val page = MutableLiveData<Int>()
+    val page = MutableLiveData<Int>()
+    fun setPage(page: Int){
+        this.page.value = page
+    }
 
     private val refresh = MutableLiveData<Boolean>()
     fun init(from: Date?, to: Date?, page: Int){
@@ -31,10 +29,6 @@ class TaskViewModel @Inject constructor(
         this.to.value = to
         this.page.value = page
         this.refresh.value = true
-    }
-
-    val tasksWithLabel: LiveData<List<TaskWithLabel>?> = switchMap(refresh){
-        taskRepository.getTaskWithLabel(from.value, to.value, page.value?:0)
     }
 
     private val activeTask = MutableLiveData<List<TaskWithLabel>?>()
@@ -51,39 +45,41 @@ class TaskViewModel @Inject constructor(
             }
         }
 
+
+    // TODO: do filtering in BE
     // Go with observing? Transformation switch map getTaskWithLabel(from, to, page)
     val taskGroup: LiveData<List<TaskWithLabel>> = Transformations.switchMap(fromToPage) { it ->
         Transformations.switchMap(taskRepository.getTaskWithLabel(it.first, it.second, it.third)) { list ->
             Transformations.switchMap(filteredLabel) { filteredLabel ->
                 Transformations.switchMap(filteredStatus) { filteredStatus ->
 
-                        val filteredStatusList = mutableListOf<TaskWithLabel>()
-                        val filteredList = mutableListOf<TaskWithLabel>()
-                        if (!filteredLabel.isNullOrEmpty()) {
-                            for (label in filteredLabel) {
-                                val tasks = list?.filter { it.labels.contains(label) }
-                                filteredList.addAll(tasks ?: listOf())
-                            }
-                        } else {
-                            filteredList.addAll(list ?: listOf())
+                    val filteredStatusList = mutableListOf<TaskWithLabel>()
+                    val filteredList = mutableListOf<TaskWithLabel>()
+                    if (!filteredLabel.isNullOrEmpty()) {
+                        for (label in filteredLabel) {
+                            val tasks = list?.filter { it.labels.contains(label) }
+                            filteredList.addAll(tasks ?: listOf())
                         }
+                    } else {
+                        filteredList.addAll(list ?: listOf())
+                    }
 
-                        if (filteredStatus.first != filteredStatus.second) {
-                            if (filteredStatus.first) {
-                                filteredStatusList.addAll(filteredList.filter { it.task.isFinish })
-                            } else {
-                                filteredStatusList.addAll(filteredList.filter { !it.task.isFinish })
-                            }
+                    if (filteredStatus.first != filteredStatus.second) {
+                        if (filteredStatus.first) {
+                            filteredStatusList.addAll(filteredList.filter { it.task.isFinish })
                         } else {
-                            filteredStatusList.addAll(filteredList)
+                            filteredStatusList.addAll(filteredList.filter { !it.task.isFinish })
                         }
+                    } else {
+                        filteredStatusList.addAll(filteredList)
+                    }
 
-                        filteredStatusList.sortByDescending { it.task.date }
-                        activeTask.value = filteredStatusList
+                    filteredStatusList.sortByDescending { it.task.date }
+                    activeTask.value = filteredStatusList
 
-                        val result = MutableLiveData<List<TaskWithLabel>>()
-                        result.value = filteredStatusList
-                        result
+                    val result = MutableLiveData<List<TaskWithLabel>>()
+                    result.value = filteredStatusList
+                    result
                 }
             }
         }
@@ -115,26 +111,26 @@ class TaskViewModel @Inject constructor(
 
     val summary: LiveData<Triple<Int, Int, Int>> by lazy{
         val result = MutableLiveData<Triple<Int, Int, Int>>() // all, completed, uncompleted
-        viewModelScope.launch(IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             result.postValue(taskRepository.getSummary())
         }
         result
     }
 
     fun insert(task: Task) {
-        viewModelScope.launch(IO) { taskRepository.insert(task) }
+        viewModelScope.launch(Dispatchers.IO) { taskRepository.insert(task) }
     }
 
     fun update(task: Task) {
-        viewModelScope.launch(IO) { taskRepository.update(task) }
+        viewModelScope.launch(Dispatchers.IO) { taskRepository.update(task) }
     }
 
     fun delete(task: Task) {
-        viewModelScope.launch(IO) { taskRepository.delete(task) }
+        viewModelScope.launch(Dispatchers.IO) { taskRepository.delete(task) }
     }
 
     fun deleteAll() {
-        viewModelScope.launch(IO) { taskRepository.deleteAll() }
+        viewModelScope.launch(Dispatchers.IO) { taskRepository.deleteAll() }
     }
 
 }

@@ -10,7 +10,7 @@ import com.project.thisappistryingtomakeyoubetter.databinding.ActivityFragmentBi
 import com.project.thisappistryingtomakeyoubetter.fragment.HistoryFragment
 import com.project.thisappistryingtomakeyoubetter.model.Label
 import com.project.thisappistryingtomakeyoubetter.viewmodel.MainViewModel
-import com.project.thisappistryingtomakeyoubetter.viewmodel.TaskViewModel
+import com.project.thisappistryingtomakeyoubetter.viewmodel.DayViewModel
 import javax.inject.Inject
 
 class FragmentActivity: AppCompatActivity() {
@@ -27,7 +27,7 @@ class FragmentActivity: AppCompatActivity() {
     @Inject
     lateinit var vmFactory: ViewModelProvider.Factory
 
-    lateinit private var taskViewModel: TaskViewModel
+    lateinit private var taskViewModel: DayViewModel
     lateinit private var mainViewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +37,7 @@ class FragmentActivity: AppCompatActivity() {
 
         (application as App).appComponent.inject(this)
 
-        taskViewModel = ViewModelProvider(this, vmFactory).get(TaskViewModel::class.java)
+        taskViewModel = ViewModelProvider(this, vmFactory).get(DayViewModel::class.java)
         mainViewModel = ViewModelProvider(this, vmFactory).get(MainViewModel::class.java)
 
         binding.apply {

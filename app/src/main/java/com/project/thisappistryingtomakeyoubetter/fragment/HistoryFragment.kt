@@ -18,18 +18,15 @@ import com.project.thisappistryingtomakeyoubetter.R
 import com.project.thisappistryingtomakeyoubetter.adapter.ChipAdapter
 import com.project.thisappistryingtomakeyoubetter.adapter.TaskAdapter
 import com.project.thisappistryingtomakeyoubetter.adapter.TaskGroupAdapter
-import com.project.thisappistryingtomakeyoubetter.databinding.DialogTaskBinding
 import com.project.thisappistryingtomakeyoubetter.databinding.FragmentHistoryBinding
 import com.project.thisappistryingtomakeyoubetter.databinding.LayoutFilterBinding
 import com.project.thisappistryingtomakeyoubetter.model.Label
 import com.project.thisappistryingtomakeyoubetter.model.Task
-import com.project.thisappistryingtomakeyoubetter.model.TaskGroup
 import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
 import com.project.thisappistryingtomakeyoubetter.view.toggle
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
+import com.project.thisappistryingtomakeyoubetter.viewmodel.HistoryViewModel
 import com.project.thisappistryingtomakeyoubetter.viewmodel.MainViewModel
-import com.project.thisappistryingtomakeyoubetter.viewmodel.TaskViewModel
-import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
 
@@ -42,8 +39,9 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
     @Inject
     lateinit var vmFactory: ViewModelProvider.Factory
 
-    // TODO: This cannot be allowed having two viewmodels in one activity 
-    private val taskViewModel: TaskViewModel by activityViewModels { vmFactory }
+    // TODO: This cannot be allowed having two viewmodels in one activity
+    @Inject
+    lateinit var taskViewModel: HistoryViewModel
     private val mainViewModel: MainViewModel by activityViewModels { vmFactory }
 
     override fun onCreateView(
@@ -102,8 +100,8 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
                 val isLastPosition = itemCount.minus(1) == lastVisibleItem
 
                 if(isLastPosition) {
-                    /*val page = taskViewModel.page.value ?: 0
-                    taskViewModel.setPage(page + 1)*/
+                    val page = taskViewModel.page.value ?: 0
+                    taskViewModel.setPage(page + 1)
                     loading = true
                 }
 
