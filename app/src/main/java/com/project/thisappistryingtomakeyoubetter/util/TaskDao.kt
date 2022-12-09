@@ -24,6 +24,10 @@ interface TaskDao {
     fun getAllTaskWithLabel():LiveData<List<TaskWithLabel>?>
 
     @Transaction
+    @Query("SELECT * FROM task ORDER BY date DESC")
+    fun getHistoryAllTask():List<TaskWithLabel>?
+
+    @Transaction
     @Query("SELECT * FROM task ORDER BY date DESC LIMIT :limit OFFSET :offset")
     fun getTaskWithLabelLimited(limit: Int, offset: Int): LiveData<List<TaskWithLabel>?>
 

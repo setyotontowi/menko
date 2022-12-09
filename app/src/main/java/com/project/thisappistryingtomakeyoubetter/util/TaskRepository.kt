@@ -52,6 +52,10 @@ class TaskRepository @Inject constructor(
         }
     }
 
+    fun getHistoryAllTask(): List<TaskWithLabel>{
+        return taskDao.getHistoryAllTask() ?: listOf()
+    }
+
     fun getTaskWithLabel(from: Date?, to: Date?, page: Int): LiveData<List<TaskWithLabel>?>{
         return if (from == null && to == null && page == -1) {
             taskDao.getAllTaskWithLabel()
