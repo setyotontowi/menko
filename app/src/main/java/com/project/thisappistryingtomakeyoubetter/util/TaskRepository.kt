@@ -66,6 +66,10 @@ class TaskRepository @Inject constructor(
         }
     }
 
+    fun filterStatus(isComplete: Boolean) : List<TaskWithLabel> {
+        return taskDao.filterLabel()
+    }
+
     fun getSummary(): Triple<Int, Int, Int>{
         val first = taskDao.countAllTask()
         val second = taskDao.countFinishedTask()

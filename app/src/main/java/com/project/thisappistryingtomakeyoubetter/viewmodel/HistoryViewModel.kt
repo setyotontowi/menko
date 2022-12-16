@@ -45,6 +45,33 @@ class HistoryViewModel @Inject constructor(
             }
         }
 
+    fun fetchList() {
+        taskHistoryMutable.value = taskRepository.getHistoryAllTask()
+    }
+
+    fun filterStatus(filteredStatus: Boolean?) {
+        val list = taskHistoryMutable.value
+        list?.filter {
+            it.task.isFinish == filteredStatus
+        }
+    }
+
+    fun filterLabel(filteredLabel: List<Label>) {
+        val list = taskHistoryMutable.value
+        val map = mutableMapOf<Int, String>()
+        filteredLabel.map {
+            map[it.id] = it.name.orEmpty()
+        }
+        list?.filter {
+            it.labels.any { label ->
+                map[label.id] != null
+            }
+        }
+        taskHistoryMutable.value = list
+    }
+
+    private val taskHistoryMutable = MutableLiveData<List<TaskWithLabel>>()
+    val taskHistory: LiveData<List<TaskWithLabel>> = taskHistoryMutable
 
     // TODO: do filtering in BE
     // Go with observing? Transformation switch map getTaskWithLabel(from, to, page)

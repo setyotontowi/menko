@@ -28,6 +28,13 @@ interface TaskDao {
     fun getHistoryAllTask():List<TaskWithLabel>?
 
     @Transaction
+    @Query("SELECT * FROM task WHERE finish is :isComplete")
+    fun filterStatus(isComplete: Boolean)
+
+    @Transaction
+    @Query("SELECT * FROM task WHERE ")
+
+    @Transaction
     @Query("SELECT * FROM task ORDER BY date DESC LIMIT :limit OFFSET :offset")
     fun getTaskWithLabelLimited(limit: Int, offset: Int): LiveData<List<TaskWithLabel>?>
 

@@ -64,12 +64,16 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         requireActivity().title = "History"
 
         setupView()
+        taskViewModel.fetchList()
 
         taskViewModel.init(null, null, 0)
         taskViewModel.apply {
             label.observe(viewLifecycleOwner) { handleLabel(it) }
             taskGroup.observe(viewLifecycleOwner) { handleTaskWithLabel(it) }
             summary.observe(viewLifecycleOwner) { handleSummary(it) }
+            taskHistory.observe(viewLifecycleOwner) {
+
+            }
         }
     }
 
