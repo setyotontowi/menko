@@ -1,6 +1,7 @@
 package com.project.thisappistryingtomakeyoubetter.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -127,10 +128,11 @@ class DayFragment : Fragment(), View.OnClickListener, TaskCallback {
     }
 
     private fun handleListTask(list: List<TaskWithLabel>?) {
-        tasks.clear()
+        Log.d("HEBLE", "handleListTask: $list")
+        /*tasks.clear()
         tasks.addAll(list ?: listOf())
         taskAdapter?.notifyDataSetChanged()
-        placeHolder()
+        placeHolder()*/
     }
 
     private fun taskDialog(task: TaskWithLabel?) {

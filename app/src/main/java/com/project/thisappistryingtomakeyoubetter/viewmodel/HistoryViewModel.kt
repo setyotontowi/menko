@@ -46,7 +46,7 @@ class HistoryViewModel @Inject constructor(
         }
 
     fun fetchList() {
-        taskHistoryMutable.value = taskRepository.getHistoryAllTask()
+        taskHistoryMutable.value = taskRepository.getHistoryAllTask().value
     }
 
     fun filterStatus(filteredStatus: Boolean?) {

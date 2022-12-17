@@ -1,5 +1,6 @@
 package com.project.thisappistryingtomakeyoubetter.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.*
 import androidx.lifecycle.Transformations.switchMap
 import com.project.thisappistryingtomakeyoubetter.model.Label
@@ -30,7 +31,8 @@ class DayViewModel @Inject constructor(
     }
 
     val tasksWithLabel: LiveData<List<TaskWithLabel>?> = switchMap(refresh){
-        taskRepository.getTaskWithLabel(from.value, to.value, page.value?:0)
+        taskRepository.filterLabel()
+        //taskRepository.getTaskWithLabel(from.value, to.value, page.value?:0)
     }
 
     private val activeTask = MutableLiveData<List<TaskWithLabel>?>()

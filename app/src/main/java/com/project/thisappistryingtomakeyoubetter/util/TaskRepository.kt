@@ -52,8 +52,8 @@ class TaskRepository @Inject constructor(
         }
     }
 
-    fun getHistoryAllTask(): List<TaskWithLabel>{
-        return taskDao.getHistoryAllTask() ?: listOf()
+    fun getHistoryAllTask(): LiveData<List<TaskWithLabel>?>{
+        return taskDao.getHistoryAllTask()
     }
 
     fun getTaskWithLabel(from: Date?, to: Date?, page: Int): LiveData<List<TaskWithLabel>?>{
@@ -67,7 +67,11 @@ class TaskRepository @Inject constructor(
     }
 
     fun filterStatus(isComplete: Boolean) : List<TaskWithLabel> {
-        return taskDao.filterLabel()
+        return listOf()
+    }
+
+    fun filterLabel(): LiveData<List<TaskWithLabel>?> {
+        return taskDao.filterList()
     }
 
     fun getSummary(): Triple<Int, Int, Int>{
