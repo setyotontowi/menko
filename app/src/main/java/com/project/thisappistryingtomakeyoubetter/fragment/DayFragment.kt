@@ -78,7 +78,7 @@ class DayFragment : Fragment(), View.OnClickListener, TaskCallback {
         (requireParentFragment().requireActivity() as MainActivity).toolbar.title = title
     }
 
-    fun initData(){
+    private fun initData(){
         from = GeneralHelper.fromDate(calendar)
         to = GeneralHelper.toDate(calendar)
 
@@ -92,7 +92,7 @@ class DayFragment : Fragment(), View.OnClickListener, TaskCallback {
         }
     }
 
-    fun setupView(){
+    private fun setupView(){
         // Showing Task List
         taskAdapter = TaskAdapter(requireActivity(), tasks, this)
         binding.task.apply {
@@ -128,11 +128,10 @@ class DayFragment : Fragment(), View.OnClickListener, TaskCallback {
     }
 
     private fun handleListTask(list: List<TaskWithLabel>?) {
-        Log.d("HEBLE", "handleListTask: $list")
-        /*tasks.clear()
+        tasks.clear()
         tasks.addAll(list ?: listOf())
         taskAdapter?.notifyDataSetChanged()
-        placeHolder()*/
+        placeHolder()
     }
 
     private fun taskDialog(task: TaskWithLabel?) {

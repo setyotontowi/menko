@@ -49,25 +49,8 @@ class HistoryViewModel @Inject constructor(
         taskHistoryMutable.value = taskRepository.getHistoryAllTask().value
     }
 
-    fun filterStatus(filteredStatus: Boolean?) {
-        val list = taskHistoryMutable.value
-        list?.filter {
-            it.task.isFinish == filteredStatus
-        }
-    }
-
-    fun filterLabel(filteredLabel: List<Label>) {
-        val list = taskHistoryMutable.value
-        val map = mutableMapOf<Int, String>()
-        filteredLabel.map {
-            map[it.id] = it.name.orEmpty()
-        }
-        list?.filter {
-            it.labels.any { label ->
-                map[label.id] != null
-            }
-        }
-        taskHistoryMutable.value = list
+    fun filterLabels(labels: List<Int>?, isFinish: Boolean?) {
+        taskRepository.filterLabel(labels, isFinish)
     }
 
     private val taskHistoryMutable = MutableLiveData<List<TaskWithLabel>>()
