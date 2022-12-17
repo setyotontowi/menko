@@ -27,24 +27,22 @@ interface TaskDao {
     @Query("SELECT * FROM task ORDER BY date DESC")
     fun getHistoryAllTask():LiveData<List<TaskWithLabel>?>
 
-    /*@Transaction
-    @Query("SELECT * FROM task WHERE finish is :isComplete")
-    fun filterStatus(isComplete: Boolean)*/
-
-    /*@Transaction
-    @Query("SELECT * FROM task WHERE ")*/
-
     @Transaction
     @Query("SELECT * FROM task ORDER BY date DESC LIMIT :limit OFFSET :offset")
     fun getTaskWithLabelLimited(limit: Int, offset: Int): LiveData<List<TaskWithLabel>?>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(task: Task): Long
+    @Transaction
+    @Query("SELECT distinct id, title, description, date, finish " +
+            "FROM task JOIN labeling ON task.id == labeling.taskId " +
+            "WHERE labelId IN (:labels) AND finish IN (:isFinished)")
+    fun filterList(labels: List<Int>, isFinished: List<Int>): LiveData<List<TaskWithLabel>?>
 
     @Transaction
-    @Query("SELECT task.* " +
-           "FROM task JOIN labeling ON task.id == labeling.taskId WHERE labelId IN (2)")
-    fun filterList(): LiveData<List<TaskWithLabel>?>
+    @Query("SELECT * FROM task WHERE finish IN (:isFinished)")
+    fun filterList(isFinished: List<Int>): LiveData<List<TaskWithLabel>?>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertAll(task: Task): Long
 
     @Update
     fun update(task: Task)

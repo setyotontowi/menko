@@ -31,8 +31,11 @@ class DayViewModel @Inject constructor(
     }
 
     val tasksWithLabel: LiveData<List<TaskWithLabel>?> = switchMap(refresh){
-        taskRepository.filterLabel()
-        //taskRepository.getTaskWithLabel(from.value, to.value, page.value?:0)
+        taskRepository.getTaskWithLabel(from.value, to.value, page.value?:0)
+    }
+
+    fun filterLabels(labels: List<Int>?, isFinish: Boolean?) {
+        taskRepository.filterLabel(labels, isFinish)
     }
 
     private val activeTask = MutableLiveData<List<TaskWithLabel>?>()
