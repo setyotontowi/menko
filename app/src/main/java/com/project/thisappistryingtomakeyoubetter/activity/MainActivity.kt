@@ -117,7 +117,6 @@ class MainActivity : AppCompatActivity() {
     private fun setupFragment(){
         supportFragmentManager.beginTransaction()
                 .add(R.id.nav_host_fragment, mainFragment)
-                .hide(mainFragment)
                 .commit()
         supportFragmentManager.beginTransaction()
                 .add(R.id.nav_host_fragment, historyFragment)
