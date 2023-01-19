@@ -58,7 +58,7 @@ class HistoryViewModel @Inject constructor(
     }
 
     private val taskHistoryMutable = MutableLiveData<List<TaskWithLabel>>()
-    val taskHistory: LiveData<List<TaskWithLabel>> = taskHistoryMutable
+    val taskHistory: LiveData<List<TaskWithLabel>?> = taskRepository.getHistoryAllTask()
 
     // TODO: do filtering in BE
     // Go with observing? Transformation switch map getTaskWithLabel(from, to, page)

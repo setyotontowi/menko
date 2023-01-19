@@ -64,11 +64,13 @@ class TaskAdapter(
             listener.onBoxChecked(tasks[position])
         }
         holder.wrapper.setOnLongClickListener {
-            taskDialog(tasks[position], labels, position)
+            //taskDialog(tasks[position], labels, position)
+            listener.onLongClick(tasks[position])
             true
         }
         holder.title.setOnLongClickListener {
-            taskDialog(tasks[position], labels, position)
+            //taskDialog(tasks[position], labels, position)
+            listener.onLongClick(tasks[position])
             true
         }
     }
@@ -150,5 +152,6 @@ class TaskAdapter(
         fun onBoxChecked(task: TaskWithLabel)
         fun onUpdate(task: Task)
         fun onDelete(task: Task)
+        fun onLongClick(task: TaskWithLabel)
     }
 }

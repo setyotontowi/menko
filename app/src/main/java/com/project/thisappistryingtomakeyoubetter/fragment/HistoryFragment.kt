@@ -69,11 +69,9 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         taskViewModel.init(null, null, 0)
         taskViewModel.apply {
             label.observe(viewLifecycleOwner) { handleLabel(it) }
-            taskGroup.observe(viewLifecycleOwner) { handleTaskWithLabel(it) }
+            //taskGroup.observe(viewLifecycleOwner) { handleTaskWithLabel(it) }
             summary.observe(viewLifecycleOwner) { handleSummary(it) }
-            taskHistory.observe(viewLifecycleOwner) {
-
-            }
+            taskHistory.observe(viewLifecycleOwner) { handleTaskWithLabel(it) }
         }
     }
 
@@ -153,6 +151,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
     override fun onHiddenChanged(hidden: Boolean) {
         if(!hidden){
             requireActivity().title = "History"
+            taskViewModel.fetchList()
         }
         super.onHiddenChanged(hidden)
     }
@@ -167,6 +166,10 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
 
     override fun onDelete(task: Task) {
         taskViewModel.delete(task)
+    }
+
+    override fun onLongClick(task: TaskWithLabel) {
+
     }
 
     private fun handleSummary(summary: Triple<Int, Int, Int>){

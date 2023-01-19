@@ -44,6 +44,7 @@ class TaskGroupAdapter(
 
     @SuppressLint("NotifyDataSetChanged")
     fun addListTaskWithLabel(list: List<TaskWithLabel>){
+        this.list.clear()
         listToMap(list).forEach {
             val date = it.key
 

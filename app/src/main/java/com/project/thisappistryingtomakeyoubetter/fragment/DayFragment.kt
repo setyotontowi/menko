@@ -122,6 +122,10 @@ class DayFragment : Fragment(), View.OnClickListener, TaskCallback {
         taskViewModel.delete(task)
     }
 
+    override fun onLongClick(task: TaskWithLabel) {
+        taskDialog(task)
+    }
+
     private fun handleLabel(labels: List<Label>?) {
         this.labels.clear()
         this.labels.addAll(labels ?: listOf())

@@ -45,7 +45,7 @@ class FragmentActivity: AppCompatActivity() {
 
             toolbar.title = label.name
 
-            taskViewModel.filter(listOf(label))
+            //taskViewModel.filter(listOf(label))
             mainViewModel.standAlone.value = true
             mainViewModel.stateFromOutsideMainFragment.postValue(false)
 
