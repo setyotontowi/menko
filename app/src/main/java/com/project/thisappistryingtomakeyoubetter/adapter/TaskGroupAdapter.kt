@@ -45,6 +45,7 @@ class TaskGroupAdapter(
     @SuppressLint("NotifyDataSetChanged")
     fun addListTaskWithLabel(list: List<TaskWithLabel>){
         this.list.clear()
+        this.dateSet.clear()
         listToMap(list).forEach {
             val date = it.key
 
@@ -68,6 +69,9 @@ class TaskGroupAdapter(
         notifyDataSetChanged()
     }
 
+    // Create map from task list by parsing it from data from the model
+    // list(task1, task2, task3)
+    // into [map(1-10-2023, [task 1, task 2]), map(2-10-2023, [task 3])]
     private fun listToMap(list: List<TaskWithLabel>): MutableMap<Date, List<TaskWithLabel>>{
         val map = mutableMapOf<Date, List<TaskWithLabel>>()
         list.forEach {
