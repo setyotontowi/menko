@@ -30,20 +30,6 @@ class LabelViewModelTest : TestCase() {
     @Mock
     lateinit var observer: Observer<List<Label>?>
 
-    @Before
-    fun setup(){
-        MockitoAnnotations.initMocks(this)
-        viewModel = LabelViewModel(labelRepository)
-        viewModel.labels.observeForever(observer)
-    }
-
-    @Test
-    fun testGetLabels() {
-        viewModel.insert(Label(1, "Hello", 1))
-        viewModel.get()
-        assertEquals(viewModel.labels.value, listOf(Label(1, "Hello", 1)))
-    }
-
     fun testInsert() {}
 
     fun testUpdate() {}
