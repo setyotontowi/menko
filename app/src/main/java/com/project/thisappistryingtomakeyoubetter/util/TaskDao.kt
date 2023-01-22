@@ -25,6 +25,10 @@ interface TaskDao {
 
     @Transaction
     @Query("SELECT * FROM task ORDER BY date DESC")
+    fun getAllTaskWithLabelList():List<TaskWithLabel>?
+
+    @Transaction
+    @Query("SELECT * FROM task ORDER BY date DESC")
     fun getHistoryAllTask():LiveData<List<TaskWithLabel>?>
 
     @Transaction

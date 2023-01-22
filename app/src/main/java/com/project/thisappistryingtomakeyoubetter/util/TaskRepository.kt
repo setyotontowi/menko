@@ -77,8 +77,7 @@ class TaskRepository @Inject constructor(
                 val number = if (isFinish) 1 else 0
                 taskDao.filterList(listOf(number))
             } else {
-                taskDao.getAllTaskWithLabel()
-                listOf()
+                taskDao.getAllTaskWithLabelList()
             }
     }
 

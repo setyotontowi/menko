@@ -65,17 +65,15 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
 
         setupView()
 
-        taskViewModel.init(null, null, 0)
         taskViewModel.apply {
             label.observe(viewLifecycleOwner) { handleLabel(it) }
-            //taskGroup.observe(viewLifecycleOwner) { handleTaskWithLabel(it) }
             summary.observe(viewLifecycleOwner) { handleSummary(it) }
             taskHistory.observe(viewLifecycleOwner) { handleTaskWithLabel(it) }
             taskFilter.observe(viewLifecycleOwner) { handleTaskWithLabel(it) }
         }
     }
 
-    var taskAdapter = TaskGroupAdapter(mutableMapOf(), this@HistoryFragment)
+    private var taskAdapter = TaskGroupAdapter(mutableMapOf(), this@HistoryFragment)
     private fun setupView() {
         val linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
@@ -84,37 +82,8 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
             layoutManager = linearLayoutManager
         }
 
-        var previousTotal = 0
-        var firstVisibleItem: Int
-        var visibleItemCount: Int
-        var totalItemCount: Int
-        val visibleTreshold = 10
-        var loading = true
-
         val behavior = BottomSheetBehavior.from(binding.linearLayout)
         behavior.peekHeight = arguments?.getInt(EXTRA_PEEK_HEIGHT, 1700)?:1700
-
-        binding.listTask.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val itemCount = linearLayoutManager.itemCount
-                val lastVisibleItem = linearLayoutManager.findLastCompletelyVisibleItemPosition()
-                val isLastPosition = itemCount.minus(1) == lastVisibleItem
-
-                if(isLastPosition) {
-                    /*val page = taskViewModel.page.value ?: 0
-                    taskViewModel.setPage(page + 1)*/
-                    loading = true
-                }
-
-                if (loading) {
-                    if (itemCount > previousTotal) {
-                        loading = false
-                        previousTotal = itemCount
-                    }
-                }
-            }
-        })
 
         if(mainViewModel.standAlone.value == false) {
             binding.linearLayout.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
@@ -232,29 +201,34 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
                 val listLabel = this@HistoryFragment.labels
                 val chipAdapter = ChipAdapter(requireContext(), listLabel) {
                     taskViewModel.filterLabel = it
+                    taskViewModel.filter()
                 }
-                chipAdapter.setSelectedLabels(taskViewModel.filteredLabel.value?: mutableListOf())
+                chipAdapter.setSelectedLabels(taskViewModel.filterLabel?: mutableListOf())
 
                 labels.apply {
                     adapter = chipAdapter
                     layoutManager = FlexboxLayoutManager(requireContext())
                 }
 
-                taskViewModel.filteredStatus.value?.let {
-                    chipCompleted.isChecked = it.first
-                    chipUncompleted.isChecked = it.second
+                taskViewModel.filterCompleted.let {
+                    when (it) {
+                        true -> chipCompleted.isChecked = true
+                        false -> chipUncompleted.isChecked = true
+                        null -> {
+                            chipCompleted.isChecked = false
+                            chipUncompleted.isChecked = false
+                        }
+                    }
                 }
 
                 chipStatus.setOnCheckedChangeListener { group, checkedId ->
                     val completed = chipCompleted.isChecked
                     val unCompleted = chipUncompleted.isChecked
                     taskViewModel.filterCompleted(completed, unCompleted)
+                    taskViewModel.filter()
                 }
             }
             show()
-            setOnDismissListener {
-                taskViewModel.filter()
-            }
         }
     }
 

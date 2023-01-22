@@ -20,21 +20,6 @@ class HistoryViewModel @Inject constructor(
     val labelRepository: LabelRepository
 ): ViewModel() {
 
-    private val from = MutableLiveData<Date?>()
-    private val to = MutableLiveData<Date?>()
-    val page = MutableLiveData<Int>()
-    fun setPage(page: Int){
-        this.page.value = page
-    }
-
-    private val refresh = MutableLiveData<Boolean>()
-    fun init(from: Date?, to: Date?, page: Int){
-        this.from.value = from
-        this.to.value = to
-        this.page.value = page
-        this.refresh.value = true
-    }
-
     val taskHistory: LiveData<List<TaskWithLabel>?> = taskRepository.getHistoryAllTask()
     val label: LiveData<List<Label>?> = labelRepository.getAll()
     var taskFilter = MutableLiveData<List<TaskWithLabel>?>()
@@ -54,34 +39,6 @@ class HistoryViewModel @Inject constructor(
             taskFilter.postValue(taskRepository.filterLabel(filterLabel, filterCompleted))
         }
     }
-
-    /*================ LEGACY CODE ===========================*/
-
-    val filteredLabel: MutableLiveData<List<Label>> by lazy {
-        val result = MutableLiveData<List<Label>>()
-        result.value = listOf()
-        result
-    }
-
-    fun filter(list: List<Label>) {
-        filteredLabel.postValue(list)
-    }
-
-    // first: complete, second: uncompleted
-    val filteredStatus: MutableLiveData<Pair<Boolean, Boolean>> by lazy {
-        val result = MutableLiveData<Pair<Boolean, Boolean>>()
-        result.value = Pair(false, false)
-        result
-    }
-
-    fun filter(complete: Boolean = false, uncomplete: Boolean = false) {
-        filteredStatus.postValue(Pair(complete, uncomplete))
-    }
-
-
-    /*============================================================*/
-
-
 
     val summary: LiveData<Triple<Int, Int, Int>> by lazy{
         val result = MutableLiveData<Triple<Int, Int, Int>>() // all, completed, uncompleted
