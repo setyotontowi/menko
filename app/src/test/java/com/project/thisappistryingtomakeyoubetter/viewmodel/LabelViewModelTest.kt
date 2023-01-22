@@ -15,20 +15,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.nhaarman.mockitokotlin2.atLeast
 import org.junit.Rule
 
-
-@RunWith(JUnit4::class)
 class LabelViewModelTest : TestCase() {
-
-    @Rule
-    @JvmField
-    var instantExecutorRule = InstantTaskExecutorRule()
-
-    lateinit var viewModel: LabelViewModel
-
-    @Mock
-    lateinit var labelRepository: LabelRepository
-    @Mock
-    lateinit var observer: Observer<List<Label>?>
 
     fun testInsert() {}
 
