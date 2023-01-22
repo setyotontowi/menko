@@ -35,72 +35,27 @@ class HistoryViewModel @Inject constructor(
         this.refresh.value = true
     }
 
-    private val activeTask = MutableLiveData<List<TaskWithLabel>?>()
-
-    // to history
-    private val fromToPage: LiveData<Triple<Date?, Date?, Int>> =
-        Transformations.switchMap(from) { from ->
-            Transformations.switchMap(to) { to ->
-                Transformations.switchMap(page) { page ->
-                    val result = MutableLiveData<Triple<Date?, Date?, Int>>()
-                    result.value = Triple(from, to, page)
-                    result
-                }
-            }
-        }
-
-    fun fetchList() {
-        taskHistoryMutable.value = taskRepository.getHistoryAllTask().value
-    }
-
-    fun filterLabels(labels: List<Int>?, isFinish: Boolean?) {
-        taskRepository.filterLabel(labels, isFinish)
-    }
-
-    private val taskHistoryMutable = MutableLiveData<List<TaskWithLabel>>()
     val taskHistory: LiveData<List<TaskWithLabel>?> = taskRepository.getHistoryAllTask()
+    val label: LiveData<List<Label>?> = labelRepository.getAll()
+    var taskFilter = MutableLiveData<List<TaskWithLabel>?>()
+    var filterLabel: List<Label>? = null
+    var filterCompleted: Boolean? = null
 
-    // TODO: do filtering in BE
-    // Go with observing? Transformation switch map getTaskWithLabel(from, to, page)
-    val taskGroup: LiveData<List<TaskWithLabel>> = Transformations.switchMap(fromToPage) { it ->
-        Transformations.switchMap(taskRepository.getTaskWithLabel(it.first, it.second, it.third)) { list ->
-            Transformations.switchMap(filteredLabel) { filteredLabel ->
-                Transformations.switchMap(filteredStatus) { filteredStatus ->
-
-                    val filteredStatusList = mutableListOf<TaskWithLabel>()
-                    val filteredList = mutableListOf<TaskWithLabel>()
-                    if (!filteredLabel.isNullOrEmpty()) {
-                        for (label in filteredLabel) {
-                            val tasks = list?.filter { it.labels.contains(label) }
-                            filteredList.addAll(tasks ?: listOf())
-                        }
-                    } else {
-                        filteredList.addAll(list ?: listOf())
-                    }
-
-                    if (filteredStatus.first != filteredStatus.second) {
-                        if (filteredStatus.first) {
-                            filteredStatusList.addAll(filteredList.filter { it.task.isFinish })
-                        } else {
-                            filteredStatusList.addAll(filteredList.filter { !it.task.isFinish })
-                        }
-                    } else {
-                        filteredStatusList.addAll(filteredList)
-                    }
-
-                    filteredStatusList.sortByDescending { it.task.date }
-                    activeTask.value = filteredStatusList
-
-                    val result = MutableLiveData<List<TaskWithLabel>>()
-                    result.value = filteredStatusList
-                    result
-                }
-            }
+    fun filterCompleted(completed: Boolean, unCompleted: Boolean) {
+        filterCompleted = when {
+            (completed && !unCompleted) -> true
+            (!completed && unCompleted) -> false
+            else -> null
         }
     }
 
-    // to history?
-    val label: LiveData<List<Label>?> = labelRepository.getAll()
+    fun filter() {
+        viewModelScope.launch(IO) {
+            taskFilter.postValue(taskRepository.filterLabel(filterLabel, filterCompleted))
+        }
+    }
+
+    /*================ LEGACY CODE ===========================*/
 
     val filteredLabel: MutableLiveData<List<Label>> by lazy {
         val result = MutableLiveData<List<Label>>()
@@ -122,6 +77,11 @@ class HistoryViewModel @Inject constructor(
     fun filter(complete: Boolean = false, uncomplete: Boolean = false) {
         filteredStatus.postValue(Pair(complete, uncomplete))
     }
+
+
+    /*============================================================*/
+
+
 
     val summary: LiveData<Triple<Int, Int, Int>> by lazy{
         val result = MutableLiveData<Triple<Int, Int, Int>>() // all, completed, uncompleted

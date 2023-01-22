@@ -66,17 +66,19 @@ class TaskRepository @Inject constructor(
         }
     }
 
-    fun filterLabel(labels: List<Int>?, isFinish: Boolean? = null): LiveData<List<TaskWithLabel>?> {
-        return if (!labels.isNullOrEmpty() && isFinish != null) {
+    suspend fun filterLabel(labels: List<Label>?, isFinish: Boolean? = null): List<TaskWithLabel>? {
+        val listId = labels?.map { it.id }
+        return if (!listId.isNullOrEmpty() && isFinish != null) {
                 val number = if (isFinish) 1 else 0
-                taskDao.filterList(labels, listOf(number))
-            } else if (!labels.isNullOrEmpty() && isFinish == null) {
-                taskDao.filterList(labels, listOf(0, 1))
-            } else if (labels.isNullOrEmpty() && isFinish != null) {
+                taskDao.filterList(listId, listOf(number))
+            } else if (!listId.isNullOrEmpty() && isFinish == null) {
+                taskDao.filterList(listId, listOf(0, 1))
+            } else if (listId.isNullOrEmpty() && isFinish != null) {
                 val number = if (isFinish) 1 else 0
                 taskDao.filterList(listOf(number))
             } else {
                 taskDao.getAllTaskWithLabel()
+                listOf()
             }
     }
 

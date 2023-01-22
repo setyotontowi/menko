@@ -34,12 +34,12 @@ interface TaskDao {
     @Transaction
     @Query("SELECT distinct id, title, description, date, finish " +
             "FROM task JOIN labeling ON task.id == labeling.taskId " +
-            "WHERE labelId IN (:labels) AND finish IN (:isFinished)")
-    fun filterList(labels: List<Int>, isFinished: List<Int>): LiveData<List<TaskWithLabel>?>
+            "WHERE labelId IN (:labels) AND finish IN (:isFinished) ORDER BY DATE DESC")
+    fun filterList(labels: List<Int>, isFinished: List<Int>): List<TaskWithLabel>?
 
     @Transaction
-    @Query("SELECT * FROM task WHERE finish IN (:isFinished)")
-    fun filterList(isFinished: List<Int>): LiveData<List<TaskWithLabel>?>
+    @Query("SELECT * FROM task WHERE finish IN (:isFinished) ORDER BY DATE DESC")
+    fun filterList(isFinished: List<Int>): List<TaskWithLabel>?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(task: Task): Long

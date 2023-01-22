@@ -64,7 +64,6 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         requireActivity().title = "History"
 
         setupView()
-        taskViewModel.fetchList()
 
         taskViewModel.init(null, null, 0)
         taskViewModel.apply {
@@ -72,6 +71,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
             //taskGroup.observe(viewLifecycleOwner) { handleTaskWithLabel(it) }
             summary.observe(viewLifecycleOwner) { handleSummary(it) }
             taskHistory.observe(viewLifecycleOwner) { handleTaskWithLabel(it) }
+            taskFilter.observe(viewLifecycleOwner) { handleTaskWithLabel(it) }
         }
     }
 
@@ -151,7 +151,6 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
     override fun onHiddenChanged(hidden: Boolean) {
         if(!hidden){
             requireActivity().title = "History"
-            taskViewModel.fetchList()
         }
         super.onHiddenChanged(hidden)
     }
@@ -232,7 +231,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
                 layoutLabel.toggle(labels.isNotEmpty())
                 val listLabel = this@HistoryFragment.labels
                 val chipAdapter = ChipAdapter(requireContext(), listLabel) {
-                    taskViewModel.filter(it)
+                    taskViewModel.filterLabel = it
                 }
                 chipAdapter.setSelectedLabels(taskViewModel.filteredLabel.value?: mutableListOf())
 
@@ -247,10 +246,15 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
                 }
 
                 chipStatus.setOnCheckedChangeListener { group, checkedId ->
-                    taskViewModel.filter(chipCompleted.isChecked, chipUncompleted.isChecked)
+                    val completed = chipCompleted.isChecked
+                    val unCompleted = chipUncompleted.isChecked
+                    taskViewModel.filterCompleted(completed, unCompleted)
                 }
             }
             show()
+            setOnDismissListener {
+                taskViewModel.filter()
+            }
         }
     }
 
