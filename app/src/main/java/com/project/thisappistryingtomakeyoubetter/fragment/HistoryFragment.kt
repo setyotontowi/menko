@@ -2,6 +2,7 @@ package com.project.thisappistryingtomakeyoubetter.fragment
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.core.view.isNotEmpty
 import androidx.core.widget.NestedScrollView
@@ -64,12 +65,19 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         requireActivity().title = "History"
 
         setupView()
-
         taskViewModel.apply {
             label.observe(viewLifecycleOwner) { handleLabel(it) }
             summary.observe(viewLifecycleOwner) { handleSummary(it) }
             taskHistory.observe(viewLifecycleOwner) { handleTaskWithLabel(it) }
             taskFilter.observe(viewLifecycleOwner) { handleTaskWithLabel(it) }
+        }
+
+        try {
+            val labelFiltered = arguments?.getSerializable(EXTRA_FILTER) as Label
+            taskViewModel.filterLabel = listOf(labelFiltered)
+            taskViewModel.filter()
+        } catch (e: java.lang.Exception) {
+            e.stackTrace
         }
     }
 

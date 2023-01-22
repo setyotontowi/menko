@@ -36,7 +36,8 @@ class HistoryViewModel @Inject constructor(
 
     fun filter() {
         viewModelScope.launch(IO) {
-            taskFilter.postValue(taskRepository.filterLabel(filterLabel, filterCompleted))
+            val a = taskRepository.filterLabel(filterLabel, filterCompleted)
+            taskFilter.postValue(a)
         }
     }
 
