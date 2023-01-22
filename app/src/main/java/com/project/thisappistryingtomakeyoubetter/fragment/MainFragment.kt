@@ -5,9 +5,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.project.thisappistryingtomakeyoubetter.App
 import com.project.thisappistryingtomakeyoubetter.R
 import com.project.thisappistryingtomakeyoubetter.activity.MainActivity
@@ -27,7 +31,7 @@ class MainFragment : Fragment() {
     private lateinit var binding: FragmentMainBinding
     lateinit var dayAdapter: DayAdapter
     lateinit var viewPager: ViewPager2
-    lateinit var viewModel: MainViewModel
+    val viewModel: MainViewModel by activityViewModels()
 
     @JvmField
     @Inject
@@ -47,43 +51,62 @@ class MainFragment : Fragment() {
 
         (activity?.application as App).appComponent.inject(this)
 
-        // Set ViewModel
-        viewModel = ViewModelProvider(requireActivity(), vmFactory!!).get(MainViewModel::class.java)
-
         createDay()
     }
 
     override fun onResume() {
         super.onResume()
-        if(viewModel.stateFromOutsideMainFragment.value == true){
+        /*if(viewModel.stateFromOutsideMainFragment.value == false){
             createDay()
-        } else {
-            viewPager.currentItem = viewModel.currentPosition.value?:(if (MainActivity.INCLUDE_YESTERDAY) 1 else 0)
-        }
+        } else {*/
+            currentItem = viewModel.currentPosition.value?:(if (MainActivity.INCLUDE_YESTERDAY) 1 else 0)
+            viewPager.doOnPreDraw {
+                viewPager.currentItem = currentItem
+                viewPager.invalidate()
+            }
+            (requireActivity() as MainActivity).toolbar.title = viewModel.dayTitle.value.toString()
+        /*}*/
     }
 
     override fun onPause() {
         super.onPause()
-        Log.d("DEBUGGING", "onPause: ")
         currentItem = viewPager.currentItem
         viewModel.currentPosition.value = viewPager.currentItem
-        viewModel.stateFromOutsideMainFragment.value = false
+        viewModel.dayTitle.value = (requireActivity() as MainActivity).toolbar.title.toString()
     }
 
-    fun createDay() {
+    override fun onHiddenChanged(hidden: Boolean) {
+        if(!hidden){
+            (requireActivity() as MainActivity).toolbar.title = viewModel.dayTitle.value.toString()
+        } else {
+            viewModel.dayTitle.value = (requireActivity() as MainActivity).toolbar.title.toString()
+        }
+        super.onHiddenChanged(hidden)
+    }
+
+    private fun createDay() {
         // Generate Calendar List
         calendar = generateCalendar(MainActivity.DAY_LIMIT, MainActivity.INCLUDE_YESTERDAY)
 
         // Create Fragment View Pager
         viewPager = binding.frame
-
+        viewPager.offscreenPageLimit = 5
         dayAdapter = DayAdapter(
                 childFragmentManager,
                 lifecycle,
                 calendar
         )
         viewPager.adapter = dayAdapter
-        viewPager.setPageTransformer(DepthPageTransformer())
+        //viewPager.setPageTransformer(DepthPageTransformer())
+        TabLayoutMediator(binding.tabLayout, viewPager){ tab, position ->
+            val title: String = when (position) {
+                0 -> if(MainActivity.INCLUDE_YESTERDAY) getString(R.string.title_yesterday) else getString(R.string.title_today)
+                1 -> if(MainActivity.INCLUDE_YESTERDAY) getString(R.string.title_today) else getString(R.string.title_tomorrow)
+                2 -> if(MainActivity.INCLUDE_YESTERDAY) getString(R.string.title_tomorrow) else GeneralHelper.dayFormatter().format(calendar!![position].time)
+                else -> GeneralHelper.dayFormatter().format(calendar!![position].time)
+            }
+            tab.text = title
+        }.attach()
     }
 
     /**

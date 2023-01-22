@@ -12,6 +12,11 @@
 
     </style>
 
+    <style name="AppTheme.NoToolbar.Light" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -63,5 +68,11 @@
         parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/bg_top_round</item>
     </style>
+
+    <style name="SmallTextAppearanceTab" parent="TextAppearance.Design.Tab">
+        <item name="textAllCaps">false</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
 
 </resources>

@@ -10,17 +10,10 @@ import javax.inject.Inject
 
 class MainViewModel @Inject constructor() : ViewModel() {
 
-    val includeYesterday = MutableLiveData<Boolean>()
-    fun setSetting(includedYesterday: Boolean){
-        this.includeYesterday.value = includedYesterday
-    }
-
     val currentPosition = MutableLiveData<Int>()
 
-    val currentFragment = MutableLiveData<Fragment>()
-
-    val stateFromOutsideMainFragment = MutableLiveData<Boolean>()
-
     val standAlone = MutableLiveData(false)
+
+    val dayTitle = MutableLiveData<String>()
 
 }

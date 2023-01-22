@@ -1,14 +1,11 @@
 package com.project.thisappistryingtomakeyoubetter.fragment
 
-import android.app.Dialog
-import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.project.thisappistryingtomakeyoubetter.App
 import com.project.thisappistryingtomakeyoubetter.R
@@ -22,7 +19,7 @@ import com.project.thisappistryingtomakeyoubetter.model.Label
 import com.project.thisappistryingtomakeyoubetter.model.Task
 import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
-import com.project.thisappistryingtomakeyoubetter.viewmodel.TaskViewModel
+import com.project.thisappistryingtomakeyoubetter.viewmodel.DayViewModel
 import java.util.*
 import javax.inject.Inject
 
@@ -37,18 +34,20 @@ class DayFragment : Fragment(), View.OnClickListener, TaskCallback {
     @Inject
     lateinit var vmFactory: ViewModelProvider.Factory
 
-    private lateinit var taskViewModel: TaskViewModel
+    private lateinit var taskViewModel: DayViewModel
 
     var from: Date? = null
     var to: Date? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        (requireActivity().application as App).appComponent.inject(this)
+        setHasOptionsMenu(true)
         assert(arguments != null)
+
         calendar = Calendar.getInstance(TimeZone.getDefault(), Locale.ENGLISH)
         calendar?.timeInMillis = requireArguments().getLong(DATE)
         position = requireArguments().getInt(POSITION)
-        (requireActivity().application as App).appComponent.inject(this)
-        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -63,30 +62,8 @@ class DayFragment : Fragment(), View.OnClickListener, TaskCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        from = GeneralHelper.fromDate(calendar)
-        to = GeneralHelper.toDate(calendar)
-
-        // Showing Task List
-        taskAdapter = TaskAdapter(requireActivity(), tasks, this)
-        binding.task.apply {
-            adapter = taskAdapter
-            layoutManager = LinearLayoutManager(activity)
-        }
-
-        // Floating Action Button Add
-        binding.addTask.setOnClickListener(this)
-
-        // Set task ViewModel
-        taskViewModel = ViewModelProvider(this, vmFactory).get(TaskViewModel::class.java)
-        taskViewModel.setFrom(from)
-        taskViewModel.setTo(to)
-        taskViewModel.setPage(-1)
-        taskViewModel.apply {
-            tasksWithLabel.observe(viewLifecycleOwner) { handleListTask(it) }
-            label.observe(viewLifecycleOwner) { handleLabel(it) }
-        }
-
+        initData()
+        setupView()
     }
 
     override fun onResume() {
@@ -101,18 +78,52 @@ class DayFragment : Fragment(), View.OnClickListener, TaskCallback {
         (requireParentFragment().requireActivity() as MainActivity).toolbar.title = title
     }
 
+    private fun initData(){
+        from = GeneralHelper.fromDate(calendar)
+        to = GeneralHelper.toDate(calendar)
+
+        // Set task ViewModel
+        taskViewModel = ViewModelProvider(this, vmFactory).get(DayViewModel::class.java)
+        taskViewModel.init(from, to, -1)
+
+        taskViewModel.apply {
+            tasksWithLabel.observe(viewLifecycleOwner) { handleListTask(it) }
+            label.observe(viewLifecycleOwner) { handleLabel(it) }
+        }
+    }
+
+    private fun setupView(){
+        // Showing Task List
+        taskAdapter = TaskAdapter(requireActivity(), tasks, this)
+        binding.task.apply {
+            adapter = taskAdapter
+            layoutManager = LinearLayoutManager(activity)
+        }
+
+        // Floating Action Button Add
+        binding.addTask.setOnClickListener(this)
+    }
+
     override fun onClick(v: View) {
         if (v.id == R.id.add_task) {
             taskDialog(null)
         }
     }
 
-    override fun onLongClick(task: TaskWithLabel) {
-        taskDialog(task)
-    }
-
     override fun onBoxChecked(task: TaskWithLabel) {
         taskViewModel.update(task.task)
+    }
+
+    override fun onUpdate(task: Task) {
+        taskViewModel.update(task)
+    }
+
+    override fun onDelete(task: Task) {
+        taskViewModel.delete(task)
+    }
+
+    override fun onLongClick(task: TaskWithLabel) {
+        taskDialog(task)
     }
 
     private fun handleLabel(labels: List<Label>?) {
@@ -133,10 +144,6 @@ class DayFragment : Fragment(), View.OnClickListener, TaskCallback {
                 layoutInflater
             )
             setContentView(binding.root)
-
-            // Hide Keyboard
-            Objects.requireNonNull(window)
-                ?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
 
             // Chip Adapter
             val chipAdapter = ChipAdapter(requireContext(), labels)

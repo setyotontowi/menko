@@ -29,6 +29,10 @@ public class GeneralHelper {
         return new SimpleDateFormat("EEEE, dd MMMM", new Locale("id", "ID"));
     }
 
+    public static SimpleDateFormat dayFormatter(){
+        return new SimpleDateFormat("EEEE", new Locale("id", "ID"));
+    }
+
     public static SimpleDateFormat hourFormatter(){
         return new SimpleDateFormat("EEEE, dd MMMM: HH.mm.ss", new Locale("id", "ID"));
     }

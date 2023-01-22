@@ -5,12 +5,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.CheckBox
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.project.thisappistryingtomakeyoubetter.R
+import com.project.thisappistryingtomakeyoubetter.databinding.DialogTaskBinding
+import com.project.thisappistryingtomakeyoubetter.model.Label
 import com.project.thisappistryingtomakeyoubetter.model.Task
 import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
@@ -20,7 +25,7 @@ import kotlin.collections.HashSet
 
 class TaskAdapter(
     private val context: Context,
-    private val tasks: List<TaskWithLabel>,
+    private val tasks: MutableList<TaskWithLabel>,
     private val listener: TaskCallback
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var date = 0
@@ -59,10 +64,12 @@ class TaskAdapter(
             listener.onBoxChecked(tasks[position])
         }
         holder.wrapper.setOnLongClickListener {
+            //taskDialog(tasks[position], labels, position)
             listener.onLongClick(tasks[position])
             true
         }
         holder.title.setOnLongClickListener {
+            //taskDialog(tasks[position], labels, position)
             listener.onLongClick(tasks[position])
             true
         }
@@ -88,8 +95,63 @@ class TaskAdapter(
         var label: RecyclerView = itemView.findViewById(R.id.labels)
     }
 
+    private fun removeTask(position: Int){
+        this.tasks.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
+    private fun taskDialog(task: TaskWithLabel?, labels: MutableList<Label>, position: Int) {
+        BottomSheetDialog(context).apply {
+            val binding = DialogTaskBinding.inflate(
+                    layoutInflater
+            )
+            setContentView(binding.root)
+
+            Objects.requireNonNull(window)
+                    ?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+
+            // Chip Adapter
+            val chipAdapter = ChipAdapter(context, labels)
+
+
+            // Views Setup
+            if (task != null) {
+                chipAdapter.setSelectedLabels(task.labels)
+                binding.title.setText(task.task.title)
+                binding.description.setText(task.task.description)
+                binding.delete.visibility = View.VISIBLE
+            }
+            binding.labels.layoutManager =
+                    LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            binding.labels.adapter = chipAdapter
+
+
+            // Listeners
+            binding.save.setOnClickListener {
+                task?.let { task ->
+                    task.task.title = Objects.requireNonNull(binding.title.text).toString()
+                    task.task.description = Objects.requireNonNull(binding.description.text).toString()
+                    task.task.labels = chipAdapter.getSelectedLabels()
+                    listener.onUpdate(task.task)
+                }
+                dismiss()
+            }
+            binding.delete.setOnClickListener {
+                if (task != null) {
+                    removeTask(position)
+                    listener.onDelete(task.task)
+                }
+                dismiss()
+            }
+
+            show()
+        }
+    }
+
     interface TaskCallback {
-        fun onLongClick(task: TaskWithLabel)
         fun onBoxChecked(task: TaskWithLabel)
+        fun onUpdate(task: Task)
+        fun onDelete(task: Task)
+        fun onLongClick(task: TaskWithLabel)
     }
 }
