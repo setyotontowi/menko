@@ -1,7 +1,7 @@
 package com.project.thisappistryingtomakeyoubetter.util
 
 import com.project.thisappistryingtomakeyoubetter.model.Task
-import com.project.thisappistryingtomakeyoubetter.viewmodel.TaskViewModel
+import com.project.thisappistryingtomakeyoubetter.viewmodel.DayViewModel
 import org.junit.Test
 
 import org.junit.Before
@@ -12,7 +12,7 @@ import org.mockito.junit.MockitoJUnitRunner
 @RunWith(MockitoJUnitRunner::class)
 class TaskViewModelTest {
 
-    private lateinit var taskViewModel: TaskViewModel
+    private lateinit var taskViewModel: DayViewModel
 
     @Mock
     private lateinit var taskRepository: TaskRepository
@@ -22,7 +22,7 @@ class TaskViewModelTest {
 
     @Before
     fun setup() {
-        taskViewModel = TaskViewModel(taskRepository, labelRepository)
+        taskViewModel = DayViewModel(taskRepository, labelRepository)
     }
 
     @Test

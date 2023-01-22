@@ -2,6 +2,7 @@ package com.project.thisappistryingtomakeyoubetter.fragment
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.core.view.isNotEmpty
 import androidx.core.widget.NestedScrollView
@@ -18,18 +19,15 @@ import com.project.thisappistryingtomakeyoubetter.R
 import com.project.thisappistryingtomakeyoubetter.adapter.ChipAdapter
 import com.project.thisappistryingtomakeyoubetter.adapter.TaskAdapter
 import com.project.thisappistryingtomakeyoubetter.adapter.TaskGroupAdapter
-import com.project.thisappistryingtomakeyoubetter.databinding.DialogTaskBinding
 import com.project.thisappistryingtomakeyoubetter.databinding.FragmentHistoryBinding
 import com.project.thisappistryingtomakeyoubetter.databinding.LayoutFilterBinding
 import com.project.thisappistryingtomakeyoubetter.model.Label
 import com.project.thisappistryingtomakeyoubetter.model.Task
-import com.project.thisappistryingtomakeyoubetter.model.TaskGroup
 import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
 import com.project.thisappistryingtomakeyoubetter.view.toggle
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
+import com.project.thisappistryingtomakeyoubetter.viewmodel.HistoryViewModel
 import com.project.thisappistryingtomakeyoubetter.viewmodel.MainViewModel
-import com.project.thisappistryingtomakeyoubetter.viewmodel.TaskViewModel
-import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
 
@@ -41,7 +39,10 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
 
     @Inject
     lateinit var vmFactory: ViewModelProvider.Factory
-    private val taskViewModel: TaskViewModel by activityViewModels { vmFactory }
+
+    // TODO: This cannot be allowed having two viewmodels in one activity
+    @Inject
+    lateinit var taskViewModel: HistoryViewModel
     private val mainViewModel: MainViewModel by activityViewModels { vmFactory }
 
     override fun onCreateView(
@@ -57,25 +58,26 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         super.onViewCreated(view, savedInstanceState)
         (activity?.application as App).appComponent.inject(this)
         setHasOptionsMenu(true)
-        if(mainViewModel.standAlone.value == false){
-            mainViewModel.stateFromOutsideMainFragment.value = true
-        }
-
         requireActivity().title = "History"
 
         setupView()
-
-        taskViewModel.setFrom(null)
-        taskViewModel.setTo(null)
-        taskViewModel.setPage(0)
         taskViewModel.apply {
             label.observe(viewLifecycleOwner) { handleLabel(it) }
-            taskGroup.observe(viewLifecycleOwner) { handleTaskWithLabel(it) }
             summary.observe(viewLifecycleOwner) { handleSummary(it) }
+            taskHistory.observe(viewLifecycleOwner) { handleTaskWithLabel(it) }
+            taskFilter.observe(viewLifecycleOwner) { handleTaskWithLabel(it) }
+        }
+
+        try {
+            val labelFiltered = arguments?.getSerializable(EXTRA_FILTER) as Label
+            taskViewModel.filterLabel = listOf(labelFiltered)
+            taskViewModel.filter()
+        } catch (e: java.lang.Exception) {
+            e.stackTrace
         }
     }
 
-    var taskAdapter = TaskGroupAdapter(mutableMapOf(), this@HistoryFragment)
+    private var taskAdapter = TaskGroupAdapter(mutableMapOf(), this@HistoryFragment)
     private fun setupView() {
         val linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
@@ -84,37 +86,8 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
             layoutManager = linearLayoutManager
         }
 
-        var previousTotal = 0
-        var firstVisibleItem: Int
-        var visibleItemCount: Int
-        var totalItemCount: Int
-        val visibleTreshold = 10
-        var loading = true
-
         val behavior = BottomSheetBehavior.from(binding.linearLayout)
         behavior.peekHeight = arguments?.getInt(EXTRA_PEEK_HEIGHT, 1700)?:1700
-
-        binding.listTask.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val itemCount = linearLayoutManager.itemCount
-                val lastVisibleItem = linearLayoutManager.findLastCompletelyVisibleItemPosition()
-                val isLastPosition = itemCount.minus(1) == lastVisibleItem
-
-                if(isLastPosition) {
-                    val page = taskViewModel.page.value ?: 0
-                    taskViewModel.setPage(page + 1)
-                    loading = true
-                }
-
-                if (loading) {
-                    if (itemCount > previousTotal) {
-                        loading = false
-                        previousTotal = itemCount
-                    }
-                }
-            }
-        })
 
         if(mainViewModel.standAlone.value == false) {
             binding.linearLayout.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
@@ -165,6 +138,10 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
 
     override fun onDelete(task: Task) {
         taskViewModel.delete(task)
+    }
+
+    override fun onLongClick(task: TaskWithLabel) {
+
     }
 
     private fun handleSummary(summary: Triple<Int, Int, Int>){
@@ -227,22 +204,32 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
                 layoutLabel.toggle(labels.isNotEmpty())
                 val listLabel = this@HistoryFragment.labels
                 val chipAdapter = ChipAdapter(requireContext(), listLabel) {
-                    taskViewModel.filter(it)
+                    taskViewModel.filterLabel = it
+                    taskViewModel.filter()
                 }
-                chipAdapter.setSelectedLabels(taskViewModel.filteredLabel.value?: mutableListOf())
+                chipAdapter.setSelectedLabels(taskViewModel.filterLabel?: mutableListOf())
 
                 labels.apply {
                     adapter = chipAdapter
                     layoutManager = FlexboxLayoutManager(requireContext())
                 }
 
-                taskViewModel.filteredStatus.value?.let {
-                    chipCompleted.isChecked = it.first
-                    chipUncompleted.isChecked = it.second
+                taskViewModel.filterCompleted.let {
+                    when (it) {
+                        true -> chipCompleted.isChecked = true
+                        false -> chipUncompleted.isChecked = true
+                        null -> {
+                            chipCompleted.isChecked = false
+                            chipUncompleted.isChecked = false
+                        }
+                    }
                 }
 
                 chipStatus.setOnCheckedChangeListener { group, checkedId ->
-                    taskViewModel.filter(chipCompleted.isChecked, chipUncompleted.isChecked)
+                    val completed = chipCompleted.isChecked
+                    val unCompleted = chipUncompleted.isChecked
+                    taskViewModel.filterCompleted(completed, unCompleted)
+                    taskViewModel.filter()
                 }
             }
             show()

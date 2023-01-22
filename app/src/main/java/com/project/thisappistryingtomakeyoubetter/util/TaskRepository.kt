@@ -52,6 +52,10 @@ class TaskRepository @Inject constructor(
         }
     }
 
+    fun getHistoryAllTask(): LiveData<List<TaskWithLabel>?>{
+        return taskDao.getHistoryAllTask()
+    }
+
     fun getTaskWithLabel(from: Date?, to: Date?, page: Int): LiveData<List<TaskWithLabel>?>{
         return if (from == null && to == null && page == -1) {
             taskDao.getAllTaskWithLabel()
@@ -60,6 +64,21 @@ class TaskRepository @Inject constructor(
         } else {
             taskDao.getTaskWithLabelLimited(LIMIT, LIMIT*page)
         }
+    }
+
+    suspend fun filterLabel(labels: List<Label>?, isFinish: Boolean? = null): List<TaskWithLabel>? {
+        val listId = labels?.map { it.id }
+        return if (!listId.isNullOrEmpty() && isFinish != null) {
+                val number = if (isFinish) 1 else 0
+                taskDao.filterList(listId, listOf(number))
+            } else if (!listId.isNullOrEmpty() && isFinish == null) {
+                taskDao.filterList(listId, listOf(0, 1))
+            } else if (listId.isNullOrEmpty() && isFinish != null) {
+                val number = if (isFinish) 1 else 0
+                taskDao.filterList(listOf(number))
+            } else {
+                taskDao.getAllTaskWithLabelList()
+            }
     }
 
     fun getSummary(): Triple<Int, Int, Int>{

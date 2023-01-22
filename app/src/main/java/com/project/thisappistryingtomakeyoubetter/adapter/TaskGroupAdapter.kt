@@ -44,12 +44,10 @@ class TaskGroupAdapter(
 
     @SuppressLint("NotifyDataSetChanged")
     fun addListTaskWithLabel(list: List<TaskWithLabel>){
+        this.list.clear()
+        this.dateSet.clear()
         listToMap(list).forEach {
             val date = it.key
-
-            val diffCallback = TaskDiffCallback(this.list[date]?: listOf(), list)
-            val diffResult = DiffUtil.calculateDiff(diffCallback)
-            diffResult.dispatchUpdatesTo(this)
 
             val existedList = this.list[date]
             if(existedList.isNullOrEmpty()) {
@@ -67,6 +65,9 @@ class TaskGroupAdapter(
         notifyDataSetChanged()
     }
 
+    // Create map from task list by parsing it from data from the model
+    // list(task1, task2, task3)
+    // into [map(1-10-2023, [task 1, task 2]), map(2-10-2023, [task 3])]
     private fun listToMap(list: List<TaskWithLabel>): MutableMap<Date, List<TaskWithLabel>>{
         val map = mutableMapOf<Date, List<TaskWithLabel>>()
         list.forEach {
@@ -84,24 +85,6 @@ class TaskGroupAdapter(
         }
         return map
     }
-
-    class TaskDiffCallback(
-            private val oldList: List<TaskWithLabel>,
-            private val newList: List<TaskWithLabel>): DiffUtil.Callback() {
-
-        override fun getOldListSize(): Int = oldList.size
-
-        override fun getNewListSize(): Int = newList.size
-
-        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition].task.id == newList[newItemPosition].task.id
-        }
-
-        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition].task.date == newList[newItemPosition].task.date
-        }
-    }
-
 
     inner class ViewHolder(view: View): RecyclerView.ViewHolder(view){
         val date: TextView = view.findViewById(R.id.date)

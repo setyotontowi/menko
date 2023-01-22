@@ -2,10 +2,7 @@ package com.project.thisappistryingtomakeyoubetter.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.project.thisappistryingtomakeyoubetter.viewmodel.LabelViewModel
-import com.project.thisappistryingtomakeyoubetter.viewmodel.MainViewModel
-import com.project.thisappistryingtomakeyoubetter.viewmodel.TaskViewModel
-import com.project.thisappistryingtomakeyoubetter.viewmodel.ViewModelFactory
+import com.project.thisappistryingtomakeyoubetter.viewmodel.*
 import dagger.Binds
 import dagger.MapKey
 import dagger.Module
@@ -29,8 +26,13 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(TaskViewModel::class)
-    internal abstract fun taskViewModel(viewModel: TaskViewModel): ViewModel
+    @ViewModelKey(DayViewModel::class)
+    internal abstract fun taskViewModel(viewModel: DayViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(HistoryViewModel::class)
+    internal abstract fun historyViewModel(viewModel: HistoryViewModel): ViewModel
 
     @Binds
     @IntoMap
