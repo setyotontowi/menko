@@ -60,9 +60,24 @@ interface TaskDao {
     @Query("SELECT COUNT(*) as total FROM task")
     fun countAllTask(): Int
 
+    @Query("SELECT COUNT(*) as total FROM task " +
+            "JOIN labeling ON task.id == labeling.taskId " +
+            "WHERE labelId IN (:label)")
+    fun countAllTask(label: List<Int>): Int
+
     @Query("SELECT COUNT(*) as totalFinished FROM task WHERE finish = 1 ")
     fun countFinishedTask(): Int
 
+    @Query("SELECT COUNT(*) as totalFinished FROM task " +
+            "JOIN labeling ON task.id == labeling.taskId " +
+            "WHERE finish = 1 AND labelId IN (:label)")
+    fun countFinishedTask(label: List<Int>): Int
+
     @Query("SELECT COUNT(*) as totalFinished FROM task WHERE finish = 0 ")
     fun countUnfinishedTask(): Int
+
+    @Query("SELECT COUNT(*) as totalFinished FROM task " +
+            "JOIN labeling ON task.id == labeling.taskId " +
+            "WHERE finish = 0 AND labelId IN (:label)")
+    fun countUnfinishedTask(label: List<Int>): Int
 }

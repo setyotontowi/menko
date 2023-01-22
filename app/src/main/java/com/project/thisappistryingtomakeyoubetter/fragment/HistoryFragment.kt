@@ -2,15 +2,16 @@ package com.project.thisappistryingtomakeyoubetter.fragment
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.*
+import android.widget.FrameLayout
 import androidx.core.view.isNotEmpty
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -24,12 +25,11 @@ import com.project.thisappistryingtomakeyoubetter.databinding.LayoutFilterBindin
 import com.project.thisappistryingtomakeyoubetter.model.Label
 import com.project.thisappistryingtomakeyoubetter.model.Task
 import com.project.thisappistryingtomakeyoubetter.model.TaskWithLabel
-import com.project.thisappistryingtomakeyoubetter.view.toggle
 import com.project.thisappistryingtomakeyoubetter.util.GeneralHelper
+import com.project.thisappistryingtomakeyoubetter.view.toggle
 import com.project.thisappistryingtomakeyoubetter.viewmodel.HistoryViewModel
 import com.project.thisappistryingtomakeyoubetter.viewmodel.MainViewModel
 import javax.inject.Inject
-import kotlin.collections.ArrayList
 
 
 class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.ConfirmDialog {
@@ -44,6 +44,8 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
     @Inject
     lateinit var taskViewModel: HistoryViewModel
     private val mainViewModel: MainViewModel by activityViewModels { vmFactory }
+
+    private var labelFiltered: Label? = null
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -64,13 +66,17 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         taskViewModel.apply {
             label.observe(viewLifecycleOwner) { handleLabel(it) }
             summary.observe(viewLifecycleOwner) { handleSummary(it) }
-            taskHistory.observe(viewLifecycleOwner) { handleTaskWithLabel(it) }
+            taskHistory.observe(viewLifecycleOwner) {
+                if ( labelFiltered == null ) handleTaskWithLabel(it)
+            }
             taskFilter.observe(viewLifecycleOwner) { handleTaskWithLabel(it) }
         }
 
         try {
-            val labelFiltered = arguments?.getSerializable(EXTRA_FILTER) as Label
-            taskViewModel.filterLabel = listOf(labelFiltered)
+            labelFiltered = arguments?.getSerializable(EXTRA_FILTER) as Label
+            labelFiltered?.let {
+                taskViewModel.filterLabel = listOf(it)
+            }
             taskViewModel.filter()
         } catch (e: java.lang.Exception) {
             e.stackTrace
@@ -154,6 +160,7 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
     }
 
     private fun handleTaskWithLabel(it: List<TaskWithLabel>?) {
+        taskViewModel.updateSummary(labelFiltered)
         it?.let {
             placeHolder(true)
             taskAdapter.addListTaskWithLabel(it)

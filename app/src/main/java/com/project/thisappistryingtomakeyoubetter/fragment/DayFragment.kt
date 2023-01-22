@@ -1,11 +1,14 @@
 package com.project.thisappistryingtomakeyoubetter.fragment
 
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.*
+import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.project.thisappistryingtomakeyoubetter.App
 import com.project.thisappistryingtomakeyoubetter.R
@@ -185,7 +188,8 @@ class DayFragment : Fragment(), View.OnClickListener, TaskCallback {
                 }
                 dismiss()
             }
-
+            binding.title.requestFocus()
+            window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
             show()
         }
     }

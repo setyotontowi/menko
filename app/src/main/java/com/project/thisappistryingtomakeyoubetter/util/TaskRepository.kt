@@ -81,12 +81,21 @@ class TaskRepository @Inject constructor(
             }
     }
 
-    fun getSummary(): Triple<Int, Int, Int>{
-        val first = taskDao.countAllTask()
-        val second = taskDao.countFinishedTask()
-        val third = taskDao.countUnfinishedTask()
+    fun getSummary(labels: Label?): Triple<Int, Int, Int>{
+        if (labels != null) {
+            val labelId = labels.id
+            val first = taskDao.countAllTask(listOf(labelId))
+            val second = taskDao.countFinishedTask(listOf(labelId))
+            val third = taskDao.countUnfinishedTask(listOf(labelId))
 
-        return Triple(first, second, third)
+            return Triple(first, second, third)
+        } else {
+            val first = taskDao.countAllTask()
+            val second = taskDao.countFinishedTask()
+            val third = taskDao.countUnfinishedTask()
+
+            return Triple(first, second, third)
+        }
     }
 
 }

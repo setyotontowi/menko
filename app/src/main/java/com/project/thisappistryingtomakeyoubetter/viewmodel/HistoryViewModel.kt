@@ -41,12 +41,12 @@ class HistoryViewModel @Inject constructor(
         }
     }
 
-    val summary: LiveData<Triple<Int, Int, Int>> by lazy{
-        val result = MutableLiveData<Triple<Int, Int, Int>>() // all, completed, uncompleted
+    val summary= MutableLiveData<Triple<Int, Int, Int>>()
+
+    fun updateSummary(label: Label?) {
         viewModelScope.launch(Dispatchers.IO) {
-            result.postValue(taskRepository.getSummary())
+            summary.postValue(taskRepository.getSummary(label))
         }
-        result
     }
 
     fun insert(task: Task) {
