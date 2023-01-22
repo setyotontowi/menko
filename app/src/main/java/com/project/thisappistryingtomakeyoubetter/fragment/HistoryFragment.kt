@@ -58,10 +58,6 @@ class HistoryFragment : Fragment(), TaskAdapter.TaskCallback, GeneralHelper.Conf
         super.onViewCreated(view, savedInstanceState)
         (activity?.application as App).appComponent.inject(this)
         setHasOptionsMenu(true)
-        if(mainViewModel.standAlone.value == false){
-            mainViewModel.stateFromOutsideMainFragment.value = true
-        }
-
         requireActivity().title = "History"
 
         setupView()
