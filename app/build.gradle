@@ -17,8 +17,8 @@ android {
 
     defaultConfig {
         applicationId "com.project.thisappistryingtomakeyoubetter"
-        minSdkVersion 21
-        targetSdkVersion 31
+        minSdkVersion 24
+        targetSdkVersion 33
         versionCode 7
         versionName "2.2.4"
         multiDexEnabled true
